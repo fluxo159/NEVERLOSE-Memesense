@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Map, MapPin, Users, Briefcase, AlertOctagon, Phone, UserCheck, ArrowRight, Layers, Eye, Navigation2 } from 'lucide-react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useState } from 'react';
+import { Map, MapPin, Users, Briefcase, AlertOctagon, Phone, UserCheck, ArrowRight, Layers, Eye, Sparkles, Upload } from 'lucide-react';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { YouthProfile } from '../types';
 
@@ -12,6 +10,18 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
+// Hotspot coordinates on the visual map (in percentages x%, y%)
+const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; badge: string; color: string } } = {
+  'm_darxon': { x: 26, y: 55, label: 'Дархон', badge: '95.7% банд', color: '#10B981' },
+  'm_buyuk_ipak': { x: 42, y: 44, label: 'Буюк Ипак Йўли', badge: '91.3% банд', color: '#10B981' },
+  'm_oliy_himmat': { x: 74, y: 50, label: 'Олий Ҳиммат', badge: '⚠️ 34 NEET', color: '#F43F5E' },
+  'm_shahriobod': { x: 55, y: 72, label: 'Шаҳриобод', badge: '90.3% банд', color: '#10B981' },
+  'm_avaykhon': { x: 44, y: 70, label: 'Авайхон', badge: '84.3% банд', color: '#F59E0B' },
+  'm_feruza': { x: 54, y: 28, label: 'Феруза', badge: '28 NEET', color: '#F59E0B' },
+  'm_qorasuv': { x: 71, y: 40, label: 'Қорасув', badge: '39 NEET', color: '#F43F5E' },
+  'm_humo': { x: 67, y: 30, label: 'Ҳумо', badge: '91.5% банд', color: '#10B981' },
+};
+
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   youthList,
   onSelectMakhalla,
@@ -20,118 +30,18 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 }) => {
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
   const [mapMetric, setMapMetric] = useState<'neet' | 'employment'>('neet');
-  const [viewType, setViewType] = useState<'real_gis' | 'schematic'>('real_gis');
-
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const layerGroupRef = useRef<L.LayerGroup | null>(null);
+  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/district_map.jpg');
 
   const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
   const youthInCurrent = youthList.filter(y => y.makhalla === currentMahalla.name);
 
-  const getColor = (m: typeof MAKHALLAS_LIST[0]) => {
-    if (mapMetric === 'neet') {
-      if (m.riskLevel === 'high') return '#f43f5e'; // rose-500
-      if (m.riskLevel === 'medium') return '#f59e0b'; // amber-500
-      return '#10b981'; // emerald-500
-    } else {
-      if (m.employmentRate >= 90) return '#10b981';
-      if (m.employmentRate >= 83) return '#06b6d4';
-      return '#f59e0b';
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setCustomMapUrl(url);
     }
   };
-
-  // Initialize and Update Leaflet Real GIS Map
-  useEffect(() => {
-    if (viewType !== 'real_gis' || !mapContainerRef.current) return;
-
-    if (!mapInstanceRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [41.3360, 69.3380], // Center of Mirzo-Ulugbek district
-        zoom: 13,
-        zoomControl: true,
-        scrollWheelZoom: true
-      });
-
-      // Dark Matter CartoDB tiles for gorgeous GovTech dark aesthetic
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap',
-        maxZoom: 19,
-      }).addTo(map);
-
-      mapInstanceRef.current = map;
-      layerGroupRef.current = L.layerGroup().addTo(map);
-    }
-
-    const map = mapInstanceRef.current;
-    const layerGroup = layerGroupRef.current;
-
-    if (map && layerGroup) {
-      layerGroup.clearLayers();
-
-      MAKHALLAS_LIST.forEach(m => {
-        const color = getColor(m);
-        const isSelected = m.id === selectedMahallaId;
-
-        // Render Mahalla Geographical Polygon
-        const polygon = L.polygon(m.geoPolygon, {
-          color: isSelected ? '#38bdf8' : color,
-          weight: isSelected ? 4 : 2,
-          fillColor: color,
-          fillOpacity: isSelected ? 0.6 : 0.35
-        });
-
-        polygon.on('click', () => {
-          setSelectedMahallaId(m.id);
-        });
-
-        // Custom HTML Marker Pin
-        const customIcon = L.divIcon({
-          className: 'custom-map-pin',
-          html: `
-            <div style="
-              background: ${color};
-              color: #ffffff;
-              padding: 4px 8px;
-              border-radius: 20px;
-              font-size: 11px;
-              font-weight: bold;
-              white-space: nowrap;
-              border: 2px solid ${isSelected ? '#ffffff' : 'rgba(255,255,255,0.7)'};
-              box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-              cursor: pointer;
-              transform: translate(-50%, -50%);
-              display: flex;
-              align-items: center;
-              gap: 4px;
-            ">
-              <span>${m.name}</span>
-              <span style="background: rgba(0,0,0,0.25); padding: 1px 5px; border-radius: 10px; font-size: 10px;">
-                ${mapMetric === 'neet' ? `${m.neetPending} NEET` : `${m.employmentRate}%`}
-              </span>
-            </div>
-          `,
-          iconSize: [0, 0],
-          iconAnchor: [0, 0]
-        });
-
-        const marker = L.marker(m.geoCenter, { icon: customIcon });
-        marker.on('click', () => {
-          setSelectedMahallaId(m.id);
-        });
-
-        layerGroup.addLayer(polygon);
-        layerGroup.addLayer(marker);
-      });
-    }
-  }, [viewType, selectedMahallaId, mapMetric]);
-
-  // Center on selected mahalla when changed
-  useEffect(() => {
-    if (mapInstanceRef.current && currentMahalla && viewType === 'real_gis') {
-      mapInstanceRef.current.panTo(currentMahalla.geoCenter, { animate: true, duration: 0.8 });
-    }
-  }, [selectedMahallaId, viewType]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -145,45 +55,31 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </div>
             <h2 className="text-xl font-bold text-white tracking-tight">
               {lang === 'ru' 
-                ? 'Реальная ГИС-карта занятости (Мирзо-Улугбекский район)' 
-                : 'Мирзо Улуғбек тумани реал ГИС-харитаси'}
+                ? 'Интерактивная карта занятости (Мирзо-Улугбекский район)' 
+                : 'Мирзо Улуғбек тумани интерактив харитаси'}
             </h2>
           </div>
           <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
             {lang === 'ru'
-              ? 'Настоящая географическая карта Ташкента с реальными улицами (Буюк Ипак Йули, Паркентская, ТТЗ, Карасу) и тепловой окраской махаллей.'
-              : 'Тошкент шаҳрининг реал кўчалари ва маҳаллалари акс этган ГИС-харита.'}
+              ? 'Наглядная карта секторов района с цветовой индикацией зон риска NEET. Кликните по любому маркеру для открытия паспорта махалли.'
+              : 'Хавф даражаси ранглар билан ажратилган туман маҳаллалари харитаси.'}
           </p>
         </div>
 
-        {/* View Mode & Heatmap Metric Selector */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           
-          {/* Map Type Toggle */}
-          <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
-            <button
-              onClick={() => setViewType('real_gis')}
-              className={`px-3.5 py-2 rounded-lg font-bold transition-all ${
-                viewType === 'real_gis' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              🗺️ {lang === 'ru' ? 'Реальная карта (OpenStreetMap)' : 'Реал харита'}
-            </button>
-            <button
-              onClick={() => setViewType('schematic')}
-              className={`px-3.5 py-2 rounded-lg font-bold transition-all ${
-                viewType === 'schematic' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              📊 {lang === 'ru' ? 'Схема секторов' : 'Схема'}
-            </button>
-          </div>
+          {/* Custom image upload button */}
+          <label className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer transition-all">
+            <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{lang === 'ru' ? 'Загрузить свой скриншот карты' : 'Харита расмини юклаш'}</span>
+            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          </label>
 
-          {/* Layer Selector */}
+          {/* Metric Toggle */}
           <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
             <button
               onClick={() => setMapMetric('neet')}
-              className={`px-3.5 py-2 rounded-lg font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
                 mapMetric === 'neet' ? 'bg-rose-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -191,7 +87,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </button>
             <button
               onClick={() => setMapMetric('employment')}
-              className={`px-3.5 py-2 rounded-lg font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
                 mapMetric === 'employment' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -205,77 +101,84 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       {/* Main Map + Sidebar Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left: Interactive Real GIS Map or Vector Scheme */}
-        <div className="lg:col-span-7 glass-panel rounded-3xl p-5 border border-slate-700/60 bg-[#0c1626] relative overflow-hidden flex flex-col justify-between min-h-[520px] shadow-xl">
+        {/* Left: Graphic Digital Twin Map with Interactive Hotspots */}
+        <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#0c1626] relative overflow-hidden flex flex-col justify-between shadow-xl">
           
           <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
-            <span className="text-xs font-semibold text-cyan-300 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5">
-              <Navigation2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Ташкент: Мирзо-Улугбекский район (8 пилотных секторов)</span>
+            <span className="text-xs font-semibold text-cyan-300 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
+              Мирзо-Улугбекский район (8 ключевых секторов)
             </span>
             <div className="flex items-center gap-3 text-xs bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-medium"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Норма</span>
-              <span className="flex items-center gap-1.5 text-amber-400 font-medium"><span className="w-2 h-2 rounded-full bg-amber-500"></span> Внимание</span>
-              <span className="flex items-center gap-1.5 text-rose-400 font-bold"><span className="w-2 h-2 rounded-full bg-rose-500"></span> NEET риск</span>
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Норма</span>
+              <span className="flex items-center gap-1.5 text-amber-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Внимание</span>
+              <span className="flex items-center gap-1.5 text-rose-400 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> NEET риск</span>
             </div>
           </div>
 
-          {/* REAL LEAFLET GIS MAP CONTAINER */}
-          {viewType === 'real_gis' ? (
-            <div className="w-full flex-1 min-h-[440px] rounded-2xl overflow-hidden border border-slate-700/80 relative shadow-inner">
-              <div ref={mapContainerRef} className="w-full h-full min-h-[440px]" style={{ zIndex: 1 }} />
-            </div>
-          ) : (
-            /* SCHEMATIC VECTOR VIEW */
-            <div className="relative my-2 flex-1 flex items-center justify-center min-h-[440px]">
-              <svg viewBox="0 0 540 440" className="w-full max-w-[500px] h-auto filter drop-shadow-2xl">
-                <defs>
-                  <pattern id="grid2" width="30" height="30" patternUnits="userSpaceOnUse">
-                    <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1"/>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid2)" />
+          {/* Interactive Visual Map with Glowing Hotspots */}
+          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-slate-950 flex items-center justify-center">
+            
+            {/* Base Visual Map Image */}
+            <img
+              src={customMapUrl}
+              alt="Mirzo-Ulugbek District Map"
+              className="w-full h-full object-cover object-center select-none"
+            />
 
-                <path d="M 60 110 Q 260 140 480 130" stroke="#1e293b" strokeWidth="6" fill="none" strokeLinecap="round" />
-                <path d="M 120 110 Q 210 310 290 360" stroke="#1e293b" strokeWidth="6" fill="none" strokeLinecap="round" />
-                <path d="M 260 140 Q 380 260 480 300" stroke="#1e293b" strokeWidth="6" fill="none" strokeLinecap="round" />
+            {/* Subtle cybernetic grid overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b132b]/60 via-transparent to-transparent pointer-events-none" />
 
-                {MAKHALLAS_LIST.map((m, idx) => {
-                  const isSelected = selectedMahallaId === m.id;
-                  const color = getColor(m);
-                  const polys: { [key: string]: string } = {
-                    'm_darxon': '50,60 170,50 190,140 100,170 50,120',
-                    'm_buyuk_ipak': '180,45 320,55 330,150 200,145 180,110',
-                    'm_feruza': '335,60 480,70 490,165 345,160',
-                    'm_oliy_himmat': '100,180 210,160 220,260 120,270',
-                    'm_shahriobod': '225,165 350,170 340,250 230,255',
-                    'm_qorasuv': '360,175 490,180 470,290 350,270',
-                    'm_avaykhon': '130,285 240,275 250,370 145,360',
-                    'm_humo': '265,275 410,285 390,380 275,385'
-                  };
+            {/* Interactive Pins on the Map */}
+            {MAKHALLAS_LIST.map((m) => {
+              const hotspot = MAP_HOTSPOTS[m.id] || { x: 50, y: 50, label: m.name, badge: '90%', color: '#10B981' };
+              const isSelected = m.id === selectedMahallaId;
+              const isHighRisk = m.riskLevel === 'high';
 
-                  return (
-                    <g key={m.id} onClick={() => setSelectedMahallaId(m.id)} className="cursor-pointer transition-all duration-300">
-                      <polygon 
-                        points={polys[m.id] || '50,50 100,50 100,100 50,100'} 
-                        fill={color}
-                        fillOpacity={isSelected ? 0.8 : 0.45}
-                        stroke={isSelected ? '#ffffff' : color}
-                        strokeWidth={isSelected ? 3 : 1.5}
-                      />
-                      <text x={m.coordinates.x} y={m.coordinates.y - 5} fill="#fff" fontSize="12" fontWeight="bold" textAnchor="middle">{m.name}</text>
-                      <text x={m.coordinates.x} y={m.coordinates.y + 12} fill="#e2e8f0" fontSize="10" textAnchor="middle">
-                        {mapMetric === 'neet' ? `${m.neetPending} NEET` : `${m.employmentRate}%`}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
-            </div>
-          )}
+              return (
+                <div
+                  key={m.id}
+                  onClick={() => setSelectedMahallaId(m.id)}
+                  style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group transition-all duration-300 hover:scale-110"
+                >
+                  {/* Outer Ripple Animation for Selected or High-Risk */}
+                  {(isSelected || isHighRisk) && (
+                    <div 
+                      className="absolute inset-0 rounded-full animate-ping opacity-60 pointer-events-none"
+                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : '#38bdf8', transform: 'scale(1.8)' }}
+                    />
+                  )}
 
-          <div className="text-center text-xs text-slate-400 z-10 font-medium pt-2">
-            💡 Кликните на любую махаллю или маркер на реальной карте для открытия паспорта
+                  {/* Interactive Hotspot Card */}
+                  <div
+                    className={`px-3 py-1.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shadow-2xl transition-all ${
+                      isSelected
+                        ? 'bg-cyan-500 text-white border-2 border-white scale-110 shadow-cyan-500/50'
+                        : isHighRisk
+                        ? 'bg-rose-950/90 text-rose-200 border border-rose-500/80 hover:bg-rose-900'
+                        : 'bg-slate-900/90 text-white border border-slate-600 hover:border-cyan-400'
+                    }`}
+                  >
+                    <div 
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : isSelected ? '#ffffff' : hotspot.color }}
+                    />
+                    <span>{m.name}</span>
+                    <span 
+                      className="px-1.5 py-0.5 rounded-lg text-[10px] font-mono ml-0.5"
+                      style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: isHighRisk ? '#fca5a5' : '#7dd3fc' }}
+                    >
+                      {mapMetric === 'neet' ? `${m.neetPending} NEET` : `${m.employmentRate}%`}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+
+          <div className="text-center text-xs text-slate-400 z-10 font-medium pt-3">
+            💡 Кликните по маркеру махалли для просмотра подробного паспорта территории
           </div>
         </div>
 
@@ -339,6 +242,26 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 <span>{currentMahalla.leaderPhone}</span>
               </div>
             </div>
+
+            {/* Youth in this Mahalla */}
+            <div>
+              <div className="text-xs font-bold text-slate-300 mb-2">
+                Профили молодёжи в этой махалле ({youthInCurrent.length}):
+              </div>
+              <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                {youthInCurrent.slice(0, 4).map(y => (
+                  <div key={y.id} className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-between text-xs">
+                    <span className="text-white font-semibold truncate max-w-[180px]">{y.full_name_demo}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                      y.is_neet ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'
+                    }`}>
+                      {y.is_neet ? 'NEET риск' : y.employment_status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           <button
