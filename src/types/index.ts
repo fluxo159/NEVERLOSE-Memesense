@@ -73,4 +73,6 @@ export interface MakhallaStats {
   leaderPhone: string;
   riskLevel: 'low' | 'medium' | 'high';
   coordinates: { x: number; y: number }; // For SVG map
+  geoCenter: [number, number]; // [lat, lng] for Leaflet GIS
+  geoPolygon: [number, number][]; // Polygon vertices [lat, lng][]
 }

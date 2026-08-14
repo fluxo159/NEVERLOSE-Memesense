@@ -15,7 +15,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Ахмедов Сардор Бахтиёрович',
     leaderPhone: '+998 (90) 123-45-67',
     riskLevel: 'low',
-    coordinates: { x: 260, y: 140 }
+    coordinates: { x: 260, y: 140 },
+    geoCenter: [41.3265, 69.3280],
+    geoPolygon: [
+      [41.3320, 69.3200],
+      [41.3340, 69.3360],
+      [41.3220, 69.3390],
+      [41.3190, 69.3220]
+    ]
   },
   {
     id: 'm_oliy_himmat',
@@ -31,7 +38,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Каримова Гулноза Анваровна',
     leaderPhone: '+998 (93) 234-56-78',
     riskLevel: 'high',
-    coordinates: { x: 180, y: 220 }
+    coordinates: { x: 180, y: 220 },
+    geoCenter: [41.3210, 69.3420],
+    geoPolygon: [
+      [41.3250, 69.3350],
+      [41.3260, 69.3510],
+      [41.3150, 69.3500],
+      [41.3140, 69.3360]
+    ]
   },
   {
     id: 'm_shahriobod',
@@ -47,7 +61,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Юлдашев Жасур Комилович',
     leaderPhone: '+998 (97) 345-67-89',
     riskLevel: 'low',
-    coordinates: { x: 340, y: 180 }
+    coordinates: { x: 340, y: 180 },
+    geoCenter: [41.3320, 69.3450],
+    geoPolygon: [
+      [41.3370, 69.3380],
+      [41.3380, 69.3550],
+      [41.3270, 69.3540],
+      [41.3260, 69.3370]
+    ]
   },
   {
     id: 'm_avaykhon',
@@ -63,7 +84,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Рахимов Дилшод Шокирович',
     leaderPhone: '+998 (99) 456-78-90',
     riskLevel: 'medium',
-    coordinates: { x: 210, y: 310 }
+    coordinates: { x: 210, y: 310 },
+    geoCenter: [41.3410, 69.3390],
+    geoPolygon: [
+      [41.3460, 69.3310],
+      [41.3470, 69.3480],
+      [41.3360, 69.3470],
+      [41.3350, 69.3300]
+    ]
   },
   {
     id: 'm_darxon',
@@ -79,7 +107,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Умаров Фарход Нодирович',
     leaderPhone: '+998 (90) 567-89-01',
     riskLevel: 'low',
-    coordinates: { x: 120, y: 110 }
+    coordinates: { x: 120, y: 110 },
+    geoCenter: [41.3190, 69.2980],
+    geoPolygon: [
+      [41.3260, 69.2880],
+      [41.3270, 69.3080],
+      [41.3120, 69.3090],
+      [41.3110, 69.2890]
+    ]
   },
   {
     id: 'm_feruza',
@@ -95,7 +130,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Махмудов Бекзод Искандарович',
     leaderPhone: '+998 (94) 678-90-12',
     riskLevel: 'medium',
-    coordinates: { x: 410, y: 130 }
+    coordinates: { x: 410, y: 130 },
+    geoCenter: [41.3550, 69.3620],
+    geoPolygon: [
+      [41.3610, 69.3520],
+      [41.3620, 69.3720],
+      [41.3490, 69.3710],
+      [41.3480, 69.3510]
+    ]
   },
   {
     id: 'm_qorasuv',
@@ -111,7 +153,14 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Исмаилова Нилуфар Шухратовна',
     leaderPhone: '+998 (91) 789-01-23',
     riskLevel: 'high',
-    coordinates: { x: 380, y: 260 }
+    coordinates: { x: 380, y: 260 },
+    geoCenter: [41.3480, 69.3550],
+    geoPolygon: [
+      [41.3540, 69.3460],
+      [41.3550, 69.3660],
+      [41.3420, 69.3650],
+      [41.3410, 69.3450]
+    ]
   },
   {
     id: 'm_humo',
@@ -127,6 +176,13 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     leaderName: 'Алимов Шерзод Рустамович',
     leaderPhone: '+998 (95) 890-12-34',
     riskLevel: 'low',
-    coordinates: { x: 290, y: 360 }
+    coordinates: { x: 290, y: 360 },
+    geoCenter: [41.3620, 69.3750],
+    geoPolygon: [
+      [41.3680, 69.3650],
+      [41.3690, 69.3850],
+      [41.3560, 69.3840],
+      [41.3550, 69.3640]
+    ]
   }
 ];
