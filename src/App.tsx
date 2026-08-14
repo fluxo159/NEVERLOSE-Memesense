@@ -190,26 +190,27 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0B132B] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
       
-      {/* Header */}
-      <Header
-        selectedRole={selectedRole}
-        onSelectRole={setSelectedRole}
-        selectedMakhalla={selectedMakhalla}
-        onSelectMakhalla={setSelectedMakhalla}
-        onOpenPitchGuide={() => setShowPitchGuide(true)}
-        lang={lang}
-        onToggleLang={() => setLang(prev => prev === 'ru' ? 'uz' : 'ru')}
-      />
+      {/* Sticky Header & Navigation Container */}
+      <div className="sticky top-0 z-40 shadow-xl">
+        <Header
+          selectedRole={selectedRole}
+          onSelectRole={setSelectedRole}
+          selectedMakhalla={selectedMakhalla}
+          onSelectMakhalla={setSelectedMakhalla}
+          onOpenPitchGuide={() => setShowPitchGuide(true)}
+          lang={lang}
+          onToggleLang={() => setLang(prev => prev === 'ru' ? 'uz' : 'ru')}
+        />
 
-      {/* Navigation Tabs */}
-      <Navigation
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        neetPendingCount={neetPendingCount}
-        totalYouthCount={currentScopedList.length}
-        onOpenNewYouth={() => setShowNewYouthModal(true)}
-        lang={lang}
-      />
+        <Navigation
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          neetPendingCount={neetPendingCount}
+          totalYouthCount={currentScopedList.length}
+          onOpenNewYouth={() => setShowNewYouthModal(true)}
+          lang={lang}
+        />
+      </div>
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Briefcase, GraduationCap, AlertOctagon, ArrowUpRight, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Users, Briefcase, GraduationCap, AlertOctagon, CheckCircle2, TrendingUp } from 'lucide-react';
 import { YouthProfile } from '../types';
 
 interface StatsOverviewProps {
@@ -22,128 +22,112 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const training = youthList.filter(y => y.employment_status === 'направлен на обучение').length;
   
   const neetPending = youthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
-  const neetVerified = youthList.filter(y => y.is_neet && y.neet_verification === 'verified').length;
   const supported = youthList.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
 
-  const employmentRate = total > 0 ? Math.round(((employed + studying) / total) * 100) : 0;
-
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
       
       {/* 1. Всего молодёжи */}
-      <div className="glass-card p-3.5 rounded-xl border border-slate-700/60 bg-gradient-to-b from-slate-800/80 to-slate-900/90 relative overflow-hidden">
-        <div className="flex items-center justify-between text-slate-400 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'Молодёжь (18–30)' : 'Ёшлар сони'}</span>
+      <div className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 shadow-md">
+        <div className="flex items-center justify-between text-slate-400 mb-1.5">
+          <span className="text-xs font-semibold">{lang === 'ru' ? 'Молодёжь (18–30)' : 'Ёшлар'}</span>
           <Users className="w-4 h-4 text-cyan-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-white">{total}</span>
-          <span className="text-[11px] text-cyan-400 font-medium">100%</span>
-        </div>
-        <div className="mt-2 flex items-center gap-1 text-[11px] text-slate-400">
-          <span>{selectedMakhalla === 'all' ? (lang === 'ru' ? 'По всему району' : 'Туман бўйича') : selectedMakhalla}</span>
+        <div className="text-2xl font-extrabold text-white">{total}</div>
+        <div className="text-[11px] text-slate-400 mt-1 truncate">
+          {selectedMakhalla === 'all' ? (lang === 'ru' ? 'По району' : 'Туман бўйича') : selectedMakhalla}
         </div>
       </div>
 
       {/* 2. Занятые / Бизнес */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('занят')}
-        className="glass-card p-3.5 rounded-xl border border-slate-700/60 bg-gradient-to-b from-slate-800/80 to-slate-900/90 hover:border-emerald-500/50 cursor-pointer transition-all"
+        className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-emerald-500/60 cursor-pointer transition-all shadow-md group"
       >
-        <div className="flex items-center justify-between text-slate-400 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'Заняты / Бизнес' : 'Банд / Бизнес'}</span>
+        <div className="flex items-center justify-between text-slate-400 mb-1.5">
+          <span className="text-xs font-semibold group-hover:text-emerald-400 transition-colors">{lang === 'ru' ? 'Заняты / Бизнес' : 'Банд'}</span>
           <Briefcase className="w-4 h-4 text-emerald-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-emerald-400">{employed}</span>
-          <span className="text-[11px] text-emerald-300 font-medium">{total > 0 ? Math.round((employed / total) * 100) : 0}%</span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-extrabold text-emerald-400">{employed}</span>
+          <span className="text-xs text-emerald-300 font-semibold">{total > 0 ? Math.round((employed / total) * 100) : 0}%</span>
         </div>
-        <div className="mt-2 w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
-          <div 
-            className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
-            style={{ width: `${(employed / Math.max(total, 1)) * 100}%` }}
-          ></div>
+        <div className="text-[11px] text-slate-400 mt-1">
+          {lang === 'ru' ? 'Трудоустроены' : 'Расмий банд'}
         </div>
       </div>
 
       {/* 3. Обучаются */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('обучается')}
-        className="glass-card p-3.5 rounded-xl border border-slate-700/60 bg-gradient-to-b from-slate-800/80 to-slate-900/90 hover:border-cyan-500/50 cursor-pointer transition-all"
+        className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-cyan-500/60 cursor-pointer transition-all shadow-md group"
       >
-        <div className="flex items-center justify-between text-slate-400 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'Обучаются (ВУЗ/Колледж)' : 'Ўқимоқда (ОЎЮ/Коллеж)'}</span>
+        <div className="flex items-center justify-between text-slate-400 mb-1.5">
+          <span className="text-xs font-semibold group-hover:text-cyan-400 transition-colors">{lang === 'ru' ? 'Обучаются' : 'Ўқимоқда'}</span>
           <GraduationCap className="w-4 h-4 text-cyan-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-cyan-400">{studying}</span>
-          <span className="text-[11px] text-cyan-300 font-medium">{total > 0 ? Math.round((studying / total) * 100) : 0}%</span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-extrabold text-cyan-400">{studying}</span>
+          <span className="text-xs text-cyan-300 font-semibold">{total > 0 ? Math.round((studying / total) * 100) : 0}%</span>
         </div>
-        <div className="mt-2 w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
-          <div 
-            className="bg-cyan-500 h-1.5 rounded-full transition-all duration-500"
-            style={{ width: `${(studying / Math.max(total, 1)) * 100}%` }}
-          ></div>
+        <div className="text-[11px] text-slate-400 mt-1">
+          {lang === 'ru' ? 'ВУЗы и техникумы' : 'Олий таълим'}
         </div>
       </div>
 
       {/* 4. Безработные */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('безработный')}
-        className="glass-card p-3.5 rounded-xl border border-slate-700/60 bg-gradient-to-b from-slate-800/80 to-slate-900/90 hover:border-amber-500/50 cursor-pointer transition-all"
+        className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-amber-500/60 cursor-pointer transition-all shadow-md group"
       >
-        <div className="flex items-center justify-between text-slate-400 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'Безработные' : 'Ишсизлар'}</span>
+        <div className="flex items-center justify-between text-slate-400 mb-1.5">
+          <span className="text-xs font-semibold group-hover:text-amber-400 transition-colors">{lang === 'ru' ? 'Безработные' : 'Ишсизлар'}</span>
           <TrendingUp className="w-4 h-4 text-amber-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-amber-400">{unemployed}</span>
-          <span className="text-[11px] text-amber-300 font-medium">{total > 0 ? Math.round((unemployed / total) * 100) : 0}%</span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-extrabold text-amber-400">{unemployed}</span>
+          <span className="text-xs text-amber-300 font-semibold">{total > 0 ? Math.round((unemployed / total) * 100) : 0}%</span>
         </div>
-        <div className="mt-2 flex items-center gap-1 text-[11px] text-amber-400/80">
-          <span>Целевая группа ЦЗН</span>
+        <div className="text-[11px] text-slate-400 mt-1">
+          {lang === 'ru' ? 'Ищут работу' : 'Иш қидирмоқда'}
         </div>
       </div>
 
-      {/* 5. NEET: Требует проверки */}
+      {/* 5. NEET (На проверке) */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('neet_pending')}
-        className="glass-card p-3.5 rounded-xl border border-rose-500/30 bg-gradient-to-b from-rose-950/30 via-slate-800/80 to-slate-900/90 hover:border-rose-500/70 cursor-pointer transition-all relative"
+        className="glass-panel p-4 rounded-2xl border border-rose-500/40 bg-gradient-to-b from-rose-950/20 via-slate-900/90 to-slate-900/90 hover:border-rose-400 cursor-pointer transition-all shadow-md group"
       >
-        <div className="flex items-center justify-between text-rose-300 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'NEET (На проверке)' : 'NEET (Текширувда)'}</span>
-          <AlertOctagon className="w-4 h-4 text-rose-400 animate-pulse" />
+        <div className="flex items-center justify-between text-rose-300 mb-1.5">
+          <span className="text-xs font-bold">{lang === 'ru' ? 'NEET (Риск)' : 'NEET хавфи'}</span>
+          <AlertOctagon className="w-4 h-4 text-rose-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-rose-400">{neetPending}</span>
-          <span className="text-[11px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded border border-rose-500/30">
-            {lang === 'ru' ? 'Внимание' : 'Диққат'}
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-extrabold text-rose-400">{neetPending}</span>
+          <span className="text-[11px] px-1.5 py-0.2 bg-rose-500/20 text-rose-300 rounded font-semibold">
+            {lang === 'ru' ? 'Проверка' : 'Текширув'}
           </span>
         </div>
-        <div className="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
-          <span>{lang === 'ru' ? 'Подтверждено:' : 'Тасдиқланган:'}</span>
-          <span className="text-slate-200 font-bold">{neetVerified}</span>
+        <div className="text-[11px] text-slate-400 mt-1">
+          {lang === 'ru' ? 'Требуют визита' : 'Кўрик кутмоқда'}
         </div>
       </div>
 
       {/* 6. Охвачено господдержкой */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('supported')}
-        className="glass-card p-3.5 rounded-xl border border-slate-700/60 bg-gradient-to-b from-slate-800/80 to-slate-900/90 hover:border-gov-400/50 cursor-pointer transition-all"
+        className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-gov-400/60 cursor-pointer transition-all shadow-md group"
       >
-        <div className="flex items-center justify-between text-slate-400 mb-2">
-          <span className="text-xs font-medium">{lang === 'ru' ? 'Охват мерами' : 'Дастурлар қамрови'}</span>
+        <div className="flex items-center justify-between text-slate-400 mb-1.5">
+          <span className="text-xs font-semibold group-hover:text-gov-400 transition-colors">{lang === 'ru' ? 'Господдержка' : 'Давлат ёрдами'}</span>
           <CheckCircle2 className="w-4 h-4 text-gov-400" />
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-gov-400">{supported + training}</span>
-          <span className="text-[11px] text-gov-300 font-medium">
-            {total > 0 ? Math.round(((supported + training) / Math.max(unemployed + neetPending, 1)) * 100) : 0}% нужд.
-          </span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-extrabold text-gov-400">{supported + training}</span>
+          <span className="text-xs text-gov-300 font-semibold">чел.</span>
         </div>
-        <div className="mt-2 flex items-center gap-1 text-[11px] text-emerald-400">
-          <ArrowUpRight className="w-3.5 h-3.5" />
-          <span>{lang === 'ru' ? 'Моноцентр & Субсидии' : 'Мономарказ & Субсидия'}</span>
+        <div className="text-[11px] text-slate-400 mt-1">
+          {lang === 'ru' ? 'Моноцентр & Гранты' : 'Мономарказ'}
         </div>
       </div>
 

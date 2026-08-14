@@ -29,38 +29,38 @@ export const Navigation: React.FC<NavigationProps> = ({
     },
     {
       id: 'triage' as ActiveTab,
-      label: lang === 'ru' ? 'NEET Триаж & Верификация' : 'NEET Текширув & Верификация',
+      label: lang === 'ru' ? 'NEET Триаж & Верификация' : 'NEET Текширув',
       icon: AlertTriangle,
-      badge: neetPendingCount > 0 ? `${neetPendingCount} на проверке` : null,
-      badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
+      badge: neetPendingCount > 0 ? `${neetPendingCount}` : null,
+      badgeColor: 'bg-rose-500 text-white font-bold'
     },
     {
       id: 'registry' as ActiveTab,
-      label: lang === 'ru' ? 'Единый Реестр Молодёжи' : 'Ёшларнинг Ягона Реестри',
+      label: lang === 'ru' ? 'Реестр Молодёжи' : 'Ёшлар Реестри',
       icon: Users,
       badge: `${totalYouthCount}`
     },
     {
       id: 'map' as ActiveTab,
-      label: lang === 'ru' ? 'ГИС-Карта Махаллей' : 'Маҳаллалар ГИС-Харитаси',
+      label: lang === 'ru' ? 'ГИС-Карта Махаллей' : 'ГИС-Харита',
       icon: Map,
-      badge: lang === 'ru' ? 'Гео-срез' : 'Гео-таҳлил'
+      badge: null
     },
     {
       id: 'programs' as ActiveTab,
-      label: lang === 'ru' ? 'Госпрограммы поддержки' : 'Давлат дастурлари',
+      label: lang === 'ru' ? 'Госпрограммы' : 'Давлат дастурлари',
       icon: BookOpen,
-      badge: '6 программ'
+      badge: null
     }
   ];
 
   return (
-    <div className="bg-[#0e1e36] border-b border-slate-700/50 sticky top-[77px] z-30 shadow-md">
+    <nav className="bg-[#0e1e36]/95 backdrop-blur-md border-b border-slate-700/60 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-2">
+        <div className="flex items-center justify-between overflow-x-auto no-scrollbar py-2.5 gap-3">
           
           {/* Main Tabs */}
-          <div className="flex space-x-1 sm:space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -69,22 +69,22 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => onSelectTab(tab.id)}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-gradient-to-r from-gov-600 to-cyan-600 text-white shadow-md shadow-cyan-900/40 font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-cyan-600 text-white shadow-md shadow-cyan-900/40'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span>{tab.label}</span>
                   {tab.badge && (
                     <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
                         tab.badgeColor
                           ? tab.badgeColor
                           : isActive
-                          ? 'bg-white/20 text-white border-white/30'
-                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                          ? 'bg-white/25 text-white'
+                          : 'bg-slate-800 text-slate-300 border border-slate-700'
                       }`}
                     >
                       {tab.badge}
@@ -95,19 +95,19 @@ export const Navigation: React.FC<NavigationProps> = ({
             })}
           </div>
 
-          {/* Quick Add Button */}
+          {/* Add Profile Button */}
           <button
             onClick={onOpenNewYouth}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow border border-emerald-400/30 transition-all flex-shrink-0"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex-shrink-0"
           >
-            <UserPlus className="w-3.5 h-3.5" />
+            <UserPlus className="w-4 h-4" />
             <span className="hidden sm:inline">
-              {lang === 'ru' ? '+ Добавить в реестр' : '+ Янги ёш киритиш'}
+              {lang === 'ru' ? 'Добавить профиль' : 'Қўшиш'}
             </span>
           </button>
 
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
