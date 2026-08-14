@@ -10,16 +10,16 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
-// Clean hotspot coordinates on the clean radial district map (in percentages x%, y%)
+// Clean hotspot coordinates on the pristine district street map (in percentages x%, y%)
 const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; color: string } } = {
-  'm_darxon': { x: 24, y: 50, label: 'Дархон', color: '#10B981' },
+  'm_darxon': { x: 22, y: 52, label: 'Дархон', color: '#10B981' },
   'm_buyuk_ipak': { x: 48, y: 38, label: 'Буюк Ипак Йўли', color: '#10B981' },
   'm_oliy_himmat': { x: 74, y: 52, label: 'Олий Ҳиммат', color: '#F43F5E' },
   'm_shahriobod': { x: 50, y: 68, label: 'Шаҳриобод', color: '#10B981' },
   'm_avaykhon': { x: 30, y: 72, label: 'Авайхон', color: '#F59E0B' },
   'm_feruza': { x: 50, y: 18, label: 'Феруза', color: '#F59E0B' },
-  'm_qorasuv': { x: 74, y: 28, label: 'Қорасув', color: '#F43F5E' },
-  'm_humo': { x: 82, y: 70, label: 'Ҳумо', color: '#10B981' },
+  'm_qorasuv': { x: 75, y: 28, label: 'Қорасув', color: '#F43F5E' },
+  'm_humo': { x: 84, y: 68, label: 'Ҳумо', color: '#10B981' },
 };
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
@@ -30,7 +30,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 }) => {
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
   const [mapMetric, setMapMetric] = useState<'neet' | 'employment'>('neet');
-  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/district_map.jpg');
+  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/clean_district_map_final.jpg?v=3');
 
   const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
   const youthInCurrent = youthList.filter(y => y.makhalla === currentMahalla.name);
@@ -61,7 +61,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
           <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
             {lang === 'ru'
-              ? 'Чистый картографический план 8 секторов района без постороннего шума. Кликните по маркеру махалли для просмотра подробного паспорта.'
+              ? 'Чистая картографическая схема 8 секторов района без постороннего текста. Кликните по маркеру махалли для просмотра паспорта территории.'
               : 'Маҳаллалар кесимида бандлик кўрсаткичларининг интерактив харитаси.'}
           </p>
         </div>
@@ -116,7 +116,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
 
           {/* Clean Map Frame */}
-          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-[#050b14] flex items-center justify-center">
+          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-[#030712] flex items-center justify-center">
             
             {/* Clean Map Texture */}
             <img
