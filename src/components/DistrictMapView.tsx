@@ -10,16 +10,16 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
-// Hotspot coordinates on the visual map (in percentages x%, y%)
-const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; badge: string; color: string } } = {
-  'm_darxon': { x: 26, y: 55, label: 'Дархон', badge: '95.7% банд', color: '#10B981' },
-  'm_buyuk_ipak': { x: 42, y: 44, label: 'Буюк Ипак Йўли', badge: '91.3% банд', color: '#10B981' },
-  'm_oliy_himmat': { x: 74, y: 50, label: 'Олий Ҳиммат', badge: '⚠️ 34 NEET', color: '#F43F5E' },
-  'm_shahriobod': { x: 55, y: 72, label: 'Шаҳриобод', badge: '90.3% банд', color: '#10B981' },
-  'm_avaykhon': { x: 44, y: 70, label: 'Авайхон', badge: '84.3% банд', color: '#F59E0B' },
-  'm_feruza': { x: 54, y: 28, label: 'Феруза', badge: '28 NEET', color: '#F59E0B' },
-  'm_qorasuv': { x: 71, y: 40, label: 'Қорасув', badge: '39 NEET', color: '#F43F5E' },
-  'm_humo': { x: 67, y: 30, label: 'Ҳумо', badge: '91.5% банд', color: '#10B981' },
+// Clean hotspot coordinates on the clean radial district map (in percentages x%, y%)
+const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; color: string } } = {
+  'm_darxon': { x: 24, y: 50, label: 'Дархон', color: '#10B981' },
+  'm_buyuk_ipak': { x: 48, y: 38, label: 'Буюк Ипак Йўли', color: '#10B981' },
+  'm_oliy_himmat': { x: 74, y: 52, label: 'Олий Ҳиммат', color: '#F43F5E' },
+  'm_shahriobod': { x: 50, y: 68, label: 'Шаҳриобод', color: '#10B981' },
+  'm_avaykhon': { x: 30, y: 72, label: 'Авайхон', color: '#F59E0B' },
+  'm_feruza': { x: 50, y: 18, label: 'Феруза', color: '#F59E0B' },
+  'm_qorasuv': { x: 74, y: 28, label: 'Қорасув', color: '#F43F5E' },
+  'm_humo': { x: 82, y: 70, label: 'Ҳумо', color: '#10B981' },
 };
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
@@ -61,8 +61,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
           <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
             {lang === 'ru'
-              ? 'Наглядная карта секторов района с цветовой индикацией зон риска NEET. Кликните по любому маркеру для открытия паспорта махалли.'
-              : 'Хавф даражаси ранглар билан ажратилган туман маҳаллалари харитаси.'}
+              ? 'Чистый картографический план 8 секторов района без постороннего шума. Кликните по маркеру махалли для просмотра подробного паспорта.'
+              : 'Маҳаллалар кесимида бандлик кўрсаткичларининг интерактив харитаси.'}
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           {/* Custom image upload button */}
           <label className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer transition-all">
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{lang === 'ru' ? 'Загрузить свой скриншот карты' : 'Харита расмини юклаш'}</span>
+            <span>{lang === 'ru' ? 'Загрузить своё фото карты' : 'Расм юклаш'}</span>
             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </label>
 
@@ -101,8 +101,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       {/* Main Map + Sidebar Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left: Graphic Digital Twin Map with Interactive Hotspots */}
-        <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#0c1626] relative overflow-hidden flex flex-col justify-between shadow-xl">
+        {/* Left: Clean Map with Interactive Hotspots */}
+        <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#07111f] relative overflow-hidden flex flex-col justify-between shadow-xl">
           
           <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
             <span className="text-xs font-semibold text-cyan-300 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
@@ -115,22 +115,19 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </div>
           </div>
 
-          {/* Interactive Visual Map with Glowing Hotspots */}
-          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-slate-950 flex items-center justify-center">
+          {/* Clean Map Frame */}
+          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-[#050b14] flex items-center justify-center">
             
-            {/* Base Visual Map Image */}
+            {/* Clean Map Texture */}
             <img
               src={customMapUrl}
-              alt="Mirzo-Ulugbek District Map"
+              alt="Mirzo-Ulugbek Clean District Map"
               className="w-full h-full object-cover object-center select-none"
             />
 
-            {/* Subtle cybernetic grid overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b132b]/60 via-transparent to-transparent pointer-events-none" />
-
             {/* Interactive Pins on the Map */}
             {MAKHALLAS_LIST.map((m) => {
-              const hotspot = MAP_HOTSPOTS[m.id] || { x: 50, y: 50, label: m.name, badge: '90%', color: '#10B981' };
+              const hotspot = MAP_HOTSPOTS[m.id] || { x: 50, y: 50, label: m.name, color: '#10B981' };
               const isSelected = m.id === selectedMahallaId;
               const isHighRisk = m.riskLevel === 'high';
 
@@ -153,10 +150,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   <div
                     className={`px-3 py-1.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shadow-2xl transition-all ${
                       isSelected
-                        ? 'bg-cyan-500 text-white border-2 border-white scale-110 shadow-cyan-500/50'
+                        ? 'bg-cyan-500 text-white border-2 border-white scale-110 shadow-cyan-500/50 ring-4 ring-cyan-500/30'
                         : isHighRisk
-                        ? 'bg-rose-950/90 text-rose-200 border border-rose-500/80 hover:bg-rose-900'
-                        : 'bg-slate-900/90 text-white border border-slate-600 hover:border-cyan-400'
+                        ? 'bg-rose-950 text-rose-100 border border-rose-500 hover:bg-rose-900 shadow-rose-900/40'
+                        : 'bg-slate-900/95 text-white border border-slate-600 hover:border-cyan-400'
                     }`}
                   >
                     <div 
@@ -166,7 +163,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                     <span>{m.name}</span>
                     <span 
                       className="px-1.5 py-0.5 rounded-lg text-[10px] font-mono ml-0.5"
-                      style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: isHighRisk ? '#fca5a5' : '#7dd3fc' }}
+                      style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: isHighRisk ? '#fca5a5' : '#7dd3fc' }}
                     >
                       {mapMetric === 'neet' ? `${m.neetPending} NEET` : `${m.employmentRate}%`}
                     </span>
@@ -192,7 +189,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 <h3 className="text-2xl font-extrabold text-white mt-1">Маҳалла «{currentMahalla.name}»</h3>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${
-                    currentMahalla.riskLevel === 'high' ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'
+                    currentMahalla.riskLevel === 'high' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                   }`}>
                     {currentMahalla.riskLevel === 'high' ? '⚠️ Высокий риск NEET' : '✓ Стабильная зона'}
                   </span>
