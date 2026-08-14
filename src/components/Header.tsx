@@ -24,35 +24,12 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="bg-[#0b162c] border-b border-slate-700/60 shadow-lg">
-      {/* Top micro-bar */}
-      <div className="bg-gradient-to-r from-gov-950 via-slate-900 to-gov-950 px-4 py-1.5 border-b border-slate-800/80 text-xs flex justify-between items-center text-slate-400">
-        <div className="flex items-center space-x-2 truncate">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></div>
-          <span className="truncate">Ўзбекистон Республикаси | Мирзо Улуғбек тумани ҳокимлиги</span>
-          <span className="hidden sm:inline bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded text-[10px] font-mono border border-cyan-500/20">
-            NEXUS30 GovTech
-          </span>
-        </div>
-        <div className="flex items-center space-x-3 flex-shrink-0">
-          <span className="text-slate-400 hidden md:inline text-[11px]">
-            Пилотный проект: Единая база учёта молодёжи (18–30 лет)
-          </span>
-          <button
-            onClick={onToggleLang}
-            className="flex items-center gap-1 text-slate-300 hover:text-white px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-semibold text-xs"
-          >
-            <Globe className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{lang === 'ru' ? 'RU' : 'O\'Z'}</span>
-          </button>
-        </div>
-      </div>
-
       {/* Main Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           
           {/* Logo & Title */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3.5">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-gov-700 p-0.5 shadow-md flex-shrink-0">
               <div className="w-full h-full bg-[#0d1c33] rounded-[10px] flex items-center justify-center">
                 <Shield className="w-5 h-5 text-cyan-400" />
@@ -75,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Selectors & Pitch Button */}
+          {/* Selectors & Actions */}
           <div className="flex items-center gap-2.5 flex-wrap">
             
             {/* Makhalla Selector */}
@@ -118,6 +95,16 @@ export const Header: React.FC<HeaderProps> = ({
                 </option>
               </select>
             </div>
+
+            {/* Language Switch */}
+            <button
+              onClick={onToggleLang}
+              className="flex items-center gap-1 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 font-bold text-xs transition-colors"
+              title="Переключить язык (RU / O'Z)"
+            >
+              <Globe className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{lang === 'ru' ? 'RU' : 'O\'Z'}</span>
+            </button>
 
             {/* Pitch Button */}
             <button

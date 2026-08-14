@@ -286,20 +286,6 @@ export const App: React.FC = () => {
 
       </main>
 
-      {/* Footer */}
-      <footer className="mt-12 py-6 border-t border-slate-800/80 bg-[#091024] text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
-            <span>Хакатон NEXUS30 — GovTech Кейс A: «Система мониторинга занятости и маршрутизации молодёжи»</span>
-          </div>
-          <div className="text-slate-400 flex items-center gap-4">
-            <span>Пилотный район: Мирзо-Улугбекский хокимият</span>
-            <span>Синтетический датасет</span>
-          </div>
-        </div>
-      </footer>
-
       {/* Modals & Dialogs */}
       {selectedYouthForModal && (
         <YouthModalCard
