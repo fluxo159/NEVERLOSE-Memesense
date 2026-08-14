@@ -10,16 +10,16 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
-// Exact hotspot coordinates matching the painted district map
-const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; color: string } } = {
-  'm_darxon': { x: 21.5, y: 63.5, label: 'Дархон', color: '#10B981' },
-  'm_buyuk_ipak': { x: 21.5, y: 36.5, label: 'Буюк Ипак Йўли', color: '#10B981' },
-  'm_shahriobod': { x: 30.5, y: 31.0, label: 'Шаҳриобод', color: '#10B981' },
-  'm_oliy_himmat': { x: 48.0, y: 22.0, label: 'Олий Ҳиммат', color: '#F43F5E' },
-  'm_feruza': { x: 55.0, y: 25.0, label: 'Феруза', color: '#F59E0B' },
-  'm_avaykhon': { x: 47.0, y: 43.0, label: 'Авайхон', color: '#F59E0B' },
-  'm_qorasuv': { x: 54.0, y: 67.0, label: 'Қорасув', color: '#F43F5E' },
-  'm_humo': { x: 71.5, y: 61.0, label: 'Ҳумо', color: '#10B981' },
+// Precise coordinates of the circular dots on the user's map image (in percentages x%, y%)
+const MAP_CIRCLE_PINS: { [key: string]: { x: number; y: number; label: string; risk: 'low' | 'medium' | 'high' } } = {
+  'm_darxon': { x: 17.5, y: 64.2, label: 'Дархон', risk: 'low' },
+  'm_buyuk_ipak': { x: 29.8, y: 36.5, label: 'Буюк Ипак Йўли', risk: 'low' },
+  'm_shahriobod': { x: 36.2, y: 30.8, label: 'Шаҳриобод', risk: 'low' },
+  'm_oliy_himmat': { x: 48.2, y: 24.5, label: 'Олий Ҳиммат', risk: 'high' },
+  'm_feruza': { x: 50.2, y: 25.0, label: 'Феруза', risk: 'medium' },
+  'm_avaykhon': { x: 41.8, y: 43.0, label: 'Авайхон', risk: 'medium' },
+  'm_qorasuv': { x: 48.8, y: 67.5, label: 'Қорасув', risk: 'high' },
+  'm_humo': { x: 67.2, y: 61.0, label: 'Ҳумо', risk: 'low' },
 };
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
@@ -29,10 +29,21 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   onNavigateRegistry
 }) => {
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
-  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/painted_district_map.png?v=4');
+  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/painted_district_map.png?v=5');
 
   const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
+  
+  // Real dynamic counts from the 100-profile database
   const youthInCurrent = youthList.filter(y => y.makhalla === currentMahalla.name);
+  const totalInCurrent = youthInCurrent.length;
+  const employedInCurrent = youthInCurrent.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length;
+  const studyingInCurrent = youthInCurrent.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length;
+  const neetPendingInCurrent = youthInCurrent.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const supportedInCurrent = youthInCurrent.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
+  
+  const dynamicEmploymentRate = totalInCurrent > 0 
+    ? Math.round(((employedInCurrent + studyingInCurrent) / totalInCurrent) * 100) 
+    : 0;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,22 +65,21 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </div>
             <h2 className="text-xl font-bold text-white tracking-tight">
               {lang === 'ru' 
-                ? 'Реальная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
-                : 'Мирзо Улуғбек тумани маҳаллалари реал харитаси'}
+                ? 'Интерактивная карта махаллей (Мирзо-Улугбекский район)' 
+                : 'Мирзо Улуғбек тумани маҳаллалари харитаси'}
             </h2>
           </div>
           <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
             {lang === 'ru'
-              ? 'Точная географическая карта с границами 8 махаллей района и цветовой индикацией зон риска NEET. Кликните по махалле для открытия паспорта.'
-              : '8 та маҳалланинг аниқ чегаралари ва хавф даражалари кўрсатилган интерактив харита.'}
+              ? 'Нажмите на кружок любой махалли на карте для выбора сектора и просмотра точных данных из базы молодёжи.'
+              : 'Харитадаги маҳалла устига босиб, паспорт маълумотларини кўринг.'}
           </p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Custom image upload button */}
           <label className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer transition-all">
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{lang === 'ru' ? 'Загрузить другую карту' : 'Бошқа харита юклаш'}</span>
+            <span>{lang === 'ru' ? 'Загрузить карту' : 'Харита юклаш'}</span>
             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </label>
         </div>
@@ -78,7 +88,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       {/* Main Map + Sidebar Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left: Real Painted District Map with Interactive Hotspots */}
+        {/* Left: Real Painted District Map with Interactive Pin Rings */}
         <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#07111f] relative overflow-hidden flex flex-col justify-between shadow-xl">
           
           <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
@@ -102,43 +112,43 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               className="w-full h-auto object-contain select-none rounded-xl"
             />
 
-            {/* Interactive Clickable Hotspots overlay right over the map labels */}
+            {/* Interactive Clickable Target Rings placed EXACTLY on the map's circle pins */}
             {MAKHALLAS_LIST.map((m) => {
-              const hotspot = MAP_HOTSPOTS[m.id] || { x: 50, y: 50, label: m.name, color: '#10B981' };
+              const pin = MAP_CIRCLE_PINS[m.id] || { x: 50, y: 50, label: m.name, risk: 'low' };
               const isSelected = m.id === selectedMahallaId;
-              const isHighRisk = m.riskLevel === 'high';
 
               return (
                 <button
                   key={m.id}
                   onClick={() => setSelectedMahallaId(m.id)}
-                  style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
+                  style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
                   aria-label={`Выбрать махаллю ${m.name}`}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group transition-all duration-300 hover:scale-115 focus:outline-none"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group p-2 focus:outline-none"
+                  title={`Кликните для выбора: ${m.name}`}
                 >
-                  {/* Outer Ripple Animation for Selected or High-Risk */}
+                  {/* Outer Ripple for Selected Pin */}
                   {isSelected && (
                     <div 
-                      className="absolute inset-0 rounded-2xl animate-ping opacity-75 pointer-events-none"
-                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : '#0284c7', transform: 'scale(1.4)' }}
+                      className="absolute inset-0 rounded-full animate-ping opacity-80 pointer-events-none"
+                      style={{ 
+                        backgroundColor: pin.risk === 'high' ? '#f43f5e' : '#06b6d4',
+                        transform: 'scale(1.8)'
+                      }}
                     />
                   )}
 
-                  {/* Active Selection Glow Box */}
+                  {/* Pulsing Selection Ring around the circle pin */}
                   <div
-                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap flex items-center gap-1.5 transition-all shadow-xl ${
+                    className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                       isSelected
-                        ? 'bg-slate-900 text-white border-2 border-cyan-400 scale-110 shadow-cyan-500/50 ring-4 ring-cyan-400/40'
-                        : isHighRisk
-                        ? 'bg-rose-900/90 text-white border border-rose-400 hover:bg-rose-800'
-                        : 'bg-slate-900/85 text-white border border-slate-600 hover:border-cyan-400 hover:bg-slate-800'
+                        ? 'border-4 border-cyan-400 bg-cyan-400/30 scale-125 shadow-lg shadow-cyan-400/80 ring-4 ring-cyan-500/50'
+                        : 'border-2 border-transparent hover:border-white/80 hover:scale-120'
                     }`}
                   >
-                    <div 
-                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : isSelected ? '#38bdf8' : hotspot.color }}
-                    />
-                    <span className="text-xs">{m.name}</span>
+                    {/* Inner glowing dot */}
+                    {isSelected && (
+                      <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                    )}
                   </div>
                 </button>
               );
@@ -147,7 +157,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
 
           <div className="text-center text-xs text-slate-400 z-10 font-medium pt-3">
-            💡 Кликните по любой махалле на карте для открытия паспорта территории
+            💡 Кликните по кружку любой махалли на карте для открытия паспорта территории
           </div>
         </div>
 
@@ -176,27 +186,41 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               </button>
             </div>
 
-            {/* Metrics Grid */}
+            {/* Dynamic Real Metrics Grid from Database */}
             <div className="grid grid-cols-2 gap-3">
+              
+              {/* 1. Молодёжь в базе */}
               <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
-                <div className="text-xs text-slate-400 font-medium">Молодёжь (18–30)</div>
-                <div className="text-2xl font-black text-white mt-1">{currentMahalla.totalYouth} чел.</div>
+                <div className="text-xs text-slate-400 font-medium">Молодёжь (в реестре)</div>
+                <div className="text-2xl font-black text-white mt-1">
+                  {totalInCurrent} <span className="text-xs text-slate-400 font-normal">чел.</span>
+                </div>
               </div>
 
+              {/* 2. Занятость */}
               <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
                 <div className="text-xs text-slate-400 font-medium">Уровень занятости</div>
-                <div className="text-2xl font-black text-emerald-400 mt-1">{currentMahalla.employmentRate}%</div>
+                <div className="text-2xl font-black text-emerald-400 mt-1">
+                  {dynamicEmploymentRate}%
+                </div>
               </div>
 
+              {/* 3. Кандидаты NEET */}
               <div className="bg-rose-950/30 p-3.5 rounded-2xl border border-rose-500/30">
-                <div className="text-xs text-rose-300 font-medium">Кандидаты NEET</div>
-                <div className="text-2xl font-black text-rose-400 mt-1">{currentMahalla.neetPending} чел.</div>
+                <div className="text-xs text-rose-300 font-medium">Кандидаты NEET (проверка)</div>
+                <div className="text-2xl font-black text-rose-400 mt-1">
+                  {neetPendingInCurrent} <span className="text-xs text-rose-300 font-normal">чел.</span>
+                </div>
               </div>
 
+              {/* 4. Господдержка */}
               <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
-                <div className="text-xs text-slate-400 font-medium">Господдержка</div>
-                <div className="text-2xl font-black text-cyan-400 mt-1">{currentMahalla.supportedCount} чел.</div>
+                <div className="text-xs text-slate-400 font-medium">Охвачено программами</div>
+                <div className="text-2xl font-black text-cyan-400 mt-1">
+                  {supportedInCurrent} <span className="text-xs text-slate-400 font-normal">чел.</span>
+                </div>
               </div>
+
             </div>
 
             {/* Responsible Leader */}
@@ -212,10 +236,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               </div>
             </div>
 
-            {/* Youth in this Mahalla */}
+            {/* Youth in this Mahalla list */}
             <div>
               <div className="text-xs font-bold text-slate-300 mb-2">
-                Профили молодёжи в этой махалле ({youthInCurrent.length}):
+                Профили молодёжи в махалле ({totalInCurrent} чел.):
               </div>
               <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                 {youthInCurrent.slice(0, 4).map(y => (
