@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Map, MapPin, Users, Briefcase, AlertOctagon, Phone, UserCheck, ArrowRight, Layers, Eye, Sparkles, Upload } from 'lucide-react';
+import { Map, Users, Briefcase, AlertOctagon, Phone, UserCheck, ArrowRight, Eye, Upload } from 'lucide-react';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { YouthProfile } from '../types';
 
@@ -10,16 +10,16 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
-// Clean hotspot coordinates on the pristine district street map (in percentages x%, y%)
+// Exact hotspot coordinates matching the painted district map
 const MAP_HOTSPOTS: { [key: string]: { x: number; y: number; label: string; color: string } } = {
-  'm_darxon': { x: 22, y: 52, label: 'Дархон', color: '#10B981' },
-  'm_buyuk_ipak': { x: 48, y: 38, label: 'Буюк Ипак Йўли', color: '#10B981' },
-  'm_oliy_himmat': { x: 74, y: 52, label: 'Олий Ҳиммат', color: '#F43F5E' },
-  'm_shahriobod': { x: 50, y: 68, label: 'Шаҳриобод', color: '#10B981' },
-  'm_avaykhon': { x: 30, y: 72, label: 'Авайхон', color: '#F59E0B' },
-  'm_feruza': { x: 50, y: 18, label: 'Феруза', color: '#F59E0B' },
-  'm_qorasuv': { x: 75, y: 28, label: 'Қорасув', color: '#F43F5E' },
-  'm_humo': { x: 84, y: 68, label: 'Ҳумо', color: '#10B981' },
+  'm_darxon': { x: 21.5, y: 63.5, label: 'Дархон', color: '#10B981' },
+  'm_buyuk_ipak': { x: 21.5, y: 36.5, label: 'Буюк Ипак Йўли', color: '#10B981' },
+  'm_shahriobod': { x: 30.5, y: 31.0, label: 'Шаҳриобод', color: '#10B981' },
+  'm_oliy_himmat': { x: 48.0, y: 22.0, label: 'Олий Ҳиммат', color: '#F43F5E' },
+  'm_feruza': { x: 55.0, y: 25.0, label: 'Феруза', color: '#F59E0B' },
+  'm_avaykhon': { x: 47.0, y: 43.0, label: 'Авайхон', color: '#F59E0B' },
+  'm_qorasuv': { x: 54.0, y: 67.0, label: 'Қорасув', color: '#F43F5E' },
+  'm_humo': { x: 71.5, y: 61.0, label: 'Ҳумо', color: '#10B981' },
 };
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
@@ -29,8 +29,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   onNavigateRegistry
 }) => {
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
-  const [mapMetric, setMapMetric] = useState<'neet' | 'employment'>('neet');
-  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/clean_district_map_final.jpg?v=3');
+  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/painted_district_map.png?v=4');
 
   const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
   const youthInCurrent = youthList.filter(y => y.makhalla === currentMahalla.name);
@@ -55,127 +54,100 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </div>
             <h2 className="text-xl font-bold text-white tracking-tight">
               {lang === 'ru' 
-                ? 'Интерактивная карта занятости (Мирзо-Улугбекский район)' 
-                : 'Мирзо Улуғбек тумани интерактив харитаси'}
+                ? 'Реальная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
+                : 'Мирзо Улуғбек тумани маҳаллалари реал харитаси'}
             </h2>
           </div>
           <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
             {lang === 'ru'
-              ? 'Чистая картографическая схема 8 секторов района без постороннего текста. Кликните по маркеру махалли для просмотра паспорта территории.'
-              : 'Маҳаллалар кесимида бандлик кўрсаткичларининг интерактив харитаси.'}
+              ? 'Точная географическая карта с границами 8 махаллей района и цветовой индикацией зон риска NEET. Кликните по махалле для открытия паспорта.'
+              : '8 та маҳалланинг аниқ чегаралари ва хавф даражалари кўрсатилган интерактив харита.'}
           </p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          
           {/* Custom image upload button */}
           <label className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer transition-all">
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{lang === 'ru' ? 'Загрузить своё фото карты' : 'Расм юклаш'}</span>
+            <span>{lang === 'ru' ? 'Загрузить другую карту' : 'Бошқа харита юклаш'}</span>
             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </label>
-
-          {/* Metric Toggle */}
-          <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
-            <button
-              onClick={() => setMapMetric('neet')}
-              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
-                mapMetric === 'neet' ? 'bg-rose-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              ⚠️ NEET риск
-            </button>
-            <button
-              onClick={() => setMapMetric('employment')}
-              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
-                mapMetric === 'employment' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              ✓ Занятость %
-            </button>
-          </div>
-
         </div>
       </div>
 
       {/* Main Map + Sidebar Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left: Clean Map with Interactive Hotspots */}
+        {/* Left: Real Painted District Map with Interactive Hotspots */}
         <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#07111f] relative overflow-hidden flex flex-col justify-between shadow-xl">
           
           <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
             <span className="text-xs font-semibold text-cyan-300 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
-              Мирзо-Улугбекский район (8 ключевых секторов)
+              Мирзо-Улугбекский район (8 пилотных махаллей)
             </span>
             <div className="flex items-center gap-3 text-xs bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
               <span className="flex items-center gap-1.5 text-emerald-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Норма</span>
               <span className="flex items-center gap-1.5 text-amber-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Внимание</span>
-              <span className="flex items-center gap-1.5 text-rose-400 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> NEET риск</span>
+              <span className="flex items-center gap-1.5 text-rose-400 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Зона риска NEET</span>
             </div>
           </div>
 
-          {/* Clean Map Frame */}
-          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl aspect-[16/10] bg-[#030712] flex items-center justify-center">
+          {/* Real Map Frame */}
+          <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-white flex items-center justify-center p-2">
             
-            {/* Clean Map Texture */}
+            {/* Painted Map Image */}
             <img
               src={customMapUrl}
-              alt="Mirzo-Ulugbek Clean District Map"
-              className="w-full h-full object-cover object-center select-none"
+              alt="Mirzo-Ulugbek District Painted Map"
+              className="w-full h-auto object-contain select-none rounded-xl"
             />
 
-            {/* Interactive Pins on the Map */}
+            {/* Interactive Clickable Hotspots overlay right over the map labels */}
             {MAKHALLAS_LIST.map((m) => {
               const hotspot = MAP_HOTSPOTS[m.id] || { x: 50, y: 50, label: m.name, color: '#10B981' };
               const isSelected = m.id === selectedMahallaId;
               const isHighRisk = m.riskLevel === 'high';
 
               return (
-                <div
+                <button
                   key={m.id}
                   onClick={() => setSelectedMahallaId(m.id)}
                   style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group transition-all duration-300 hover:scale-110"
+                  aria-label={`Выбрать махаллю ${m.name}`}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group transition-all duration-300 hover:scale-115 focus:outline-none"
                 >
                   {/* Outer Ripple Animation for Selected or High-Risk */}
-                  {(isSelected || isHighRisk) && (
+                  {isSelected && (
                     <div 
-                      className="absolute inset-0 rounded-full animate-ping opacity-60 pointer-events-none"
-                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : '#38bdf8', transform: 'scale(1.8)' }}
+                      className="absolute inset-0 rounded-2xl animate-ping opacity-75 pointer-events-none"
+                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : '#0284c7', transform: 'scale(1.4)' }}
                     />
                   )}
 
-                  {/* Interactive Hotspot Card */}
+                  {/* Active Selection Glow Box */}
                   <div
-                    className={`px-3 py-1.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shadow-2xl transition-all ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap flex items-center gap-1.5 transition-all shadow-xl ${
                       isSelected
-                        ? 'bg-cyan-500 text-white border-2 border-white scale-110 shadow-cyan-500/50 ring-4 ring-cyan-500/30'
+                        ? 'bg-slate-900 text-white border-2 border-cyan-400 scale-110 shadow-cyan-500/50 ring-4 ring-cyan-400/40'
                         : isHighRisk
-                        ? 'bg-rose-950 text-rose-100 border border-rose-500 hover:bg-rose-900 shadow-rose-900/40'
-                        : 'bg-slate-900/95 text-white border border-slate-600 hover:border-cyan-400'
+                        ? 'bg-rose-900/90 text-white border border-rose-400 hover:bg-rose-800'
+                        : 'bg-slate-900/85 text-white border border-slate-600 hover:border-cyan-400 hover:bg-slate-800'
                     }`}
                   >
                     <div 
                       className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : isSelected ? '#ffffff' : hotspot.color }}
+                      style={{ backgroundColor: isHighRisk ? '#f43f5e' : isSelected ? '#38bdf8' : hotspot.color }}
                     />
-                    <span>{m.name}</span>
-                    <span 
-                      className="px-1.5 py-0.5 rounded-lg text-[10px] font-mono ml-0.5"
-                      style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: isHighRisk ? '#fca5a5' : '#7dd3fc' }}
-                    >
-                      {mapMetric === 'neet' ? `${m.neetPending} NEET` : `${m.employmentRate}%`}
-                    </span>
+                    <span className="text-xs">{m.name}</span>
                   </div>
-                </div>
+                </button>
               );
             })}
 
           </div>
 
           <div className="text-center text-xs text-slate-400 z-10 font-medium pt-3">
-            💡 Кликните по маркеру махалли для просмотра подробного паспорта территории
+            💡 Кликните по любой махалле на карте для открытия паспорта территории
           </div>
         </div>
 
