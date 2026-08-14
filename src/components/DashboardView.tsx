@@ -151,7 +151,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   ))}
                 </Pie>
                 <RechartsTooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                  labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
+                  contentStyle={{ 
+                    backgroundColor: '#0f172a', 
+                    borderColor: 'rgba(56, 189, 248, 0.4)', 
+                    borderRadius: '12px', 
+                    color: '#ffffff', 
+                    fontSize: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
+                    padding: '8px 12px'
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -204,7 +214,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} interval={0} angle={-25} textAnchor="end" />
                 <YAxis stroke="#94a3b8" fontSize={11} />
                 <RechartsTooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                  labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
+                  contentStyle={{ 
+                    backgroundColor: '#0f172a', 
+                    borderColor: 'rgba(56, 189, 248, 0.4)', 
+                    borderRadius: '12px', 
+                    color: '#ffffff', 
+                    fontSize: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
+                    padding: '8px 12px'
+                  }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
                 <Bar dataKey="заняты" fill="#10B981" stackId="a" radius={[0, 0, 0, 0]} name={lang === 'ru' ? 'Заняты' : 'Банд'} />
