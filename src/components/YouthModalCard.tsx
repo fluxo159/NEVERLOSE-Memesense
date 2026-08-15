@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, MapPin, Phone, GraduationCap, Calendar, 
-  Sparkles, CheckCircle2, History, ArrowRight, ShieldCheck, 
+  Sparkles, CheckCircle2, History, ShieldCheck, 
   Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
@@ -23,7 +23,6 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   onClose,
   onUpdateStatus,
   onAssignProgram,
-  userRole,
   lang
 }) => {
   const tr = t[lang];
@@ -34,7 +33,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
-      onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Тизимда ҳолат янгиланди'));
+      onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Tizimda holat yangilandi'));
       setIsUpdatingStatus(false);
       setStatusComment('');
     }
@@ -82,7 +81,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   {youth.makhalla}
                 </span>
                 <span>•</span>
-                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'ёш'} ({youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale})</span>
+                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'yosh'} ({youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale})</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-400 font-mono">
                   <Phone className="w-3 h-3 text-slate-400" />
@@ -189,7 +188,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                           <option value="обучается" className="bg-surface-1">{tr.registryFilterStudying}</option>
                           <option value="направлен на обучение" className="bg-surface-1">{tr.registryFilterCourses}</option>
                           <option value="безработный" className="bg-surface-1">{tr.registryFilterUnemployed}</option>
-                          <option value="не уточнено" className="bg-surface-1">{lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган'}</option>
+                          <option value="не уточнено" className="bg-surface-1">{lang === 'ru' ? 'Не уточнено' : 'Aniqlanmagan'}</option>
                         </select>
                       </div>
                       <button
@@ -217,7 +216,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                     <span>{tr.profileCardEducation} & {tr.profileCardSpecialty}</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
-                    <div>{lang === 'ru' ? 'Уровень:' : 'Даражаси:'} <strong className="text-white">{youth.education}</strong></div>
+                    <div>{lang === 'ru' ? 'Уровень:' : 'Darajasi:'} <strong className="text-white">{youth.education}</strong></div>
                     {youth.specialty && <div>{tr.profileCardSpecialty} <strong className="text-slate-300">{youth.specialty}</strong></div>}
                   </div>
                 </div>
@@ -241,10 +240,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{tr.profileCardNotes} («Ёшлар етакчиси»)</span>
+                  <span>{tr.profileCardNotes} ({lang === 'ru' ? '«Ёшлар етакчиси»' : '«Yoshlar yetakchisi»'})</span>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-1/80 p-2.5 rounded-lg border border-white/[0.04]">
-                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Хонадонбай ўрганиш бўйича ёзувлар мавжуд эмас.')}
+                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Xonadonbay o‘rganish bo‘yicha yozuvlar mavjud emas.')}
                 </p>
               </div>
 
@@ -255,7 +254,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           {activeTab === 'history' && (
             <div className="space-y-3">
               <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">
-                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Ҳолатлар хронологияси:'}
+                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Holatlar xronologiyasi:'}
               </div>
 
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
@@ -269,7 +268,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-white capitalize">{hist.status}</span>
                         <span className="text-slate-500 font-mono text-[11px] flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-slate-400" />
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           {hist.date}
                         </span>
                       </div>
@@ -311,7 +310,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                             <h5 className="text-xs font-bold text-white">{prog.title}</h5>
                             {isRecommended && (
                               <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold whitespace-nowrap">
-                                ★ {lang === 'ru' ? 'Рекомендовано' : 'Тавсия этилган'}
+                                ★ {lang === 'ru' ? 'Рекомендовано' : 'Tavsiya etilgan'}
                               </span>
                             )}
                           </div>
@@ -328,7 +327,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       <div>
                         {isCurrentAssigned ? (
                           <span className="px-2.5 py-1 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1 whitespace-nowrap">
-                            <CheckCircle2 className="w-3 h-3" /> {lang === 'ru' ? 'Направлен' : 'Бириктирилган'}
+                            <CheckCircle2 className="w-3 h-3" /> {lang === 'ru' ? 'Направлен' : 'Biriktirilgan'}
                           </span>
                         ) : (
                           <button

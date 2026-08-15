@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
 import { t } from '../data/translations';
 
@@ -25,7 +25,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
   const [routingNotes, setRoutingNotes] = useState<string>(
     lang === 'ru' 
       ? 'Направление выдано в рамках районной программы содействия занятости молодёжи' 
-      : 'Туман ёшлар бандлигига кўмаклашиш дастури доирасида йўлланма берилди'
+      : 'Tuman yoshlar bandligiga ko‘maklashish dasturi doirasida yo‘llanma berildi'
   );
 
   const selectedProg = supportPrograms.find(p => p.id === selectedProgramId) || supportPrograms[0];
@@ -61,7 +61,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
         <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08]">
           <div className="text-xs font-bold text-white">{youth.full_name_demo}</div>
           <div className="text-[11px] text-slate-400 mt-0.5">
-            {youth.makhalla} • {youth.age} {lang === 'ru' ? 'лет' : 'ёш'} • {youth.education}
+            {youth.makhalla} • {youth.age} {lang === 'ru' ? 'лет' : 'yosh'} • {youth.education}
           </div>
           {youth.specialty && (
             <div className="text-[11px] text-slate-300 mt-0.5">
@@ -119,7 +119,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
         {/* Action Notes */}
         <div>
           <label className="block text-[11px] font-semibold text-slate-300 mb-1 uppercase tracking-wide">
-            {lang === 'ru' ? 'Комментарий к направлению:' : 'Йўналтириш изоҳи:'}
+            {lang === 'ru' ? 'Комментарий к направлению:' : 'Yo‘naltirish izohi:'}
           </label>
           <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 rounded-xl p-2">
             <textarea
@@ -142,7 +142,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
           </button>
           <button
             onClick={onClose}
-            className="py-2 px-3 bg-surface-3 hover:bg-surface-card text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all"
+            className="py-2 px-3 bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all"
           >
             {tr.routingModalBtnCancel}
           </button>

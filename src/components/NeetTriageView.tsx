@@ -23,7 +23,6 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   youthList,
   supportPrograms,
   selectedMakhalla,
-  userRole,
   lang,
   onVerifyNeet,
   onOpenProfile,
@@ -70,14 +69,14 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   const handleStartVerify = (youth: YouthProfile) => {
     setVerifyingId(youth.id);
     setIsSuccessAnimating(false);
-    setVerificationComment(youth.notes || (lang === 'ru' ? 'По результатам личного подворового обхода инспектором махалли.' : 'Маҳалла етакчисининг хонадонбай ўрганиши асосида.'));
+    setVerificationComment(youth.notes || (lang === 'ru' ? 'По результатам личного подворового обхода инспектором махалли.' : 'Mahalla yetakchisining xonadonbay o‘rganishi asosida.'));
   };
 
   const handleConfirmAction = (isNeetConfirmed: boolean) => {
     if (!verifyingId) return;
 
     const targetYouth = youthList.find(y => y.id === verifyingId);
-    const youthName = targetYouth?.full_name_demo || (lang === 'ru' ? 'Гражданин' : 'Фуқаро');
+    const youthName = targetYouth?.full_name_demo || (lang === 'ru' ? 'Гражданин' : 'Fuqaro');
 
     setIsSuccessAnimating(true);
     setSuccessInfo({ name: youthName, isConfirmed: isNeetConfirmed });
@@ -90,11 +89,11 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
 
       setToastMessage({
         title: isNeetConfirmed 
-          ? (lang === 'ru' ? '✓ Статус подтверждён: Нуждается в помощи' : '✓ Ҳолат тасдиқланди: Ёрдамга муҳтож') 
-          : (lang === 'ru' ? '✓ Статус обновлён: Работает' : '✓ Ҳолат янгиланди: Банд'),
+          ? (lang === 'ru' ? '✓ Статус подтверждён: Нуждается в помощи' : '✓ Holat tasdiqlandi: Yordamga muhtoj') 
+          : (lang === 'ru' ? '✓ Статус обновлён: Работает' : '✓ Holat yangilandi: Band'),
         desc: lang === 'ru' 
           ? `Данные гражданина «${youthName}» зафиксированы и перенесены в соответствующий список.`
-          : `«${youthName}» бўйича маълумотлар сақланди ва мос рўйхатга ўтказилди.`
+          : `«${youthName}» bo‘yicha ma’lumotlar saqlandi va tegishli ro‘yxatga o‘tkazildi.`
       });
 
       setTimeout(() => {
@@ -257,13 +256,13 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 <div>
                   <h3 className="text-lg font-bold text-white tracking-tight">
                     {successInfo?.isConfirmed 
-                      ? (lang === 'ru' ? 'Статус подтверждён: Нуждается в помощи' : 'Ҳолат тасдиқланди: Ёрдамга муҳтож')
-                      : (lang === 'ru' ? 'Статус обновлён: Работает' : 'Ҳолат янгиланди: Банд')}
+                      ? (lang === 'ru' ? 'Статус подтверждён: Нуждается в помощи' : 'Holat tasdiqlandi: Yordamga muhtoj')
+                      : (lang === 'ru' ? 'Статус обновлён: Работает' : 'Holat yangilandi: Band')}
                   </h3>
                   <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto leading-relaxed">
                     {lang === 'ru'
                       ? <>Данные по гражданину «<strong className="text-white">{successInfo?.name}</strong>» зафиксированы инспектором махалли.</>
-                      : <>«<strong className="text-white">{successInfo?.name}</strong>» бўйича маълумотлар етакчи томонидан қайд этилди.</>}
+                      : <>«<strong className="text-white">{successInfo?.name}</strong>» bo‘yicha ma’lumotlar yetakchi tomonidan qayd etildi.</>}
                   </p>
                 </div>
                 <div className="w-40 h-1 bg-surface-3 rounded-full mx-auto overflow-hidden">
@@ -280,10 +279,10 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-white tracking-tight">
-                        {lang === 'ru' ? 'Результат подворового опроса' : 'Суҳбат натижаси'}
+                        {lang === 'ru' ? 'Результат подворового опроса' : 'Xonadonbay suhbat natijasi'}
                       </h3>
                       <p className="text-[11px] text-slate-400">
-                        {lang === 'ru' ? 'Фиксация реального статуса занятости' : 'Бандлик ҳолатини қайд этиш'}
+                        {lang === 'ru' ? 'Фиксация реального статуса занятости' : 'Bandlik holatini qayd etish'}
                       </p>
                     </div>
                   </div>
@@ -306,7 +305,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                         <div className="text-xs text-slate-300 flex items-center gap-3">
                           <span>📍 {tr.makhallaPrefix}: <strong className="text-white">{target.makhalla}</strong></span>
                           <span>•</span>
-                          <span>{lang === 'ru' ? 'Возраст:' : 'Ёши:'} <strong className="text-white">{target.age} {lang === 'ru' ? 'лет' : 'ёш'}</strong></span>
+                          <span>{lang === 'ru' ? 'Возраст:' : 'Yoshi:'} <strong className="text-white">{target.age} {lang === 'ru' ? 'лет' : 'yosh'}</strong></span>
                         </div>
                         <div className="text-xs text-slate-300 pt-0.5">
                           {tr.newYouthEducation}: <strong className="text-indigo-400">{target.education} ({target.specialty})</strong>
@@ -334,7 +333,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                           className="py-2.5 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-glow-brand transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Ёрдамга муҳтож'}</span>
+                          <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Yordamga muhtoj'}</span>
                         </button>
 
                         <button
@@ -342,7 +341,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                           className="py-2.5 px-3.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Работает / Занят' : 'Банд (ишлайди)'}</span>
+                          <span>{lang === 'ru' ? 'Работает / Занят' : 'Band (ishlaydi)'}</span>
                         </button>
                       </div>
                     </div>
@@ -380,7 +379,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                         {youth.makhalla}
                       </span>
                       <span>•</span>
-                      <span>{youth.age} {lang === 'ru' ? 'лет' : 'ёш'}</span>
+                      <span>{youth.age} {lang === 'ru' ? 'лет' : 'yosh'}</span>
                     </div>
                   </div>
 
@@ -407,7 +406,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   </div>
 
                   <p className="text-slate-300 text-[11px] leading-relaxed line-clamp-2 bg-surface-2/80 p-2 rounded-lg border border-white/[0.06]">
-                    {youth.notes || (lang === 'ru' ? 'Отсутствуют налоговые отчисления более 6 месяцев.' : '6 ойдан ортиқ расмий даромад ва солиқ тўловлари мавжуд эмас.')}
+                    {youth.notes || (lang === 'ru' ? 'Отсутствуют налоговые отчисления более 6 месяцев.' : '6 oydan ortiq rasmiy daromad va soliq to‘lovlari mavjud emas.')}
                   </p>
                 </div>
 
@@ -448,7 +447,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     className="flex-1 h-8 px-3.5 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Направить' : 'Йўналтириш'}</span>
+                    <span>{tr.triageCardBtnRoute}</span>
                   </button>
                 )}
               </div>

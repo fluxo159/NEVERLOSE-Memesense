@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, X, Briefcase, Code, GraduationCap, Gift, Wrench, Building2 } from 'lucide-react';
 import { SupportProgram } from '../types';
 import { CustomSelect } from './ui/CustomSelect';
+import { t } from '../data/translations';
 
 interface NewProgramModalProps {
   onClose: () => void;
@@ -14,6 +15,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
   onAddProgram,
   lang
 }) => {
+  const tr = t[lang];
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<SupportProgram['category']>('трудоустройство');
   const [provider, setProvider] = useState('');
@@ -23,19 +25,19 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
   const [iconName, setIconName] = useState('Briefcase');
 
   const categoryOptions = [
-    { value: 'трудоустройство', label: lang === 'ru' ? 'Трудоустройство (Работа)' : 'Ишга жойлашиш', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'обучение', label: lang === 'ru' ? 'Обучение / Курсы' : 'Ўқитиш / Курслар', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'it_стажировка', label: lang === 'ru' ? 'IT Стажировка' : 'IT Стажировка', icon: <Code className="w-3.5 h-3.5 text-cyan-400" /> },
-    { value: 'субсидия', label: lang === 'ru' ? 'Субсидия / Грант' : 'Субсидия / Грант', icon: <Gift className="w-3.5 h-3.5 text-emerald-400" /> },
-    { value: 'предпринимательство', label: lang === 'ru' ? 'Предпринимательство' : 'Тадбиркорлик', icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> }
+    { value: 'трудоустройство', label: lang === 'ru' ? 'Трудоустройство (Работа)' : 'Ishga joylashish', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'обучение', label: lang === 'ru' ? 'Обучение / Курсы' : 'Kasbga o‘qitish / Kurslar', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'it_стажировка', label: lang === 'ru' ? 'IT Стажировка' : 'IT Amaliyot (Stajirovka)', icon: <Code className="w-3.5 h-3.5 text-cyan-400" /> },
+    { value: 'субсидия', label: lang === 'ru' ? 'Субсидия / Грант' : 'Subsidiya / Grant', icon: <Gift className="w-3.5 h-3.5 text-emerald-400" /> },
+    { value: 'предпринимательство', label: lang === 'ru' ? 'Предпринимательство' : 'Tadbirkorlik / Biznes', icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> }
   ];
 
   const iconOptions = [
-    { value: 'Briefcase', label: lang === 'ru' ? 'Портфель (Работа)' : 'Портфел', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'Code', label: lang === 'ru' ? 'Код (IT)' : 'Код (IT)', icon: <Code className="w-3.5 h-3.5 text-cyan-400" /> },
-    { value: 'GraduationCap', label: lang === 'ru' ? 'Шапка (Обучение)' : 'Шапка (Таълим)', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'Gift', label: lang === 'ru' ? 'Подарок (Субсидия)' : 'Совға (Субсидия)', icon: <Gift className="w-3.5 h-3.5 text-emerald-400" /> },
-    { value: 'Wrench', label: lang === 'ru' ? 'Ключ (Ремесло)' : 'Калит (Ҳунармандчилик)', icon: <Wrench className="w-3.5 h-3.5 text-amber-400" /> }
+    { value: 'Briefcase', label: lang === 'ru' ? 'Портфель (Работа)' : 'Portfel (Ish)', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Code', label: lang === 'ru' ? 'Код (IT)' : 'Kod (IT)', icon: <Code className="w-3.5 h-3.5 text-cyan-400" /> },
+    { value: 'GraduationCap', label: lang === 'ru' ? 'Шапка (Обучение)' : 'Shapka (Ta’lim)', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'Gift', label: lang === 'ru' ? 'Подарок (Субсидия)' : 'Sovg‘a (Subsidiya)', icon: <Gift className="w-3.5 h-3.5 text-emerald-400" /> },
+    { value: 'Wrench', label: lang === 'ru' ? 'Ключ (Ремесло)' : 'Kalit (Hunarmandchilik)', icon: <Wrench className="w-3.5 h-3.5 text-amber-400" /> }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,8 +50,8 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
       category,
       provider: provider.trim(),
       description: description.trim(),
-      duration: duration.trim() || (lang === 'ru' ? 'Не указано' : 'Кўрсатилмаган'),
-      stipend: stipend.trim() || (lang === 'ru' ? 'По договоренности' : 'Келишув асосида'),
+      duration: duration.trim() || (lang === 'ru' ? 'Не указано' : 'Ko‘rsatilmadi'),
+      stipend: stipend.trim() || (lang === 'ru' ? 'По договоренности' : 'Kelishuv asosida'),
       iconName
     };
 
@@ -73,7 +75,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
               <Plus className="w-4 h-4" />
             </div>
             <h3 className="text-base font-bold text-white tracking-tight">
-              {lang === 'ru' ? 'Добавить новую вакансию / программу' : 'Янги вакансия / дастур қўшиш'}
+              {tr.newProgModalTitle}
             </h3>
           </div>
           <button 
@@ -88,13 +90,13 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
           
           <div>
             <label className="block text-slate-300 font-semibold mb-1">
-              {lang === 'ru' ? 'Название (Должность):' : 'Номи (Лавозим):'}
+              {tr.newProgName}
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
               <input
                 type="text"
                 required
-                placeholder={lang === 'ru' ? 'Например: Senior Frontend Developer' : 'Масалан: Senior Frontend Developer'}
+                placeholder={tr.newProgNamePlaceholder}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none text-xs"
@@ -105,7 +107,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-300 font-semibold mb-1">
-                {lang === 'ru' ? 'Категория:' : 'Категория:'}
+                {tr.newProgCategory}
               </label>
               <CustomSelect
                 value={category}
@@ -116,7 +118,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
 
             <div>
               <label className="block text-slate-300 font-semibold mb-1">
-                {lang === 'ru' ? 'Иконка:' : 'Иконка:'}
+                {tr.newProgIcon}
               </label>
               <CustomSelect
                 value={iconName}
@@ -128,7 +130,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
 
           <div>
             <label className="block text-slate-300 font-semibold mb-1">
-              {lang === 'ru' ? 'Провайдер / Компания:' : 'Провайдер / Компания:'}
+              {tr.newProgProvider}
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
               <input
@@ -145,12 +147,12 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-300 font-semibold mb-1">
-                {lang === 'ru' ? 'Зарплата / Стипендия:' : 'Маош / Стипендия:'}
+                {tr.newProgStipend}
               </label>
               <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
                 <input
                   type="text"
-                  placeholder="от 5 000 000 сум"
+                  placeholder={tr.newProgStipendPlaceholder}
                   value={stipend}
                   onChange={(e) => setStipend(e.target.value)}
                   className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none text-xs"
@@ -160,12 +162,12 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
 
             <div>
               <label className="block text-slate-300 font-semibold mb-1">
-                {lang === 'ru' ? 'Длительность:' : 'Давомийлиги:'}
+                {tr.newProgDuration}
               </label>
               <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
                 <input
                   type="text"
-                  placeholder="Полный день / 6 месяцев"
+                  placeholder={tr.newProgDurationPlaceholder}
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                   className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none text-xs"
@@ -176,7 +178,7 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
 
           <div>
             <label className="block text-slate-300 font-semibold mb-1">
-              {lang === 'ru' ? 'Описание:' : 'Тавсиф:'}
+              {tr.newProgDesc}
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl p-3 transition-all shadow-sm">
               <textarea
@@ -195,14 +197,14 @@ export const NewProgramModal: React.FC<NewProgramModalProps> = ({
               className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-glow-brand transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
             >
               <Plus className="w-4 h-4" />
-              <span>{lang === 'ru' ? 'Добавить' : 'Қўшиш'}</span>
+              <span>{tr.newProgBtnSubmit}</span>
             </button>
             <button
               type="button"
               onClick={onClose}
               className="py-2.5 px-4 bg-surface-2 hover:bg-surface-3 text-slate-300 rounded-xl font-semibold border border-white/[0.08] transition-all"
             >
-              {lang === 'ru' ? 'Отмена' : 'Бекор қилиш'}
+              {tr.newProgBtnCancel}
             </button>
           </div>
 

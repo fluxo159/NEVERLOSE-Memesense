@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel } from '../types';
+import { t } from '../data/translations';
 
 interface ImportModalProps {
   onClose: () => void;
@@ -13,6 +14,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
   onImportProfiles,
   lang
 }) => {
+  const tr = t[lang];
   const [fileContent, setFileContent] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [previewCount, setPreviewCount] = useState<number>(0);
@@ -38,7 +40,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           setPreviewCount(0);
         }
       } catch (err) {
-        setError(lang === 'ru' ? 'Ошибка при чтении файла' : 'Файлни ўқишда хатолик');
+        setError(lang === 'ru' ? 'Ошибка при чтении файла' : 'Faylni o‘qishda xatolik');
       }
     };
     reader.readAsText(file);
@@ -50,7 +52,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     try {
       const lines = fileContent.split(/\r?\n/).filter(l => l.trim() !== '');
       if (lines.length < 2) {
-        setError(lang === 'ru' ? 'Файл пуст или содержит только заголовки' : 'Файл бўш ёки фақат сарлавҳалардан иборат');
+        setError(lang === 'ru' ? 'Файл пуст или содержит только заголовки' : 'Fayl bo‘sh yoki faqat sarlavhalardan iborat');
         return;
       }
 
@@ -61,16 +63,16 @@ export const ImportModal: React.FC<ImportModalProps> = ({
       for (let i = 1; i < lines.length; i++) {
         const cols = lines[i].split(separator).map(c => c.replace(/^"|"$/g, '').trim());
         if (cols.length >= 3) {
-          const rawName = cols[1] || cols[0] || `Импортированный Профиль ${i}`;
+          const rawName = cols[1] || cols[0] || (lang === 'ru' ? `Импортированный Профиль ${i}` : `Import qilingan profil ${i}`);
           const cleanName = rawName.replace(/\s*\(Демо\)$/i, '');
           const makhalla = cols[2] || 'Олий Ҳиммат';
           const age = parseInt(cols[3], 10) || 22;
-          const gender: Gender = (cols[4] && cols[4].includes('Жен')) ? 'Женский' : 'Мужской';
+          const gender: Gender = (cols[4] && (cols[4].includes('Жен') || cols[4].includes('Ayol'))) ? 'Женский' : 'Мужской';
           const status: EmploymentStatus = (cols[5] as EmploymentStatus) || 'безработный';
-          const activity = cols[6] || 'нет деятельности';
+          const activity = cols[6] || (lang === 'ru' ? 'нет деятельности' : 'faoliyatsiz');
           const education: EducationLevel = (cols[7] as EducationLevel) || 'Средне-специальное';
           const specialty = cols[8] || '—';
-          const isNeet = Boolean(status === 'безработный' || status === 'не уточнено' || (cols[9] && cols[9].toUpperCase() === 'ДА'));
+          const isNeet = Boolean(status === 'безработный' || status === 'не уточнено' || (cols[9] && (cols[9].toUpperCase() === 'ДА' || cols[9].toUpperCase() === 'HA')));
           const neetVerification = cols[10] === 'verified' ? 'verified' : cols[10] === 'rejected' ? 'rejected' : 'pending_verification';
 
           parsedProfiles.push({
@@ -84,18 +86,18 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             activity_type: activity,
             education,
             specialty,
-            skills: ['Импортированные навыки'],
+            skills: [lang === 'ru' ? 'Импортированные навыки' : 'Import qilingan ko‘nikmalar'],
             is_neet: isNeet,
             neet_verification: isNeet ? neetVerification : 'rejected',
             needs_support: isNeet,
             support_recommendation: ['prog_ishga_marhamat_tech', 'prog_district_job_fair'],
             last_updated: cols[12] || today,
-            notes: 'Импортировано из внешней таблицы',
+            notes: lang === 'ru' ? 'Импортировано из внешней таблицы' : 'Tashqi jadvaldan import qilindi',
             status_history: [
               {
                 date: cols[12] || today,
                 status,
-                comment: 'Импорт из реестра'
+                comment: lang === 'ru' ? 'Импорт из реестра' : 'Reyestrdan import'
               }
             ]
           });
@@ -106,10 +108,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         onImportProfiles(parsedProfiles);
         onClose();
       } else {
-        setError(lang === 'ru' ? 'Не удалось распознать строки таблицы' : 'Жадвал қаторларини таниб бўлмади');
+        setError(lang === 'ru' ? 'Не удалось распознать строки таблицы' : 'Jadval qatorlarini aniqlab bo‘lmadi');
       }
     } catch (e: any) {
-      setError(e.message || (lang === 'ru' ? 'Ошибка обработки данных' : 'Маълумотларни қайта ишлашда хатолик'));
+      setError(e.message || (lang === 'ru' ? 'Ошибка обработки данных' : 'Ma’lumotlarni qayta ishlashda xatolik'));
     }
   };
 
@@ -131,10 +133,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'Импорт таблицы данных (CSV)' : 'Маълумотларни юклаш (CSV)'}
+                {tr.importModalTitle}
               </h3>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                {lang === 'ru' ? 'Быстрая загрузка списка молодёжи в реестр' : 'Ёшлар рўйхатини реестрга тезкор юклаш'}
+                {tr.importModalSubtitle}
               </p>
             </div>
           </div>
@@ -152,10 +154,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             <FileSpreadsheet className="w-5 h-5" />
           </div>
           <span className="text-xs font-semibold text-white block">
-            {fileName ? fileName : (lang === 'ru' ? 'Нажмите для выбора CSV файла' : 'CSV файлни танланг')}
+            {fileName ? fileName : tr.importDropzoneText}
           </span>
           <span className="text-[11px] text-slate-500 mt-1 block">
-            {lang === 'ru' ? 'Поддерживаются файлы .CSV (разделители «;» или «,»)' : '.CSV форматдаги файллар'}
+            {tr.importDropzoneHint}
           </span>
           <input
             type="file"
@@ -169,10 +171,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-xs text-indigo-300 flex items-center justify-between">
             <span className="flex items-center gap-1.5 font-medium">
               <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Распознано строк:' : 'Аниқланган қаторлар:'}</span>
+              <span>{tr.importCountRecognized}</span>
             </span>
             <strong className="text-white font-bold bg-indigo-500/20 px-2 py-0.5 rounded-md">
-              {previewCount} {lang === 'ru' ? 'записей' : 'та ёзув'}
+              {previewCount} {lang === 'ru' ? 'записей' : 'ta yozuv'}
             </strong>
           </div>
         )}
@@ -192,13 +194,13 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-indigo-400/30 rounded-xl text-xs font-semibold transition-all shadow-sm shadow-indigo-500/25 hover:shadow-indigo-500/40 flex items-center justify-center gap-1.5 active:scale-[0.98]"
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-indigo-200" />
-            <span>{lang === 'ru' ? 'Импортировать' : 'Юклаш'}</span>
+            <span>{tr.importBtnSubmit}</span>
           </button>
           <button
             onClick={onClose}
             className="py-2.5 px-4 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-xl font-medium text-xs transition-all flex items-center justify-center"
           >
-            {lang === 'ru' ? 'Отмена' : 'Бекор қилиш'}
+            {tr.importBtnCancel}
           </button>
         </div>
 

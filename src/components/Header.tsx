@@ -82,10 +82,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleLang}
               className="flex items-center gap-1 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/[0.08] hover:border-white/[0.16] font-bold text-xs transition-all"
-              title="Тилни ўзгартириш / Сменить язык (RU / ЎЗ)"
+              title="Tilni o‘zgartirish / Сменить язык (RU / O‘Z)"
             >
               <Globe className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{lang === 'ru' ? 'RU' : 'ЎЗ'}</span>
+              <span>{lang === 'ru' ? 'RU' : 'O‘Z'}</span>
             </button>
 
             {/* Pitch Button */}

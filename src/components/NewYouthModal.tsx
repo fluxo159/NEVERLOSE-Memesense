@@ -30,11 +30,11 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   const [gender, setGender] = useState<Gender>('Мужской');
   const [phone, setPhone] = useState('+998 (90) 000-00-00');
   const [status, setStatus] = useState<EmploymentStatus>('безработный');
-  const [activity, setActivity] = useState(lang === 'ru' ? 'нет деятельности' : 'фаолиятсиз');
+  const [activity, setActivity] = useState(lang === 'ru' ? 'нет деятельности' : 'faoliyatsiz');
   const [education, setEducation] = useState<EducationLevel>('Средне-специальное');
   const [specialty, setSpecialty] = useState('');
-  const [skills, setSkills] = useState(lang === 'ru' ? 'Водительские права, Базовый ПК' : 'Ҳайдовчилик гувоҳномаси, Компьютер саводхонлиги');
-  const [notes, setNotes] = useState(lang === 'ru' ? 'Первичное внесение через опрос «Ёшлар етакчиси»' : 'Маҳалла етакчисининг хонадонбай сўрови орқали киритилди');
+  const [skills, setSkills] = useState(lang === 'ru' ? 'Водительские права, Базовый ПК' : 'Haydovchilik guvohnomasi, Kompyuter savodxonligi');
+  const [notes, setNotes] = useState(lang === 'ru' ? 'Первичное внесение через опрос «Ёшлар етакчиси»' : 'Mahalla yetakchisining xonadonbay so‘rovi orqali kiritildi');
 
   const makhallaOptions = MAKHALLAS_LIST.map(m => ({
     value: m.name,
@@ -52,14 +52,14 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
     { value: 'занят', label: tr.registryFilterEmployed, icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
     { value: 'предприниматель', label: tr.registryFilterBusiness, icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> },
     { value: 'обучается', label: tr.registryFilterStudying, icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган', icon: <User className="w-3.5 h-3.5 text-slate-400" /> }
+    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Aniqlanmagan', icon: <User className="w-3.5 h-3.5 text-slate-400" /> }
   ];
 
   const educationOptions = [
-    { value: 'Среднее', label: lang === 'ru' ? 'Среднее' : 'Ўрта', icon: <GraduationCap className="w-3.5 h-3.5 text-slate-400" /> },
-    { value: 'Средне-специальное', label: lang === 'ru' ? 'Средне-специальное' : 'Ўрта-махсус', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'Неоконченное высшее', label: lang === 'ru' ? 'Неоконченное высшее' : 'Тугалланмаган олий', icon: <GraduationCap className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'Высшее', label: lang === 'ru' ? 'Высшее' : 'Олий', icon: <GraduationCap className="w-3.5 h-3.5 text-emerald-400" /> }
+    { value: 'Среднее', label: lang === 'ru' ? 'Среднее' : 'O‘rta', icon: <GraduationCap className="w-3.5 h-3.5 text-slate-400" /> },
+    { value: 'Средне-специальное', label: lang === 'ru' ? 'Средне-специальное' : 'O‘rta-maxsus', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'Неоконченное высшее', label: lang === 'ru' ? 'Неоконченное высшее' : 'Tugallanmagan oliy', icon: <GraduationCap className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Высшее', label: lang === 'ru' ? 'Высшее' : 'Oliy', icon: <GraduationCap className="w-3.5 h-3.5 text-emerald-400" /> }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
