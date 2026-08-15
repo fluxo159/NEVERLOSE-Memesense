@@ -1,16 +1,16 @@
 export type EmploymentStatus = 
   | 'занят' 
-  | 'предприниматель' 
-  | 'обучается' 
-  | 'направлен на обучение' 
   | 'безработный' 
-  | 'не уточнено';
+  | 'обучается' 
+  | 'предприниматель' 
+  | 'не уточнено' 
+  | 'направлен на обучение';
 
-export type EducationLevel = string;
-
-export type VerificationState = 'pending_verification' | 'verified' | 'rejected';
+export type VerificationState = 'verified' | 'pending_verification' | 'rejected';
 
 export type Gender = 'Мужской' | 'Женский';
+
+export type EducationLevel = 'Среднее' | 'Средне-специальное' | 'Неоконченное высшее' | 'Высшее' | 'Магистратура';
 
 export interface StatusHistoryItem {
   date: string;
@@ -22,12 +22,11 @@ export interface StatusHistoryItem {
 export interface SupportProgram {
   id: string;
   title: string;
-  provider: string;
-  category: 'обучение' | 'it_стажировка' | 'субсидия' | 'предпринимательство' | 'трудоустройство';
-  duration: string;
-  stipend: string;
+  category: 'обучение' | 'трудоустройство' | 'предпринимательство' | 'субсидия' | 'it_стажировка';
   description: string;
-  quotaLeft?: number;
+  provider: string; // e.g. "Моноцентр «Ишга Мархамат»", "IT-Park", "Фонд «Ёшлар Дафтари»", "Районный Центр занятости"
+  duration?: string;
+  stipend?: string;
   iconName: string;
 }
 
@@ -44,11 +43,11 @@ export interface YouthProfile {
   specialty?: string;
   skills: string[];
   is_neet: boolean;
-  neet_verification: VerificationState;
+  neet_verification: VerificationState; // 'pending_verification' | 'verified' | 'rejected'
   neet_verified_by?: string;
   neet_verified_at?: string;
   needs_support: boolean;
-  support_recommendation: string[];
+  support_recommendation: string[]; // IDs or names of recommended measures
   assigned_program?: SupportProgram;
   assigned_at?: string;
   assigned_officer?: string;
@@ -69,13 +68,13 @@ export interface MakhallaStats {
   neetCount: number;
   neetPending: number;
   supportedCount: number;
-  employmentRate: number;
+  employmentRate: number; // percentage
   leaderName: string;
   leaderPhone: string;
   riskLevel: 'low' | 'medium' | 'high';
-  coordinates: { x: number; y: number };
-  geoCenter: [number, number];
-  geoPolygon: [number, number][];
+  coordinates: { x: number; y: number }; // For SVG map
+  geoCenter: [number, number]; // [lat, lng] for Leaflet GIS
+  geoPolygon: [number, number][]; // Polygon vertices [lat, lng][]
 }
 
 export interface InfrastructurePOI {
@@ -85,8 +84,9 @@ export interface InfrastructurePOI {
   category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university';
   address: string;
   phone: string;
-  coordinates: [number, number];
+  coordinates: [number, number]; // [lat, lng]
   servicesCount: number;
   descriptionRu: string;
   descriptionUz: string;
 }
+

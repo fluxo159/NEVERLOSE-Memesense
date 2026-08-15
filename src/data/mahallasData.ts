@@ -1,4 +1,4 @@
-import { MakhallaStats, InfrastructurePOI } from '../types';
+import { MakhallaStats } from '../types';
 
 export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
@@ -186,6 +186,8 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     ]
   }
 ];
+
+import { InfrastructurePOI } from '../types';
 
 export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
   {

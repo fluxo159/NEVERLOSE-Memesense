@@ -188,10 +188,10 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B132B] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+    <div className="min-h-screen bg-canvas text-slate-100 flex flex-col font-sans selection:bg-brand selection:text-white">
       
       {/* Sticky Header & Navigation Container */}
-      <div className="sticky top-0 z-40 shadow-xl">
+      <div className="sticky top-0 z-40 shadow-2xl backdrop-blur-xl border-b border-white/[0.08]">
         <Header
           selectedRole={selectedRole}
           onSelectRole={setSelectedRole}

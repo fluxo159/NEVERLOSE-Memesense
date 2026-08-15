@@ -27,24 +27,24 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const engagementPercent = total > 0 ? Math.round((totalEngaged / total) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
       
-      {/* 1. PRIMARY HERO ACTION CARD (Apple HIG: Single Clear Priority) */}
+      {/* 1. PRIMARY HERO ACTION CARD (Apple HIG: Single Clear Priority + Linear Dark) */}
       <div 
         onClick={onNavigateTriage}
-        className="lg:col-span-5 p-5 rounded-2xl border-2 border-rose-500/60 bg-gradient-to-r from-rose-950/40 via-slate-900 to-slate-900 shadow-xl cursor-pointer hover:border-rose-400 transition-all flex flex-col justify-between group"
+        className="lg:col-span-5 p-4 sm:p-5 rounded-2xl border border-rose-500/40 bg-surface-1 hover:bg-surface-2 shadow-surface-card cursor-pointer hover:border-rose-500/70 transition-all flex flex-col justify-between group bg-gradient-to-b from-rose-950/20 via-surface-1 to-surface-1"
       >
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-              <span className="text-xs font-bold uppercase tracking-wider text-rose-300">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-rose-300">
                 {lang === 'ru' ? 'Главная задача на сегодня' : 'Бугунги асосий вазифа'}
               </span>
             </div>
-            <div className="flex items-baseline gap-3 mt-2">
-              <span className="text-4xl font-black text-white">{neetPending}</span>
-              <span className="text-base font-bold text-rose-200">
+            <div className="flex items-baseline gap-2.5 mt-2">
+              <span className="text-3xl sm:text-4xl font-black text-white tracking-tight">{neetPending}</span>
+              <span className="text-sm font-bold text-rose-300">
                 {lang === 'ru' ? 'требуют проверки' : 'текширув кутмоқда'}
               </span>
             </div>
@@ -55,38 +55,38 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
             </p>
           </div>
 
-          <div className="p-3 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
-            <AlertCircle className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <AlertCircle className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-rose-900/40 flex items-center justify-between">
-          <span className="text-xs font-semibold text-rose-300">
+        <div className="mt-3.5 pt-2.5 border-t border-white/[0.06] flex items-center justify-between">
+          <span className="text-[11px] font-semibold text-rose-300/90 truncate">
             {selectedMakhalla === 'all' ? (lang === 'ru' ? 'По всему району' : 'Туман бўйича') : `Махалля «${selectedMakhalla}»`}
           </span>
-          <span className="text-xs font-bold text-white bg-rose-600 group-hover:bg-rose-500 px-3.5 py-1.5 rounded-xl shadow transition-colors flex items-center gap-1.5">
+          <span className="text-xs font-bold text-rose-200 bg-rose-600/30 group-hover:bg-rose-600/50 border border-rose-500/40 px-3 py-1 rounded-lg shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap">
             <span>{lang === 'ru' ? 'Начать проверку' : 'Текширувни бошлаш'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>
 
-      {/* 2. THREE CALM SECONDARY CONTEXT METRICS (Apple HIG: Deference & Clarity) */}
-      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      {/* 2. THREE SECONDARY METRICS (Apple HIG: Deference & Clarity + Linear Surface) */}
+      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
         
         {/* Metric 1: Всего молодёжи */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('all')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-slate-500 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="bg-surface-1 p-3.5 rounded-xl border border-white/[0.08] hover:border-white/[0.16] hover:bg-surface-2 cursor-pointer transition-all flex flex-col justify-between shadow-sm"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">
-              <span className="text-xs font-semibold">{lang === 'ru' ? 'Всего в реестре' : 'Жами рўйхатда'}</span>
-              <Users className="w-4 h-4 text-cyan-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider">{lang === 'ru' ? 'Всего в реестре' : 'Жами рўйхатда'}</span>
+              <Users className="w-3.5 h-3.5 text-indigo-400" />
             </div>
-            <div className="text-2xl font-black text-white mt-1">{total} <span className="text-xs font-normal text-slate-400">чел.</span></div>
+            <div className="text-2xl font-bold text-white mt-1 tracking-tight">{total} <span className="text-xs font-normal text-slate-400">чел.</span></div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+          <div className="text-[10px] text-slate-500 pt-2 border-t border-white/[0.06] font-medium">
             18–30 лет (8 махаллей)
           </div>
         </div>
@@ -94,19 +94,19 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         {/* Metric 2: Заняты или учатся */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('занят')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-emerald-500/60 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="bg-surface-1 p-3.5 rounded-xl border border-white/[0.08] hover:border-emerald-500/40 hover:bg-surface-2 cursor-pointer transition-all flex flex-col justify-between shadow-sm"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">
-              <span className="text-xs font-semibold">{lang === 'ru' ? 'Заняты или учатся' : 'Банд ёки ўқимоқда'}</span>
-              <Briefcase className="w-4 h-4 text-emerald-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider">{lang === 'ru' ? 'Заняты / учатся' : 'Банд ёки ўқимоқда'}</span>
+              <Briefcase className="w-3.5 h-3.5 text-emerald-400" />
             </div>
             <div className="flex items-baseline gap-1.5 mt-1">
-              <span className="text-2xl font-black text-emerald-400">{engagementPercent}%</span>
-              <span className="text-xs font-semibold text-slate-300">({totalEngaged} чел.)</span>
+              <span className="text-2xl font-bold text-emerald-400 tracking-tight">{engagementPercent}%</span>
+              <span className="text-[11px] font-semibold text-slate-400">({totalEngaged} чел.)</span>
             </div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+          <div className="text-[10px] text-slate-500 pt-2 border-t border-white/[0.06] font-medium">
             {employed} работают • {studying} учатся
           </div>
         </div>
@@ -114,16 +114,16 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         {/* Metric 3: Получили господдержку */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('supported')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-cyan-500/60 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="bg-surface-1 p-3.5 rounded-xl border border-white/[0.08] hover:border-indigo-500/40 hover:bg-surface-2 cursor-pointer transition-all flex flex-col justify-between shadow-sm"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">
-              <span className="text-xs font-semibold">{lang === 'ru' ? 'Получили помощь' : 'Ёрдам олган'}</span>
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider">{lang === 'ru' ? 'Получили помощь' : 'Ёрдам олган'}</span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
             </div>
-            <div className="text-2xl font-black text-cyan-400 mt-1">{supported} <span className="text-xs font-normal text-slate-400">чел.</span></div>
+            <div className="text-2xl font-bold text-indigo-400 mt-1 tracking-tight">{supported} <span className="text-xs font-normal text-slate-400">чел.</span></div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+          <div className="text-[10px] text-slate-500 pt-2 border-t border-white/[0.06] font-medium">
             Моноцентр, IT и гранты
           </div>
         </div>
