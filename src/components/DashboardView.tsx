@@ -16,7 +16,7 @@ interface DashboardViewProps {
   onOpenProfile: (youth: YouthProfile) => void;
 }
 
-const statusColors = ['#10B981', '#6366F1', '#06B6D4', '#8B5CF6', '#F59E0B', '#F43F5E', '#64748B'];
+const statusColors = ['#10B981', '#8B5CF6', '#06B6D4', '#3B82F6', '#F59E0B', '#F43F5E', '#64748B'];
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   youthList,
@@ -57,85 +57,48 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      
-      {/* Human-Centered Clean Banner */}
-      <div className="bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-5 bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1">
-        <div className="flex items-start gap-3.5">
-          <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-400 flex-shrink-0">
-            <UserCheck className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'С чего начать работу сегодня?' : 'Бугунги иш режаси'}
-              </h2>
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-                {selectedMakhalla === 'all' ? (lang === 'ru' ? 'Весь район (8 махаллей)' : 'Туман бўйича') : `Махалля «${selectedMakhalla}»`}
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 max-w-3xl leading-relaxed">
-              {lang === 'ru'
-                ? 'Проведите подворовой обход неработающей молодёжи, подтвердите их статус и направьте на бесплатные курсы в Моноцентр или субсидии IT-Park.'
-                : 'Ишсиз ёшлар билан суҳбат ўтказиб, касб-ҳунар ўрганиш ёки бандлик дастурларига йўналтиринг.'}
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => onNavigateTab('triage')}
-          className="flex items-center gap-2 px-4 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-rose-200 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex-shrink-0 shadow-sm"
-        >
-          <AlertCircle className="w-4 h-4 text-rose-400" />
-          <span>{lang === 'ru' ? 'Список на проверку' : 'Текширув рўйхати'}</span>
-        </button>
-      </div>
 
       {/* Main Visuals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* 1. Status Breakdown */}
-        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
+        {/* 1. Status Breakdown (Apple Clarity Donut) */}
+        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-sm font-bold text-white tracking-tight">
-                  {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
-                </h3>
-                <p className="text-[11px] text-slate-400">
-                  {lang === 'ru' ? 'Общее распределение по статусам' : 'Ҳолатлар бўйича тақсимот'}
-                </p>
-              </div>
-              <span className="text-[11px] text-slate-300 font-semibold bg-surface-2 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+              <h3 className="text-base font-bold text-white">
+                {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
+              </h3>
+              <span className="text-xs text-cyan-300 font-semibold bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/30">
                 {youthList.length} {lang === 'ru' ? 'чел. в реестре' : 'киши'}
               </span>
             </div>
 
-            <div className="h-60 relative my-2">
+            <div className="h-72 relative my-4">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={donutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={90}
-                    paddingAngle={3}
+                    innerRadius={85}
+                    outerRadius={120}
+                    paddingAngle={4}
                     dataKey="value"
                   >
                     {donutData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={statusColors[index % statusColors.length]} stroke="#08090C" strokeWidth={2} />
+                      <Cell key={`cell-${index}`} fill={statusColors[index % statusColors.length]} stroke="rgba(15,23,42,0.9)" strokeWidth={2} />
                     ))}
                   </Pie>
                   <RechartsTooltip 
-                    itemStyle={{ color: '#f8fafc', fontWeight: 600 }}
-                    labelStyle={{ color: '#818cf8', fontWeight: 700, marginBottom: '2px' }}
+                    itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                    labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
                     contentStyle={{ 
-                      backgroundColor: '#0E1117', 
-                      borderColor: 'rgba(255, 255, 255, 0.12)', 
+                      backgroundColor: '#0f172a', 
+                      borderColor: 'rgba(56, 189, 248, 0.4)', 
                       borderRadius: '12px', 
                       color: '#ffffff', 
-                      fontSize: '11px',
-                      boxShadow: '0 12px 30px -5px rgba(0, 0, 0, 0.8)',
+                      fontSize: '12px',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
                       padding: '8px 12px'
                     }}
                   />
@@ -144,19 +107,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               
               {/* Center Label inside Donut */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-black text-white tracking-tight">{youthList.length}</span>
-                <span className="text-[10px] text-slate-500 font-medium">{lang === 'ru' ? 'человек' : 'киши'}</span>
+                <span className="text-3xl font-black text-white">{youthList.length}</span>
+                <span className="text-xs text-slate-400">{lang === 'ru' ? 'человек' : 'киши'}</span>
               </div>
             </div>
           </div>
 
-          {/* Clean Legend */}
-          <div className="space-y-1.5 pt-3 border-t border-white/[0.06] text-xs">
+          {/* Clean Human Legend with Icons */}
+          <div className="space-y-2 pt-4 border-t border-slate-800 text-xs">
             {donutData.map((entry, idx) => (
-              <div key={entry.name} className="flex items-center justify-between text-slate-300 text-[11px]">
-                <div className="flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: statusColors[idx % statusColors.length] }}></span>
-                  <span className="truncate text-slate-400">{entry.name}</span>
+              <div key={entry.name} className="flex items-center justify-between text-slate-300">
+                <div className="flex items-center gap-2 truncate">
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: statusColors[idx % statusColors.length] }}></span>
+                  <span className="truncate text-xs">{entry.name}</span>
                 </div>
                 <span className="font-bold text-white ml-2">{entry.value} чел.</span>
               </div>
@@ -165,99 +128,120 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 2. Mahalla Comparative Bar Chart */}
-        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="text-sm font-bold text-white tracking-tight">
+        <div className="lg:col-span-7 glass-panel rounded-2xl px-6 pt-6 pb-8 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+          <div className="flex-1 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <h3 className="text-base font-bold text-white">
                   {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
                 </h3>
-                <p className="text-[11px] text-slate-400">
-                  {lang === 'ru' ? 'Где больше всего молодёжи нуждается в помощи' : 'Қайси маҳаллада ёрдамга муҳтожлар кўп'}
-                </p>
+                <span className="hidden sm:inline-block text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                  {lang === 'ru' ? 'Средняя занятость: 75%' : 'Ўртача бандлик: 75%'}
+                </span>
               </div>
               <button 
                 onClick={() => onNavigateTab('map')}
-                className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-semibold transition-colors"
+                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors shrink-0"
               >
                 <span>{lang === 'ru' ? 'Открыть карту' : 'Харитани очиш'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="h-60">
+            <div className="flex-1 min-h-[256px] relative">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mahallaBarData} margin={{ top: 10, right: 10, left: -20, bottom: 15 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={10} interval={0} angle={-20} textAnchor="end" />
-                  <YAxis stroke="#64748b" fontSize={10} />
+                <BarChart data={mahallaBarData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#cbd5e1" 
+                    fontSize={12} 
+                    fontWeight={500} 
+                    interval={0} 
+                    angle={-25} 
+                    textAnchor="end"
+                    dy={12} 
+                  />
+                  <YAxis stroke="#94a3b8" fontSize={11} />
                   <RechartsTooltip 
-                    itemStyle={{ color: '#f8fafc', fontWeight: 600 }}
-                    labelStyle={{ color: '#818cf8', fontWeight: 700, marginBottom: '2px' }}
+                    itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                    labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
                     contentStyle={{ 
-                      backgroundColor: '#0E1117', 
-                      borderColor: 'rgba(255, 255, 255, 0.12)', 
+                      backgroundColor: '#0f172a', 
+                      borderColor: 'rgba(56, 189, 248, 0.4)', 
                       borderRadius: '12px', 
                       color: '#ffffff', 
-                      fontSize: '11px',
-                      boxShadow: '0 12px 30px -5px rgba(0, 0, 0, 0.8)',
+                      fontSize: '12px',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
                       padding: '8px 12px'
                     }}
                   />
-                  <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
+                  <Legend 
+                    verticalAlign="bottom"
+                    wrapperStyle={{ position: 'absolute', bottom: -25, width: '100%' }}
+                    content={(props) => {
+                      const { payload } = props;
+                      if (!payload) return null;
+                      return (
+                        <div className="flex justify-center gap-6 text-[11px] font-medium text-slate-300 w-full">
+                          {payload.map((entry, index) => (
+                            <div key={`item-${index}`} className="flex items-center gap-2">
+                              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: entry.color }}></div>
+                              <span>{entry.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
                   <Bar dataKey="работают" fill="#10B981" stackId="a" name={lang === 'ru' ? 'Работают' : 'Ишлайди'} />
                   <Bar dataKey="учатся" fill="#06B6D4" stackId="a" name={lang === 'ru' ? 'Учатся' : 'Ўқийди'} />
-                  <Bar dataKey="на_проверке" fill="#F43F5E" stackId="a" radius={[3, 3, 0, 0]} name={lang === 'ru' ? 'Требуют проверки' : 'Текширувда'} />
+                  <Bar dataKey="на_проверке" fill="#F43F5E" stackId="a" radius={[4, 4, 0, 0]} name={lang === 'ru' ? 'Требуют проверки' : 'Текширувда'} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="pt-3 border-t border-white/[0.06] text-[11px] text-slate-400 flex items-center justify-between">
-            <span>Мирзо-Улугбекский район: 8 махаллей</span>
-            <span className="text-emerald-400 font-semibold">Средняя занятость: 75%</span>
           </div>
         </div>
 
       </div>
 
-      {/* Action Row */}
+      {/* Action Row: Whom to visit & where to route */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Priority Visits */}
-        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-5 border border-rose-500/20 shadow-surface-card">
-          <div className="flex items-center justify-between mb-3">
+        {/* 1. Priority Visits */}
+        <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-rose-500/20 bg-slate-900/80 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-              <h3 className="text-sm font-bold text-white tracking-tight">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <h3 className="text-base font-bold text-white">
                 {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда кўриладиган ёшлар'}
               </h3>
             </div>
             <button
               onClick={() => onNavigateTab('triage')}
-              className="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 transition-colors"
+              className="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1"
             >
               <span>{lang === 'ru' ? 'Все на проверке' : 'Барчаси'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {priorityVisitProfiles.map(youth => (
               <div
                 key={youth.id}
                 onClick={() => onOpenProfile(youth)}
-                className="bg-surface-2 hover:bg-surface-3 p-3.5 rounded-xl border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between gap-3 transition-all"
+                className="glass-card p-4 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between gap-3 transition-all"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-surface-3 border border-white/[0.08] flex items-center justify-center font-bold text-xs text-indigo-400 flex-shrink-0">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm text-cyan-400 flex-shrink-0">
                     {youth.age}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white hover:text-indigo-400 transition-colors">
+                    <h4 className="text-sm font-bold text-white hover:text-cyan-400 transition-colors">
                       {youth.full_name_demo}
                     </h4>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
                       <span className="text-slate-300">📍 {youth.makhalla}</span>
                       <span>•</span>
                       <span>{youth.education}</span>
@@ -266,74 +250,69 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 font-semibold whitespace-nowrap">
+                  <span className="text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold whitespace-nowrap">
                     {lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* State Routing Shortcuts */}
-        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
+        {/* 2. Where to route */}
+        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
           <div>
-            <h3 className="text-sm font-bold text-white tracking-tight mb-1">
+            <h3 className="text-base font-bold text-white mb-1">
               {lang === 'ru' ? 'Куда можно направить человека' : 'Қайси дастурларга йўналтириш мумкин'}
             </h3>
-            <p className="text-[11px] text-slate-400 mb-3">
+            <p className="text-xs text-slate-400 mb-4">
               {lang === 'ru' ? 'Бесплатные государственные возможности' : 'Бепул давлат ёрдами имкониятлари'}
             </p>
 
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between transition-all"
               >
                 <div>
-                  <div className="text-xs font-bold text-white">Моноцентр «Ишга Мархамат»</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">24 рабочие специальности + стипендия</div>
+                  <div className="text-sm font-bold text-white">Моноцентр «Ишга Мархамат»</div>
+                  <div className="text-xs text-slate-400 mt-0.5">24 рабочие специальности + стипендия</div>
                 </div>
-                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded-md border border-cyan-500/30">
+                <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30">
                   Обучение
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-emerald-500/50 cursor-pointer flex items-center justify-between transition-all"
               >
                 <div>
-                  <div className="text-xs font-bold text-white">IT-Park & IT-Bilim</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Курсы веб-разработки + субсидия на ноутбук</div>
+                  <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
+                  <div className="text-xs text-slate-400 mt-0.5">Курсы веб-разработки + субсидия на ноутбук</div>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
                   IT-Ваучер
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-purple-500/50 cursor-pointer flex items-center justify-between transition-all"
               >
                 <div>
-                  <div className="text-xs font-bold text-white">Фонд «Ёшлар Дафтари»</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Гранты на оборудование для своего дела</div>
+                  <div className="text-sm font-bold text-white">Фонд «Ёшлар Дафтари»</div>
+                  <div className="text-xs text-slate-400 mt-0.5">Гранты на оборудование для открытия своего дела</div>
                 </div>
-                <span className="text-[10px] font-bold text-purple-300 bg-purple-500/15 px-2 py-0.5 rounded-md border border-purple-500/30">
+                <span className="text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30">
                   Субсидия
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex justify-between items-center text-[10px] text-slate-500">
-            <span>Интеграция: База налоговой и Минзанятости</span>
-            <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" /> Данные синхронизированы
-            </span>
-          </div>
+
         </div>
 
       </div>

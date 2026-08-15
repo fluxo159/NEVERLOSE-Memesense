@@ -6,10 +6,10 @@ import {
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
-
 interface NewYouthModalProps {
   onClose: () => void;
   onAddYouth: (youth: YouthProfile) => void;
+  supportPrograms: SupportProgram[];
   selectedMakhalla: string;
   lang: 'ru' | 'uz';
 }
@@ -17,6 +17,7 @@ interface NewYouthModalProps {
 export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   onClose,
   onAddYouth,
+  supportPrograms,
   selectedMakhalla,
   lang
 }) => {

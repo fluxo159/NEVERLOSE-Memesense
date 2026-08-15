@@ -3,35 +3,38 @@ import {
   BookOpen, Wrench, Code, Gift, TrendingUp, GraduationCap, Briefcase, 
   ArrowRight, Search, MapPin, Building, Clock, Filter
 } from 'lucide-react';
-import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
-import { YouthProfile } from '../types';
+import { YouthProfile, SupportProgram } from '../types';
 
 interface SupportProgramsViewProps {
   youthList: YouthProfile[];
+  supportPrograms: SupportProgram[];
   lang: 'ru' | 'uz';
   onNavigateRegistryWithFilter: (filter: string) => void;
+  onOpenNewProgram: () => void;
 }
 
 export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   youthList,
+  supportPrograms,
   lang,
-  onNavigateRegistryWithFilter
+  onNavigateRegistryWithFilter,
+  onOpenNewProgram
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = [
-    { id: 'all', label: lang === 'ru' ? 'Все направления (6)' : 'Барча йўналишлар' },
-    { id: 'обучение', label: lang === 'ru' ? 'Профобучение' : 'Касбга ўқитиш' },
-    { id: 'it_стажировка', label: lang === 'ru' ? 'IT-Park' : 'IT-Park' },
-    { id: 'субсидия', label: lang === 'ru' ? 'Субсидии' : 'Субсидиялар' },
-    { id: 'предпринимательство', label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар' },
-    { id: 'трудоустройство', label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари' },
+    { id: 'all', label: lang === 'ru' ? 'Все направления' : 'Барча йўналишлар', count: supportPrograms.length },
+    { id: 'обучение', label: lang === 'ru' ? 'Профобучение' : 'Касбга ўқитиш', count: supportPrograms.filter(p => p.category === 'обучение').length },
+    { id: 'it_стажировка', label: lang === 'ru' ? 'IT-Park' : 'IT-Park', count: supportPrograms.filter(p => p.category === 'it_стажировка').length },
+    { id: 'субсидия', label: lang === 'ru' ? 'Субсидии «Ёшлар дафтари»' : 'Субсидиялар', count: supportPrograms.filter(p => p.category === 'субсидия').length },
+    { id: 'предпринимательство', label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар', count: supportPrograms.filter(p => p.category === 'предпринимательство').length },
+    { id: 'трудоустройство', label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари', count: supportPrograms.filter(p => p.category === 'трудоустройство').length },
 
   ];
 
   const filteredPrograms = useMemo(() => {
-    return SUPPORT_PROGRAMS.filter(prog => {
+    return supportPrograms.filter(prog => {
       const matchesCategory = selectedCategory === 'all' || prog.category === selectedCategory;
       const matchesSearch = 
         prog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,9 +81,17 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
             </p>
           </div>
           
-          <div className="bg-slate-800/90 px-5 py-2.5 rounded-xl border border-slate-700/50 flex flex-col items-end">
-            <span className="text-xs text-slate-400">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
-            <span className="text-xl font-bold text-emerald-400">{totalSupported} чел.</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onOpenNewProgram}
+              className="hidden md:flex px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all items-center gap-2"
+            >
+              <span>{lang === 'ru' ? '+ Добавить вакансию' : '+ Вакансия қўшиш'}</span>
+            </button>
+            <div className="bg-slate-800/90 px-5 py-2.5 rounded-xl border border-slate-700/50 flex flex-col items-end">
+              <span className="text-xs text-slate-400">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
+              <span className="text-xl font-bold text-emerald-400">{totalSupported} чел.</span>
+            </div>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
             {lang === 'ru'
@@ -89,9 +100,27 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
           </p>
         </div>
 
-        <div className="bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[130px]">
-          <span className="text-[10px] text-slate-400 font-semibold uppercase block">{lang === 'ru' ? 'Всего направлено' : 'Йўналтирилган'}</span>
-          <span className="text-xl font-black text-emerald-400">{totalSupported} чел.</span>
+        {/* Mobile Add Button */}
+        <button
+          onClick={onOpenNewProgram}
+          className="w-full md:hidden py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
+        >
+          <span>{lang === 'ru' ? '+ Добавить вакансию' : '+ Вакансия қўшиш'}</span>
+        </button>
+
+        {/* Search Input */}
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-11 pr-4 py-4 bg-slate-950/50 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all text-base shadow-inner"
+            placeholder={lang === 'ru' ? 'Поиск по названию, провайдеру или ключевым словам...' : 'Номи, провайдер ёки калит сўзлар бўйича қидириш...'}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
         </div>
       </div>
 

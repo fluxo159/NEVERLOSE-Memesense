@@ -3,12 +3,12 @@ import {
   AlertCircle, CheckCircle, XCircle, Search, UserCheck, 
   MapPin, GraduationCap, Sparkles, Check, ArrowRight, ShieldCheck, Clock
 } from 'lucide-react';
-import { YouthProfile, UserRole } from '../types';
+import { YouthProfile, UserRole, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
 
 interface NeetTriageViewProps {
   youthList: YouthProfile[];
+  supportPrograms: SupportProgram[];
   selectedMakhalla: string;
   userRole: UserRole;
   lang: 'ru' | 'uz';
@@ -19,6 +19,7 @@ interface NeetTriageViewProps {
 
 export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   youthList,
+  supportPrograms,
   selectedMakhalla,
   userRole,
   lang,
@@ -352,7 +353,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {neetCandidates.map(youth => {
           const isPending = youth.neet_verification === 'pending_verification';
-          const firstProg = SUPPORT_PROGRAMS.find(p => p.id === youth.support_recommendation[0]);
+          const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
 
           return (
             <div
