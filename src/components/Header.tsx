@@ -35,24 +35,16 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
             <div className="w-9 h-9 rounded-xl bg-surface-2 border border-white/[0.12] flex-shrink-0 flex items-center justify-center relative overflow-hidden shadow-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
               <svg viewBox="0 0 24 24" className="w-5 h-5 relative z-10" fill="none">
                 <path 
-                  d="M4.5 4.5L12 13L19.5 4.5" 
+                  d="M4.5 4.5L12 12.5L19.5 4.5M12 12.5V20" 
                   stroke="url(#govtech-logo-grad)" 
-                  strokeWidth="2.4" 
+                  strokeWidth="2.5" 
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
                 />
-                <path 
-                  d="M12 13V20" 
-                  stroke="url(#govtech-logo-grad)" 
-                  strokeWidth="2.4" 
-                  strokeLinecap="round" 
-                />
-                <circle cx="12" cy="13" r="2" fill="#818CF8" />
                 <defs>
-                  <linearGradient id="govtech-logo-grad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                  <linearGradient id="govtech-logo-grad" x1="4.5" y1="4.5" x2="19.5" y2="20" gradientUnits="userSpaceOnUse">
                     <stop stopColor="#818CF8" />
                     <stop offset="1" stopColor="#38BDF8" />
                   </linearGradient>

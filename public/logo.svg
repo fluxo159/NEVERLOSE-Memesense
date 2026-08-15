@@ -4,7 +4,7 @@
   
   <!-- Subtle Ambient Glow -->
   <radialGradient id="ambient-glow" cx="50%" cy="30%" r="60%">
-    <stop offset="0%" stop-color="#6366F1" stop-opacity="0.15"/>
+    <stop offset="0%" stop-color="#6366F1" stop-opacity="0.12"/>
     <stop offset="100%" stop-color="#0E1117" stop-opacity="0"/>
   </radialGradient>
   <rect x="5" y="5" width="110" height="110" rx="27" fill="url(#ambient-glow)"/>
@@ -16,20 +16,14 @@
       <stop offset="100%" stop-color="#38BDF8"/>
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
 
-  <!-- Glowing subtle shadow behind glyph -->
-  <path d="M30 30L60 64L90 30" stroke="#6366F1" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.3" filter="url(#glow)"/>
-  <path d="M60 64V94" stroke="#6366F1" stroke-width="12" stroke-linecap="round" opacity="0.3" filter="url(#glow)"/>
+  <!-- Glowing subtle backdrop behind glyph -->
+  <path d="M28 28L60 62L92 28M60 62V94" stroke="#6366F1" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.25" filter="url(#glow)"/>
 
-  <!-- Main Crisp Vector Strokes -->
-  <path d="M30 30L60 64L90 30" stroke="url(#yoshlar-grad)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M60 64V94" stroke="url(#yoshlar-grad)" stroke-width="9" stroke-linecap="round"/>
-
-  <!-- Core Nexus Node -->
-  <circle cx="60" cy="64" r="7" fill="#818CF8"/>
-  <circle cx="60" cy="64" r="3.5" fill="#FFFFFF"/>
+  <!-- Clean Strict Geometric Vector Stroke -->
+  <path d="M28 28L60 62L92 28M60 62V94" stroke="url(#yoshlar-grad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
