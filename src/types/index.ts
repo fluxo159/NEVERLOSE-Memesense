@@ -22,11 +22,16 @@ export interface StatusHistoryItem {
 export interface SupportProgram {
   id: string;
   title: string;
+  titleUz?: string;
   category: 'обучение' | 'трудоустройство' | 'предпринимательство' | 'субсидия' | 'it_стажировка';
   description: string;
+  descriptionUz?: string;
   provider: string; // e.g. "Моноцентр «Ишга Мархамат»", "IT-Park", "Фонд «Ёшлар Дафтари»", "Районный Центр занятости"
+  providerUz?: string;
   duration?: string;
+  durationUz?: string;
   stipend?: string;
+  stipendUz?: string;
   iconName: string;
 }
 
@@ -61,6 +66,7 @@ export type UserRole = 'district_officer' | 'mahalla_leader' | 'employment_cente
 export interface MakhallaStats {
   id: string;
   name: string;
+  nameUz?: string;
   totalYouth: number;
   employed: number;
   studying: number;

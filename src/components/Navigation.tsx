@@ -1,5 +1,6 @@
 import React from 'react';
 import { LayoutDashboard, AlertCircle, Users, Map, BookOpen } from 'lucide-react';
+import { t } from '../data/translations';
 
 export type ActiveTab = 'dashboard' | 'triage' | 'registry' | 'map' | 'programs';
 
@@ -18,35 +19,37 @@ export const Navigation: React.FC<NavigationProps> = ({
   totalYouthCount,
   lang
 }) => {
+  const tr = t[lang];
+
   const tabs = [
     {
       id: 'dashboard' as ActiveTab,
-      label: lang === 'ru' ? 'Главная / Обзор' : 'Бош саҳифа',
+      label: tr.tabDashboard,
       icon: LayoutDashboard,
       badge: null
     },
     {
       id: 'triage' as ActiveTab,
-      label: lang === 'ru' ? 'Требуют проверки' : 'Текширув кутмоқда',
+      label: tr.tabTriage,
       icon: AlertCircle,
       badge: neetPendingCount > 0 ? `${neetPendingCount}` : null,
       badgeColor: 'bg-rose-600 text-white font-bold'
     },
     {
       id: 'registry' as ActiveTab,
-      label: lang === 'ru' ? 'Список молодёжи' : 'Ёшлар рўйхати',
+      label: tr.tabRegistry,
       icon: Users,
       badge: `${totalYouthCount}`
     },
     {
       id: 'map' as ActiveTab,
-      label: lang === 'ru' ? 'Карта махаллей' : 'Маҳаллалар харитаси',
+      label: tr.tabMap,
       icon: Map,
       badge: null
     },
     {
       id: 'programs' as ActiveTab,
-      label: lang === 'ru' ? 'Программы помощи' : 'Ёрдам дастурлари',
+      label: tr.tabPrograms,
       icon: BookOpen,
       badge: null
     }

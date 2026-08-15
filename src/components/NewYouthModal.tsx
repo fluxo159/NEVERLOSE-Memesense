@@ -6,6 +6,7 @@ import {
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
+import { t, getMahallaName } from '../data/translations';
 
 interface NewYouthModalProps {
   onClose: () => void;
@@ -22,42 +23,43 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   selectedMakhalla,
   lang
 }) => {
+  const tr = t[lang];
   const [fullName, setFullName] = useState('');
   const [makhalla, setMakhalla] = useState(selectedMakhalla !== 'all' ? selectedMakhalla : MAKHALLAS_LIST[0].name);
   const [age, setAge] = useState(21);
   const [gender, setGender] = useState<Gender>('Мужской');
   const [phone, setPhone] = useState('+998 (90) 000-00-00');
   const [status, setStatus] = useState<EmploymentStatus>('безработный');
-  const [activity, setActivity] = useState('нет деятельности');
+  const [activity, setActivity] = useState(lang === 'ru' ? 'нет деятельности' : 'faoliyatsiz');
   const [education, setEducation] = useState<EducationLevel>('Средне-специальное');
   const [specialty, setSpecialty] = useState('');
-  const [skills, setSkills] = useState('Водительские права, Базовый ПК');
-  const [notes, setNotes] = useState('Первичное внесение через опрос «Ёшлар етакчиси»');
+  const [skills, setSkills] = useState(lang === 'ru' ? 'Водительские права, Базовый ПК' : 'Haydovchilik guvohnomasi, Kompyuter savodxonligi');
+  const [notes, setNotes] = useState(lang === 'ru' ? 'Первичное внесение через опрос «Ёшлар етакчиси»' : 'Mahalla yetakchisining xonadonbay so‘rovi orqali kiritildi');
 
   const makhallaOptions = MAKHALLAS_LIST.map(m => ({
     value: m.name,
-    label: m.name,
+    label: getMahallaName(m.name, lang),
     icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" />
   }));
 
   const genderOptions = [
-    { value: 'Мужской', label: lang === 'ru' ? 'Мужской' : 'Эркак', icon: <User className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'Женский', label: lang === 'ru' ? 'Женский' : 'Аёл', icon: <User className="w-3.5 h-3.5 text-rose-400" /> }
+    { value: 'Мужской', label: tr.registryFilterMale, icon: <User className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Женский', label: tr.registryFilterFemale, icon: <User className="w-3.5 h-3.5 text-rose-400" /> }
   ];
 
   const statusOptions = [
-    { value: 'безработный', label: lang === 'ru' ? 'Безработный (NEET риск)' : 'Ишсиз (NEET хавфи)', icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> },
-    { value: 'занят', label: lang === 'ru' ? 'Занят (официальный найм)' : 'Ишлайди (расмий)', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'предприниматель', label: lang === 'ru' ? 'Предприниматель / ИП' : 'Тадбиркор / ЯТТ', icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> },
-    { value: 'обучается', label: lang === 'ru' ? 'Обучается (ВУЗ/Колледж)' : 'Ўқимоқда (ОТМ/Коллеж)', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган', icon: <User className="w-3.5 h-3.5 text-slate-400" /> }
+    { value: 'безработный', label: tr.registryFilterNeetPending, icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> },
+    { value: 'занят', label: tr.registryFilterEmployed, icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'предприниматель', label: tr.registryFilterBusiness, icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> },
+    { value: 'обучается', label: tr.registryFilterStudying, icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Aniqlanmagan', icon: <User className="w-3.5 h-3.5 text-slate-400" /> }
   ];
 
   const educationOptions = [
-    { value: 'Среднее', label: lang === 'ru' ? 'Среднее' : 'Ўрта', icon: <GraduationCap className="w-3.5 h-3.5 text-slate-400" /> },
-    { value: 'Средне-специальное', label: lang === 'ru' ? 'Средне-специальное' : 'Ўрта-махсус', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
-    { value: 'Неоконченное высшее', label: lang === 'ru' ? 'Неоконченное высшее' : 'Тугалланмаган олий', icon: <GraduationCap className="w-3.5 h-3.5 text-sky-400" /> },
-    { value: 'Высшее', label: lang === 'ru' ? 'Высшее' : 'Олий', icon: <GraduationCap className="w-3.5 h-3.5 text-emerald-400" /> }
+    { value: 'Среднее', label: lang === 'ru' ? 'Среднее' : 'O‘rta', icon: <GraduationCap className="w-3.5 h-3.5 text-slate-400" /> },
+    { value: 'Средне-специальное', label: lang === 'ru' ? 'Средне-специальное' : 'O‘rta-maxsus', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'Неоконченное высшее', label: lang === 'ru' ? 'Неоконченное высшее' : 'Tugallanmagan oliy', icon: <GraduationCap className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Высшее', label: lang === 'ru' ? 'Высшее' : 'Oliy', icon: <GraduationCap className="w-3.5 h-3.5 text-emerald-400" /> }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,19 +80,19 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
       education,
       specialty: specialty || '—',
       skills: skills.split(',').map(s => s.trim()).filter(Boolean),
-      is_neet: isNeet,
-      neet_verification: isNeet ? 'pending_verification' : 'rejected',
-      needs_support: isNeet,
-      support_recommendation: ['prog_ishga_marhamat_tech', 'prog_district_job_fair'],
-      last_updated: new Date().toISOString().split('T')[0],
       notes,
+      is_neet: isNeet,
+      neet_verification: isNeet ? 'pending_verification' : 'verified',
+      needs_support: isNeet,
+      support_recommendation: ['prog_it_01', 'prog_mono_01'],
       status_history: [
         {
           date: new Date().toISOString().split('T')[0],
-          status,
-          comment: 'Первичная регистрация в реестре махалли'
+          status: status,
+          comment: lang === 'ru' ? 'Первичное внесение в единую базу молодёжи' : 'Yagona yoshlar bazasiga dastlabki kiritish'
         }
-      ]
+      ],
+      last_updated: new Date().toISOString().split('T')[0]
     };
 
     onAddYouth(newProfile);
@@ -104,46 +106,46 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.12] shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar cursor-default"
+        className="bg-surface-1 w-full max-w-xl rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200 cursor-default"
       >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               <UserPlus className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'Добавить молодого человека в реестр' : 'Реестрга янги ёш киритиш'}
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {tr.newYouthModalTitle}
               </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                {lang === 'ru' ? 'Внесение анкеты в единую базу данных района' : 'Туман ягона маълумотлар базасига киритиш'}
+              <p className="text-[11px] text-slate-400">
+                {tr.newYouthModalSubtitle}
               </p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-surface-3 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Form */}
+        {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           
           {/* Full Name */}
           <div>
             <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
               <User className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Ф.И.О. гражданина' : 'Ф.И.Ш.'}</span>
+              <span>{tr.newYouthFullName}</span>
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
               <input
                 type="text"
                 required
-                placeholder={lang === 'ru' ? 'Например: Каримов Жасур Бахтиёрович' : 'Масалан: Каримов Жасур Бахтиёрович'}
+                placeholder={tr.newYouthFullNamePlaceholder}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
@@ -156,7 +158,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <MapPin className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Махалля' : 'Маҳалла'}</span>
+                <span>{tr.newYouthMakhalla}</span>
               </label>
               <CustomSelect
                 value={makhalla}
@@ -168,7 +170,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <Calendar className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Возраст (18–30)' : 'Ёши (18–30)'}</span>
+                <span>{tr.newYouthAge}</span>
               </label>
               <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
                 <input
@@ -188,7 +190,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <User className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Пол' : 'Жинси'}</span>
+                <span>{tr.newYouthGender}</span>
               </label>
               <CustomSelect
                 value={gender}
@@ -200,7 +202,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Статус занятости' : 'Бандлик ҳолати'}</span>
+                <span>{tr.newYouthStatus}</span>
               </label>
               <CustomSelect
                 value={status}
@@ -215,7 +217,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Образование' : 'Маълумоти'}</span>
+                <span>{tr.newYouthEducation}</span>
               </label>
               <CustomSelect
                 value={education}
@@ -227,12 +229,12 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
             <div>
               <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Специальность' : 'Мутахассислиги'}</span>
+                <span>{tr.newYouthSpecialty}</span>
               </label>
               <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
                 <input
                   type="text"
-                  placeholder={lang === 'ru' ? 'Электрик, бухгалтер и т.д.' : 'Электрик, бухгалтер ва ҳ.к.'}
+                  placeholder={tr.newYouthSpecialtyPlaceholder}
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
                   className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
@@ -245,7 +247,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
           <div>
             <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
               <Wrench className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Навыки (через запятую)' : 'Кўникмалар (вергул билан)'}</span>
+              <span>{tr.newYouthSkills}</span>
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
               <input
@@ -261,7 +263,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
           <div>
             <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
               <FileText className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Заметка инспектора' : 'Инспектор изоҳи'}</span>
+              <span>{tr.newYouthNotes}</span>
             </label>
             <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl p-2.5 transition-all shadow-sm">
               <textarea
@@ -280,14 +282,14 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
               className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 rounded-xl font-semibold text-xs transition-all shadow-sm shadow-indigo-500/25 hover:shadow-indigo-500/40 flex items-center justify-center gap-1.5 active:scale-[0.98]"
             >
               <UserPlus className="w-3.5 h-3.5 text-indigo-200" />
-              <span>{lang === 'ru' ? 'Зарегистрировать' : 'Рўйхатга олиш'}</span>
+              <span>{tr.newYouthBtnSubmit}</span>
             </button>
             <button
               type="button"
               onClick={onClose}
               className="py-2.5 px-4 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-xl font-medium text-xs transition-all flex items-center justify-center"
             >
-              {lang === 'ru' ? 'Отмена' : 'Бекор қилиш'}
+              {tr.newYouthBtnCancel}
             </button>
           </div>
 

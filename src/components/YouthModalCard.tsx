@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
 import { CustomSelect } from './ui/CustomSelect';
+import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
@@ -13,7 +14,7 @@ interface YouthModalCardProps {
   onClose: () => void;
   onUpdateStatus: (id: string, newStatus: EmploymentStatus, comment: string) => void;
   onAssignProgram: (id: string, program: SupportProgram) => void;
-  userRole: UserRole;
+  userRole?: UserRole;
   lang: 'ru' | 'uz';
 }
 
@@ -23,9 +24,9 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   onClose,
   onUpdateStatus,
   onAssignProgram,
-  userRole,
   lang
 }) => {
+  const tr = t[lang];
   const [newStatus, setNewStatus] = useState<EmploymentStatus>(youth.employment_status);
   const [statusComment, setStatusComment] = useState<string>('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
@@ -33,19 +34,19 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
-      onUpdateStatus(youth.id, newStatus, statusComment || 'Обновление статуса в системе');
+      onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Tizimda holat yangilandi'));
       setIsUpdatingStatus(false);
       setStatusComment('');
     }
   };
 
   const statusOptions = [
-    { value: 'безработный', label: lang === 'ru' ? 'Безработный (NEET)' : 'Ишсиз (NEET)' },
-    { value: 'занят', label: lang === 'ru' ? 'Занят (найм)' : 'Ишлайди (расмий)' },
-    { value: 'предприниматель', label: lang === 'ru' ? 'Бизнес / ИП' : 'Тадбиркор / ЯТТ' },
-    { value: 'обучается', label: lang === 'ru' ? 'Обучается (ВУЗ)' : 'Ўқимоқда (ОТМ)' },
-    { value: 'направлен на обучение', label: lang === 'ru' ? 'Направлен на обучение' : 'Ўқишга юборилган' },
-    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган' }
+    { value: 'безработный', label: tr.registryFilterUnemployed },
+    { value: 'занят', label: tr.registryFilterEmployed },
+    { value: 'предприниматель', label: tr.registryFilterBusiness },
+    { value: 'обучается', label: tr.registryFilterStudying },
+    { value: 'направлен на обучение', label: tr.registryFilterCourses },
+    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Aniqlanmagan' }
   ];
 
   const getProgramIcon = (name: string) => {
@@ -87,10 +88,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
                 <span className="flex items-center gap-1 text-slate-300 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-indigo-400" />
-                  {youth.makhalla}
+                  {getMahallaName(youth.makhalla, lang)}
                 </span>
                 <span>•</span>
-                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'ёш'} ({youth.gender})</span>
+                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'yosh'} ({youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale})</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-400 font-mono">
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
@@ -104,7 +105,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             <button
               onClick={() => window.print()}
               className="p-2 rounded-xl bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
-              title="Печать"
+              title={tr.profileCardBtnPrint}
             >
               <Printer className="w-3.5 h-3.5" />
             </button>
@@ -126,7 +127,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <User className="w-3.5 h-3.5 text-indigo-400" />
-            <span>{lang === 'ru' ? 'Общие сведения' : 'Умумий маълумотлар'}</span>
+            <span>{tr.profileCardTabOverview}</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -135,7 +136,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <History className="w-3.5 h-3.5 text-indigo-400" />
-            <span>{lang === 'ru' ? `История (${youth.status_history.length})` : `Тарих (${youth.status_history.length})`}</span>
+            <span>{tr.profileCardTabHistory} ({youth.status_history.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('recommendations')}
@@ -144,7 +145,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>{lang === 'ru' ? 'Маршрутизация & Программы' : 'Йўналтириш ва дастурлар'}</span>
+            <span>{tr.profileCardTabRouting}</span>
           </button>
         </div>
 
@@ -159,19 +160,19 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="p-4 rounded-xl bg-surface-2 border border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                 <div>
                   <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-                    {lang === 'ru' ? 'Текущий статус занятости:' : 'Жорий бандлик ҳолати:'}
+                    {tr.registryThStatus}:
                   </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className="text-sm font-bold text-white capitalize">{youth.employment_status}</span>
                     {youth.is_neet && (
                       <span className="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold whitespace-nowrap flex items-center gap-1">
                         <AlertCircle className="w-3 h-3 text-rose-400" />
-                        <span>NEET ({youth.neet_verification === 'verified' ? 'Подтверждён' : 'На проверке'})</span>
+                        <span>NEET ({youth.neet_verification === 'verified' ? tr.triageCardVerifiedBadge : tr.triageTabPending})</span>
                       </span>
                     )}
                   </div>
                   <div className="text-xs text-slate-400 mt-0.5">
-                    {lang === 'ru' ? 'Сфера:' : 'Соҳа:'} <strong className="text-slate-200">{youth.activity_type}</strong>
+                    {tr.profileCardActivity} <strong className="text-slate-200">{youth.activity_type}</strong>
                   </div>
                 </div>
 
@@ -181,7 +182,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       onClick={() => setIsUpdatingStatus(true)}
                       className="px-3 py-1.5 bg-surface-3 hover:bg-surface-2 border border-white/[0.12] text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-all"
                     >
-                      {lang === 'ru' ? 'Изменить статус' : 'Ҳолатни ўзгартириш'}
+                      {tr.profileCardChangeStatus}
                     </button>
                   ) : (
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -195,13 +196,13 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                         onClick={handleSaveStatus}
                         className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-all shadow-sm shadow-indigo-500/25"
                       >
-                        {lang === 'ru' ? 'Сохранить' : 'Сақлаш'}
+                        {tr.verifBtnSave}
                       </button>
                       <button
                         onClick={() => setIsUpdatingStatus(false)}
                         className="px-2.5 py-1.5 bg-surface-3 text-slate-400 hover:text-white rounded-lg text-xs transition-colors"
                       >
-                        {lang === 'ru' ? 'Отмена' : 'Бекор'}
+                        {tr.profileCardBtnCancelStatus}
                       </button>
                     </div>
                   )}
@@ -213,18 +214,18 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
                     <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>{lang === 'ru' ? 'Образование & Специальность' : 'Маълумот ва мутахассислик'}</span>
+                    <span>{tr.profileCardEducation} & {tr.profileCardSpecialty}</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
-                    <div>{lang === 'ru' ? 'Уровень:' : 'Даражаси:'} <strong className="text-white">{youth.education}</strong></div>
-                    {youth.specialty && <div>{lang === 'ru' ? 'Специальность:' : 'Мутахассислиги:'} <strong className="text-slate-300">{youth.specialty}</strong></div>}
+                    <div>{lang === 'ru' ? 'Уровень:' : 'Darajasi:'} <strong className="text-white">{getEducationName(youth.education, lang)}</strong></div>
+                    {youth.specialty && <div>{tr.profileCardSpecialty}: <strong className="text-slate-300">{youth.specialty}</strong></div>}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
                     <Wrench className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{lang === 'ru' ? 'Навыки и компетенции' : 'Кўникмалар'}</span>
+                    <span>{tr.profileCardSkills}</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {youth.skills.map((skill, idx) => (
@@ -240,10 +241,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>{lang === 'ru' ? 'Заметки выездного опроса («Ёшлар етакчиси»)' : '«Ёшлар етакчиси» изоҳлари'}</span>
+                  <span>{tr.profileCardNotes} ({lang === 'ru' ? '«Ёшлар етакчиси»' : '«Yoshlar yetakchisi»'})</span>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-1/80 p-2.5 rounded-lg border border-white/[0.04]">
-                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Изоҳлар мавжуд эмас.')}
+                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Xonadonbay o‘rganish bo‘yicha yozuvlar mavjud emas.')}
                 </p>
               </div>
 
@@ -254,7 +255,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           {activeTab === 'history' && (
             <div className="space-y-3">
               <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">
-                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Ҳаётий цикл хронологияси:'}
+                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Holatlar xronologiyasi:'}
               </div>
 
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
@@ -288,6 +289,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {supportPrograms.map(prog => {
                 const isRecommended = youth.support_recommendation.includes(prog.id);
                 const isCurrentAssigned = youth.assigned_program?.id === prog.id;
+                const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+                const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+                const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
+                const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
 
                 return (
                   <div
@@ -307,19 +312,19 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h5 className="text-xs font-bold text-white">{prog.title}</h5>
+                            <h5 className="text-xs font-bold text-white">{title}</h5>
                             {isRecommended && (
                               <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold whitespace-nowrap">
-                                ★ Рекомендовано
+                                ★ {lang === 'ru' ? 'Рекомендовано' : 'Tavsiya etilgan'}
                               </span>
                             )}
                           </div>
                           <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                            {prog.description}
+                            {description}
                           </p>
                           <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
-                            <span>Срок: <strong className="text-white">{prog.duration}</strong></span>
-                            <span>Стипендия/Грант: <strong className="text-emerald-400">{prog.stipend}</strong></span>
+                            <span>{tr.routingModalDuration} <strong className="text-white">{duration}</strong></span>
+                            <span>{tr.routingModalStipend} <strong className="text-emerald-400">{stipend}</strong></span>
                           </div>
                         </div>
                       </div>
@@ -327,14 +332,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       <div>
                         {isCurrentAssigned ? (
                           <span className="px-2.5 py-1 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1 whitespace-nowrap">
-                            <CheckCircle2 className="w-3 h-3" /> Направлен
+                            <CheckCircle2 className="w-3 h-3" /> {lang === 'ru' ? 'Направлен' : 'Biriktirilgan'}
                           </span>
                         ) : (
                           <button
                             onClick={() => onAssignProgram(youth.id, prog)}
                             className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm shadow-indigo-500/25 text-xs font-semibold transition-all whitespace-nowrap"
                           >
-                            Направить
+                            {tr.profileCardBtnAssign}
                           </button>
                         )}
                       </div>

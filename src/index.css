@@ -14,6 +14,23 @@
       radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 45%);
     background-attachment: fixed;
   }
+
+  /* Global Safari/macOS Native Form Reset to prevent white control backgrounds */
+  input, textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    color-scheme: dark;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="search"],
+  textarea {
+    background-color: transparent;
+    color: #ffffff;
+  }
 }
 
 /* Custom Inky Scrollbar */

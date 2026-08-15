@@ -4,6 +4,7 @@ import {
   ArrowRight, Search, Plus, Layers, Filter, CheckCircle2, Sparkles, X
 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
+import { t, getProgramCategoryName } from '../data/translations';
 
 interface SupportProgramsViewProps {
   youthList: YouthProfile[];
@@ -20,43 +21,44 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   onNavigateRegistryWithFilter,
   onOpenNewProgram
 }) => {
+  const tr = t[lang];
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = [
     { 
       id: 'all', 
-      label: lang === 'ru' ? 'Все направления' : 'Барча йўналишлар', 
+      label: tr.progCatAll, 
       count: supportPrograms.length,
       icon: Layers
     },
     { 
       id: 'обучение', 
-      label: lang === 'ru' ? 'Профобучение' : 'Касбга ўқитиш', 
+      label: tr.progCatTraining, 
       count: supportPrograms.filter(p => p.category === 'обучение').length,
       icon: Wrench
     },
     { 
       id: 'it_стажировка', 
-      label: lang === 'ru' ? 'IT-Park' : 'IT-Park', 
+      label: tr.progCatIt, 
       count: supportPrograms.filter(p => p.category === 'it_стажировка').length,
       icon: Code
     },
     { 
       id: 'субсидия', 
-      label: lang === 'ru' ? 'Субсидии «Ёшлар дафтари»' : 'Субсидиялар', 
+      label: tr.progCatSubsidy, 
       count: supportPrograms.filter(p => p.category === 'субсидия').length,
       icon: Gift
     },
     { 
       id: 'предпринимательство', 
-      label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар', 
+      label: tr.progCatCredit, 
       count: supportPrograms.filter(p => p.category === 'предпринимательство').length,
       icon: TrendingUp
     },
     { 
       id: 'трудоустройство', 
-      label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари', 
+      label: tr.progCatJobs, 
       count: supportPrograms.filter(p => p.category === 'трудоустройство').length,
       icon: Briefcase
     },
@@ -65,14 +67,18 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   const filteredPrograms = useMemo(() => {
     return supportPrograms.filter(prog => {
       const matchesCategory = selectedCategory === 'all' || prog.category === selectedCategory;
+      const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+      const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+      const provider = (lang === 'uz' && prog.providerUz) ? prog.providerUz : prog.provider;
+
       const matchesSearch = 
-        prog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prog.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prog.provider.toLowerCase().includes(searchQuery.toLowerCase());
+        title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        provider.toLowerCase().includes(searchQuery.toLowerCase());
       
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery, supportPrograms]);
+  }, [supportPrograms, selectedCategory, searchQuery, lang]);
 
   const getProgramIcon = (name: string) => {
     switch (name) {
@@ -82,23 +88,6 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
       case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-slate-300" />;
       case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-slate-300" />;
       default: return <Briefcase className="w-4 h-4 text-slate-300" />;
-    }
-  };
-
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'обучение':
-        return lang === 'ru' ? 'Профобучение' : 'Касбга ўқитиш';
-      case 'it_стажировка':
-        return 'IT-стажировка';
-      case 'субсидия':
-        return lang === 'ru' ? 'Субсидия' : 'Субсидия';
-      case 'предпринимательство':
-        return lang === 'ru' ? 'Микрокредит' : 'Микрокредит';
-      case 'трудоустройство':
-        return lang === 'ru' ? 'Вакансия' : 'Вакансия';
-      default:
-        return category;
     }
   };
 
@@ -119,7 +108,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
             <div className="flex items-center justify-between text-xs font-bold text-white">
               <span className="flex items-center gap-2">
                 <Search className="w-4 h-4 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Поиск программ' : 'Дастурларни қидириш'}</span>
+                <span>{tr.progSearchLabel || (lang === 'ru' ? 'Поиск программ' : 'Dasturlarni qidirish')}</span>
               </span>
               {searchQuery && (
                 <button 
@@ -127,7 +116,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                   className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
                 >
                   <X className="w-3 h-3" />
-                  <span>{lang === 'ru' ? 'Сброс' : 'Тозалаш'}</span>
+                  <span>{lang === 'ru' ? 'Сброс' : 'Tozalash'}</span>
                 </button>
               )}
             </div>
@@ -136,7 +125,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               <input
                 type="text"
                 className="w-full bg-surface-2 border border-white/[0.08] rounded-xl pl-3.5 pr-8 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 transition-all shadow-inner"
-                placeholder={lang === 'ru' ? 'Поиск по названию, провайдеру...' : 'Номи ёки провайдер бўйича...'}
+                placeholder={tr.progSearchPlaceholder || (lang === 'ru' ? 'Поиск по названию, провайдеру...' : 'Nomi yoki provayder bo‘yicha...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -158,10 +147,10 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
             <div className="flex items-center justify-between px-1 pb-1">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Filter className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Направления' : 'Йўналишлар'}</span>
+                <span>{tr.progCategoriesTitle || (lang === 'ru' ? 'Направления' : 'Yo‘nalishlar')}</span>
               </span>
               <span className="text-[11px] text-slate-500 font-semibold font-mono">
-                {supportPrograms.length} {lang === 'ru' ? 'всего' : 'жами'}
+                {supportPrograms.length} {lang === 'ru' ? 'всего' : 'jami'}
               </span>
             </div>
 
@@ -202,13 +191,13 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
           <div className="bg-surface-1 p-4 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-white">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>{lang === 'ru' ? 'Охват программами' : 'Дастурлар қамрови'}</span>
+              <span>{tr.progCoverageTitle || (lang === 'ru' ? 'Охват программами' : 'Dasturlar qamrovi')}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.06] space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400">{lang === 'ru' ? 'Уже направлено:' : 'Йўналтирилган:'}</span>
-                <span className="font-bold text-emerald-400">{totalSupported} чел.</span>
+                <span className="text-slate-400">{tr.progAlreadyAssigned || (lang === 'ru' ? 'Уже направлено:' : 'Yo‘naltirilgan:')}</span>
+                <span className="font-bold text-emerald-400">{totalSupported} {lang === 'ru' ? 'чел.' : 'kishi'}</span>
               </div>
               <div className="w-full h-1.5 bg-surface-3 rounded-full overflow-hidden">
                 <div 
@@ -217,15 +206,15 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 />
               </div>
               <div className="text-[10px] text-slate-500 flex items-center justify-between">
-                <span>{Math.round((totalSupported / (youthList.length || 1)) * 100)}% от реестра</span>
-                <span>{youthList.length} чел. в базе</span>
+                <span>{Math.round((totalSupported / (youthList.length || 1)) * 100)}% {lang === 'ru' ? 'от реестра' : 'reyestrdan'}</span>
+                <span>{youthList.length} {lang === 'ru' ? 'чел. в базе' : 'kishi bazada'}</span>
               </div>
             </div>
 
             <p className="text-[11px] text-slate-400 leading-relaxed px-0.5">
-              {lang === 'ru' 
+              {tr.progCoverageNote || (lang === 'ru' 
                 ? 'Направляйте кандидатов категории NEET на обучение в Моноцентры, IT-стажировки и грантовые программы.' 
-                : 'NEET тоифасидаги ёшларни Мономарказларга, IT-стажировкаларга йўналтиринг.'}
+                : 'NEET toifasidagi yoshlarni Monomarkazlarga, IT-stajirovkalarga yo‘naltiring.')}
             </p>
           </div>
 
@@ -239,16 +228,14 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-base font-bold text-white tracking-tight">
-                  {currentCategoryObj?.label || (lang === 'ru' ? 'Программы поддержки' : 'Қўллаб-қувватлаш дастурлари')}
+                  {currentCategoryObj?.label || tr.progHeaderTitle}
                 </h2>
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-surface-2 text-slate-300 border border-white/[0.08] font-semibold font-mono">
-                  {filteredPrograms.length} {lang === 'ru' ? 'доступно' : 'мавжуд'}
+                  {filteredPrograms.length} {lang === 'ru' ? 'доступно' : 'mavjud'}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                {lang === 'ru' 
-                  ? 'Каталог государственных мер поддержки, субсидий и центров профподготовки' 
-                  : 'Давлат қўллаб-қувватлаш чоралари, субсидиялар ва касбга тайёрлаш марказлари'}
+                {tr.progHeaderSubtitle}
               </p>
             </div>
 
@@ -257,7 +244,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-sm shadow-indigo-500/25 transition-all flex items-center gap-2 whitespace-nowrap self-stretch sm:self-auto justify-center"
             >
               <Plus className="w-4 h-4" />
-              <span>{lang === 'ru' ? 'Добавить вакансию' : 'Вакансия қўшиш'}</span>
+              <span>{tr.progAddVacancyBtn}</span>
             </button>
           </div>
 
@@ -267,6 +254,11 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               {filteredPrograms.map(prog => {
                 const countAssigned = youthList.filter(y => y.assigned_program?.id === prog.id).length;
                 const countRecommended = youthList.filter(y => y.support_recommendation.includes(prog.id)).length;
+                const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+                const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+                const provider = (lang === 'uz' && prog.providerUz) ? prog.providerUz : prog.provider;
+                const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
+                const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
 
                 return (
                   <div
@@ -284,32 +276,32 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 border border-white/[0.08] text-slate-300 text-[11px] font-medium">
                               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
-                              <span>{getCategoryLabel(prog.category)}</span>
+                              <span>{getProgramCategoryName(prog.category, lang)}</span>
                             </span>
                           </div>
                           <h3 className="text-sm font-bold text-white leading-snug">
-                            {prog.title}
+                            {title}
                           </h3>
                           <div className="text-[11px] text-slate-400 truncate">
-                            {lang === 'ru' ? 'Провайдер:' : 'Провайдер:'} <span className="text-slate-300 font-medium">{prog.provider}</span>
+                            {tr.progProviderLabel}: <span className="text-slate-300 font-medium">{provider}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Description Box */}
                       <p className="text-xs text-slate-300 leading-relaxed bg-surface-2/60 p-3 rounded-xl border border-white/[0.04]">
-                        {prog.description}
+                        {description}
                       </p>
 
                       {/* Duration & Stipend Stats */}
                       <div className="grid grid-cols-2 gap-3 text-xs py-2.5 px-3 bg-surface-2/40 rounded-xl border border-white/[0.04]">
                         <div>
-                          <span className="text-slate-500 text-[11px] block">{lang === 'ru' ? 'Длительность:' : 'Муддати:'}</span>
-                          <strong className="text-white text-xs mt-0.5 block font-semibold">{prog.duration || '—'}</strong>
+                          <span className="text-slate-500 text-[11px] block">{tr.progDurationLabel}:</span>
+                          <strong className="text-white text-xs mt-0.5 block font-semibold">{duration || '—'}</strong>
                         </div>
                         <div>
-                          <span className="text-slate-500 text-[11px] block">{lang === 'ru' ? 'Стипендия / Грант:' : 'Стипендия / Грант:'}</span>
-                          <strong className="text-slate-200 text-xs mt-0.5 block font-semibold">{prog.stipend || '—'}</strong>
+                          <span className="text-slate-500 text-[11px] block">{tr.progStipendLabel}:</span>
+                          <strong className="text-slate-200 text-xs mt-0.5 block font-semibold">{stipend || '—'}</strong>
                         </div>
                       </div>
                     </div>
@@ -317,16 +309,16 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                     {/* Card Footer Actions */}
                     <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
                       <div className="text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
-                        <span>{lang === 'ru' ? 'Рекомендовано:' : 'Тавсия:'} <strong className="text-slate-200 font-mono">{countRecommended}</strong></span>
+                        <span>{tr.progRecommended}: <strong className="text-slate-200 font-mono">{countRecommended}</strong></span>
                         <span>•</span>
-                        <span>{lang === 'ru' ? 'Направлено:' : 'Юборилган:'} <strong className="text-slate-200 font-mono">{countAssigned}</strong></span>
+                        <span>{tr.progAssigned}: <strong className="text-slate-200 font-mono">{countAssigned}</strong></span>
                       </div>
 
                       <button
                         onClick={() => onNavigateRegistryWithFilter('neet_pending')}
                         className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white rounded-lg text-xs font-medium border border-white/[0.08] transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm"
                       >
-                        <span>{lang === 'ru' ? 'Кандидаты' : 'Номзодлар'}</span>
+                        <span>{tr.progCandidatesBtn}</span>
                         <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                       </button>
                     </div>
@@ -342,18 +334,18 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 <Search className="w-6 h-6" />
               </div>
               <h4 className="text-sm font-bold text-white">
-                {lang === 'ru' ? 'Программы не найдены' : 'Дастурлар топилмади'}
+                {lang === 'ru' ? 'Программы не найдены' : 'Dasturlar topilmadi'}
               </h4>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
                 {lang === 'ru' 
                   ? 'Попробуйте изменить поисковый запрос или выбрать другое направление в левой колонке.' 
-                  : 'Қидирув сўровини ўзгартириб кўринг ёки чап устундан бошқа йўналишни танланг.'}
+                  : 'Qidiruv so‘rovini o‘zgartirib ko‘ring yoki chap ustundan boshqa yo‘nalishni tanlang.'}
               </p>
               <button
                 onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
                 className="px-4 py-2 bg-surface-2 hover:bg-surface-3 text-slate-200 rounded-lg text-xs font-semibold border border-white/[0.08] transition-colors"
               >
-                {lang === 'ru' ? 'Показать все направления' : 'Барча йўналишларни кўрсатиш'}
+                {tr.progCatAll}
               </button>
             </div>
           )}
