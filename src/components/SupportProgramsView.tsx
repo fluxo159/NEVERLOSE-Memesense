@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BookOpen, Wrench, Code, Gift, TrendingUp, GraduationCap, Briefcase, 
-  ArrowRight, Sparkles 
+  ArrowRight, Search, MapPin, Building, Clock, Filter
 } from 'lucide-react';
 import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
 import { YouthProfile } from '../types';
@@ -18,6 +18,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   onNavigateRegistryWithFilter
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = [
     { id: 'all', label: lang === 'ru' ? 'Все направления (6)' : 'Барча йўналишлар' },
@@ -26,12 +27,20 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
     { id: 'субсидия', label: lang === 'ru' ? 'Субсидии' : 'Субсидиялар' },
     { id: 'предпринимательство', label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар' },
     { id: 'трудоустройство', label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари' },
+
   ];
 
-  const filteredPrograms = SUPPORT_PROGRAMS.filter(prog => {
-    if (selectedCategory === 'all') return true;
-    return prog.category === selectedCategory;
-  });
+  const filteredPrograms = useMemo(() => {
+    return SUPPORT_PROGRAMS.filter(prog => {
+      const matchesCategory = selectedCategory === 'all' || prog.category === selectedCategory;
+      const matchesSearch = 
+        prog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prog.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prog.provider.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
 
   const getProgramIcon = (name: string) => {
     switch (name) {
@@ -47,7 +56,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   const totalSupported = youthList.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto space-y-6">
       
       {/* Top Banner */}
       <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
@@ -60,7 +69,18 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               {lang === 'ru' 
                 ? 'Реестр государственных программ поддержки' 
                 : 'Давлат дастурлари реестри'}
+=
             </h2>
+            <p className="text-slate-400 text-sm mt-1">
+              {lang === 'ru' 
+                ? `Найдено ${filteredPrograms.length} программ для молодежи.` 
+                : `Ёшлар учун ${filteredPrograms.length} та дастур топилди.`}
+            </p>
+          </div>
+          
+          <div className="bg-slate-800/90 px-5 py-2.5 rounded-xl border border-slate-700/50 flex flex-col items-end">
+            <span className="text-xs text-slate-400">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
+            <span className="text-xl font-bold text-emerald-400">{totalSupported} чел.</span>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
             {lang === 'ru'
@@ -119,7 +139,6 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                       Провайдер: <span className="text-slate-200 font-medium">{prog.provider}</span>
                     </div>
                   </div>
-                </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-2/70 p-2.5 rounded-xl border border-white/[0.06]">
                   {prog.description}
@@ -155,7 +174,6 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
           );
         })}
       </div>
-
     </div>
   );
 };
