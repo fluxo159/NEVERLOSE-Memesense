@@ -1,7 +1,8 @@
 import React from 'react';
-import { Shield, UserCheck, Sparkles, MapPin, Globe } from 'lucide-react';
+import { Shield, UserCheck, Sparkles, MapPin, Globe, Building, User, Briefcase } from 'lucide-react';
 import { UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
+import { CustomSelect } from './ui/CustomSelect';
 
 interface HeaderProps {
   selectedRole: UserRole;
@@ -23,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleLang
 }) => {
   return (
-    <header className="bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl">
+    <header className="relative z-50 bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl">
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -56,45 +57,26 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2 flex-wrap">
             
             {/* Makhalla Selector */}
-            <div className="flex items-center bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 transition-colors">
-              <MapPin className="w-3.5 h-3.5 text-indigo-400 mr-1.5 flex-shrink-0" />
-              <select
-                aria-label="Фильтр по махалле"
-                value={selectedMakhalla}
-                onChange={(e) => onSelectMakhalla(e.target.value)}
-                className="bg-transparent text-slate-100 font-medium focus:outline-none cursor-pointer pr-1 text-xs"
-              >
-                <option value="all" className="bg-surface-2 text-white">
-                  {lang === 'ru' ? 'Весь район (8 махаллей)' : 'Барча маҳаллалар'}
-                </option>
-                {MAKHALLAS_LIST.map((m) => (
-                  <option key={m.id} value={m.name} className="bg-surface-2 text-white">
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomSelect
+              value={selectedMakhalla}
+              onChange={onSelectMakhalla}
+              options={[
+                { value: 'all', label: lang === 'ru' ? 'Весь район (8 махаллей)' : 'Барча маҳаллалар', icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
+                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+              ]}
+            />
 
             {/* Role Switcher */}
-            <div className="flex items-center bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2 py-1 text-xs transition-colors">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400 mx-1 flex-shrink-0" />
-              <select
-                aria-label="Выбор роли пользователя"
-                value={selectedRole}
-                onChange={(e) => onSelectRole(e.target.value as UserRole)}
-                className="bg-surface-3 text-slate-200 font-medium px-2 py-1 rounded-lg border border-white/[0.08] focus:outline-none cursor-pointer text-xs"
-              >
-                <option value="district_officer" className="bg-surface-2 text-white">
-                  🏛️ {lang === 'ru' ? 'Хокимият' : 'Ҳокимлик'}
-                </option>
-                <option value="mahalla_leader" className="bg-surface-2 text-white">
-                  👤 {lang === 'ru' ? 'Лидер Махалли' : 'Маҳалла етакчиси'}
-                </option>
-                <option value="employment_center" className="bg-surface-2 text-white">
-                  💼 {lang === 'ru' ? 'Центр занятости' : 'Бандлик маркази'}
-                </option>
-              </select>
-            </div>
+            <CustomSelect
+              value={selectedRole}
+              onChange={(val) => onSelectRole(val as UserRole)}
+              options={[
+                { value: 'district_officer', label: lang === 'ru' ? 'Хокимият' : 'Ҳокимлик', icon: <Building className="w-3.5 h-3.5 text-indigo-400" /> },
+                { value: 'mahalla_leader', label: lang === 'ru' ? 'Лидер Махалли' : 'Маҳалла етакчиси', icon: <User className="w-3.5 h-3.5 text-emerald-400" /> },
+                { value: 'employment_center', label: lang === 'ru' ? 'Центр занятости' : 'Бандлик маркази', icon: <Briefcase className="w-3.5 h-3.5 text-purple-400" /> }
+              ]}
+              className="min-w-[150px]"
+            />
 
             {/* Language Switch */}
             <button
