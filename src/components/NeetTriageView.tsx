@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { YouthProfile, UserRole, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
+import { CustomSelect } from './ui/CustomSelect';
 
 interface NeetTriageViewProps {
   youthList: YouthProfile[];
@@ -136,109 +137,98 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
       )}
 
-      {/* Human-Centered Header Banner */}
-      <div className="bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div className="space-y-1 max-w-2xl">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <AlertCircle className="w-5 h-5" />
-              </div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'Молодёжь, требующая проверки' : 'Текширув кутаётган ёшлар'}
+      {/* Sleek Control & Filter Toolbar */}
+      <div className="bg-surface-1 p-4 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          {/* Title & Badge */}
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white tracking-tight flex items-center gap-2 flex-wrap">
+                <span>{lang === 'ru' ? 'Молодёжь, требующая проверки' : 'Текширув кутаётган ёшлар'}</span>
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded-full">
+                  {pendingCount} {lang === 'ru' ? 'чел. ждут визита' : 'киши'}
+                </span>
               </h2>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
-              {lang === 'ru'
-                ? 'Список молодых людей, у которых более 6 месяцев нет налоговых отчислений или записей об учёбе. Проведите личный опрос, чтобы подтвердить статус или помочь с работой.'
-                : 'Солиқ ёки таълим базасида 6 ойдан ортиқ маълумоти бўлмаган ёшлар рўйхати.'}
-            </p>
           </div>
 
-          {/* Quick Metric Chips */}
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Ожидают обхода' : 'Кутмоқда'}</div>
-              <div className="text-xl font-black text-amber-400 mt-0.5">{pendingCount} чел.</div>
-            </div>
-            <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Опрошены' : 'Текширилган'}</div>
-              <div className="text-xl font-black text-emerald-400 mt-0.5">{verifiedCount} чел.</div>
-            </div>
+          {/* Search */}
+          <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-lg focus-within:border-indigo-500 transition-colors">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        {/* Search */}
-        <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-lg focus-within:border-indigo-500 transition-colors">
-          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
-          />
-        </div>
+        {/* Filter Row */}
+        <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-white/[0.06] text-xs">
+          
+          {/* Verification Status Tabs */}
+          <div className="flex items-center p-1 bg-surface-2 border border-white/[0.08] rounded-xl text-xs font-semibold">
+            <button
+              onClick={() => setFilterVerification('pending')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+                filterVerification === 'pending' 
+                  ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              {lang === 'ru' ? 'Нужен визит' : 'Кўрик'}
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'pending' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+                {pendingCount}
+              </span>
+            </button>
+            <button
+              onClick={() => setFilterVerification('verified')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+                filterVerification === 'verified' 
+                  ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              {lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'verified' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+                {verifiedCount}
+              </span>
+            </button>
+            <button
+              onClick={() => setFilterVerification('all')}
+              className={`px-3 py-1.5 rounded-lg transition-colors border ${
+                filterVerification === 'all' 
+                  ? 'bg-surface-3 text-white border-white/[0.12]' 
+                  : 'text-slate-400 hover:text-slate-300 border-transparent'
+              }`}
+            >
+              {lang === 'ru' ? 'Все' : 'Барчаси'}
+            </button>
+          </div>
 
-        {/* Verification Status Tabs */}
-        <div className="flex items-center p-1 bg-surface-2 border border-white/[0.08] rounded-xl text-[11px] font-semibold">
-          <button
-            onClick={() => setFilterVerification('pending')}
-            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
-              filterVerification === 'pending' 
-                ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
-                : 'text-slate-400 hover:text-slate-300 border border-transparent'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
-            {lang === 'ru' ? 'Нужен визит' : 'Кўрик'}
-            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'pending' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
-              {pendingCount}
-            </span>
-          </button>
-          <button
-            onClick={() => setFilterVerification('verified')}
-            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
-              filterVerification === 'verified' 
-                ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
-                : 'text-slate-400 hover:text-slate-300 border border-transparent'
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            {lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}
-            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'verified' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
-              {verifiedCount}
-            </span>
-          </button>
-          <button
-            onClick={() => setFilterVerification('all')}
-            className={`px-3 py-1.5 rounded-lg transition-colors border ${
-              filterVerification === 'all' 
-                ? 'bg-surface-3 text-white border-white/[0.12]' 
-                : 'text-slate-400 hover:text-slate-300 border-transparent'
-            }`}
-          >
-            {lang === 'ru' ? 'Все' : 'Барчаси'}
-          </button>
-        </div>
-
-        {/* Makhalla Quick Filter */}
-        <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
-          <select
+          {/* Makhalla Quick Filter */}
+          <CustomSelect
             value={filterMakhalla}
-            onChange={(e) => setFilterMakhalla(e.target.value)}
-            className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-1 pr-4"
-          >
-            <option value="all" className="bg-surface-2">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
-            {MAKHALLAS_LIST.map(m => (
-              <option key={m.id} value={m.name} className="bg-surface-2">{m.name}</option>
-            ))}
-          </select>
-        </div>
+            onChange={setFilterMakhalla}
+            options={[
+              { value: 'all', label: lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар', icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
+              ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+            ]}
+          />
 
+          <div className="text-[11px] text-slate-400 ml-auto font-medium">
+            Отображено: <strong className="text-white font-bold">{neetCandidates.length}</strong> анкет
+          </div>
+
+        </div>
       </div>
 
       {/* Verification Modal with Linear/Raycast Dark Theme */}
