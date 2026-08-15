@@ -6,7 +6,7 @@ import {
 import { YouthProfile, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { ArrowRight } from 'lucide-react';
-import { t } from '../data/translations';
+import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface DashboardViewProps {
   youthList: YouthProfile[];
@@ -21,8 +21,6 @@ const statusColors = ['#10B981', '#8B5CF6', '#06B6D4', '#3B82F6', '#F59E0B', '#F
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   youthList,
-  selectedMakhalla,
-  userRole,
   lang,
   onNavigateTab,
   onOpenProfile
@@ -45,9 +43,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const mahallaBarData = MAKHALLAS_LIST.map(m => {
     const listInM = youthList.filter(y => y.makhalla === m.name);
+    const mName = getMahallaName(m.name, lang);
+    const shortName = lang === 'ru' 
+      ? m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.')
+      : mName.replace('Buyuk Ipak Yo‘li', 'B. Ipak').replace('Oliy Himmat', 'Oliy H.');
+
     return {
-      name: m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.'),
-      fullName: m.name,
+      name: shortName,
+      fullName: mName,
       [tr.dashChartEmployed]: listInM.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length,
       [tr.dashChartStudying]: listInM.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length,
       [tr.dashChartNeet]: listInM.filter(y => y.is_neet).length,
@@ -198,14 +201,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
               <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда ўрганиладиган ёшлар'}
+                {tr.dashPriorityTitle}
               </h3>
             </div>
             <button
               onClick={() => onNavigateTab('triage')}
               className="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1"
             >
-              <span>{lang === 'ru' ? 'Все на проверке' : 'Барчаси'}</span>
+              <span>{tr.dashAllPending}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -226,16 +229,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       {youth.full_name_demo}
                     </h4>
                     <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                      <span className="text-slate-300">📍 {youth.makhalla}</span>
+                      <span className="text-slate-300">📍 {getMahallaName(youth.makhalla, lang)}</span>
                       <span>•</span>
-                      <span>{youth.education}</span>
+                      <span>{getEducationName(youth.education, lang)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold whitespace-nowrap">
-                    {lang === 'ru' ? 'Требует визита' : 'Кўрик зарур'}
+                    {tr.dashNeedsVisit}
                   </span>
                   <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
@@ -248,10 +251,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-white mb-1">
-              {lang === 'ru' ? 'Куда можно направить человека' : 'Қайси дастурларга йўналтириш мумкин'}
+              {tr.dashWhereToRouteTitle}
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              {lang === 'ru' ? 'Бесплатные государственные возможности' : 'Бепул давлат ёрдами имкониятлари'}
+              {tr.dashWhereToRouteSubtitle}
             </p>
 
             <div className="space-y-3">
@@ -260,11 +263,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-cyan-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">{lang === 'ru' ? 'Моноцентр «Ишга Мархамат»' : '«Ишга марҳамат» мономаркази'}</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? '24 рабочие специальности + стипендия' : '24 та касб-ҳунар + стипендия'}</div>
+                  <div className="text-sm font-bold text-white">{tr.dashMonoCenterTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashMonoCenterDesc}</div>
                 </div>
                 <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                  {lang === 'ru' ? 'Обучение' : 'Таълим'}
+                  {tr.dashMonoCenterTag}
                 </span>
               </div>
 
@@ -273,11 +276,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? 'Курсы веб-разработки + субсидия на ноутбук' : 'IT-курслар + ноутбук учун субсидия'}</div>
+                  <div className="text-sm font-bold text-white">{tr.dashItParkTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashItParkDesc}</div>
                 </div>
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                  {lang === 'ru' ? 'IT-Ваучер' : 'IT-Ваучер'}
+                  {tr.dashItParkTag}
                 </span>
               </div>
 
@@ -286,11 +289,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-purple-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">{lang === 'ru' ? 'Фонд «Ёшлар Дафтари»' : '«Ёшлар дафтари» жамғармаси'}</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? 'Гранты на оборудование для открытия своего дела' : 'Тадбиркорлик ва ускуналар учун грантлар'}</div>
+                  <div className="text-sm font-bold text-white">{tr.dashYoshlarDaftariTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashYoshlarDaftariDesc}</div>
                 </div>
                 <span className="text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30">
-                  {lang === 'ru' ? 'Субсидия' : 'Субсидия'}
+                  {tr.dashYoshlarDaftariTag}
                 </span>
               </div>
             </div>

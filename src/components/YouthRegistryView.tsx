@@ -11,7 +11,7 @@ import { usePagination } from '../hooks/usePagination';
 import { StatusBadge } from './StatusBadge';
 import { CustomSelect } from './ui/CustomSelect';
 import { FilterToggle } from './ui/FilterToggle';
-import { t } from '../data/translations';
+import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface YouthRegistryViewProps {
   youthList: YouthProfile[];
@@ -28,7 +28,6 @@ interface YouthRegistryViewProps {
 export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
   youthList,
   selectedMakhalla,
-  userRole,
   lang,
   onOpenProfile,
   onOpenNewYouth,
@@ -88,7 +87,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                 className={`p-1.5 rounded-md transition-colors ${
                   viewMode === 'table' ? 'bg-surface-3 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
-                title={lang === 'ru' ? 'Таблица' : 'Жадвал'}
+                title={lang === 'ru' ? 'Таблица' : 'Jadval'}
               >
                 <List className="w-3.5 h-3.5" />
               </button>
@@ -97,7 +96,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                 className={`p-1.5 rounded-md transition-colors ${
                   viewMode === 'cards' ? 'bg-surface-3 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
-                title={lang === 'ru' ? 'Карточки' : 'Карточкалар'}
+                title={lang === 'ru' ? 'Карточки' : 'Kartochkalar'}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
               </button>
@@ -149,7 +148,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
               onChange={setMakhallaFilter}
               options={[
                 { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
-                ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+                ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
               ]}
             />
           )}
@@ -174,9 +173,9 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             onChange={setAgeFilter}
             options={[
               { value: 'all', label: tr.registryFilterAllAges, icon: <Calendar className="w-3.5 h-3.5 text-indigo-400" /> },
-              { value: '18-21', label: `18–21 ${lang === 'ru' ? 'лет' : 'ёш'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
-              { value: '22-25', label: `22–25 ${lang === 'ru' ? 'лет' : 'ёш'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
-              { value: '26-30', label: `26–30 ${lang === 'ru' ? 'лет' : 'ёш'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
+              { value: '18-21', label: `18–21 ${lang === 'ru' ? 'лет' : 'yosh'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
+              { value: '22-25', label: `22–25 ${lang === 'ru' ? 'лет' : 'yosh'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
+              { value: '26-30', label: `26–30 ${lang === 'ru' ? 'лет' : 'yosh'}`, icon: <Calendar className="w-3.5 h-3.5 text-slate-400" /> },
             ]}
           />
 
@@ -244,13 +243,13 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-slate-300 text-xs">
-                      <div className="font-semibold text-white">{youth.age} {lang === 'ru' ? 'лет' : 'ёш'}</div>
+                      <div className="font-semibold text-white">{youth.age} {lang === 'ru' ? 'лет' : 'yosh'}</div>
                       <div className="text-slate-500 text-[11px]">{youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale}</div>
                     </td>
                     <td className="py-3.5 px-4 text-slate-300 text-xs">
                       <span className="flex items-center gap-1.5 font-medium text-slate-300">
                         <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-                        {youth.makhalla}
+                        {getMahallaName(youth.makhalla, lang)}
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
@@ -261,7 +260,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                         {youth.activity_type}
                       </div>
                       <div className="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">
-                        {youth.specialty || youth.education}
+                        {youth.specialty || getEducationName(youth.education, lang)}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-slate-500 font-mono text-[11px]">
@@ -301,9 +300,9 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                     </h4>
                     <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
                       <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-                      <span>{youth.makhalla}</span>
+                      <span>{getMahallaName(youth.makhalla, lang)}</span>
                       <span>•</span>
-                      <span>{youth.age} {lang === 'ru' ? 'лет' : 'ёш'}</span>
+                      <span>{youth.age} {lang === 'ru' ? 'лет' : 'yosh'}</span>
                     </div>
                   </div>
                   <div>
@@ -313,12 +312,12 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
 
                 <div className="space-y-1 text-xs text-slate-300 my-2 bg-surface-2/80 p-2.5 rounded-lg border border-white/[0.06]">
                   <div>
-                    <span className="text-slate-500 text-[11px]">{lang === 'ru' ? 'Сфера:' : 'Соҳа:'}</span>{' '}
+                    <span className="text-slate-500 text-[11px]">{lang === 'ru' ? 'Сфера:' : 'Soha:'}</span>{' '}
                     <strong className="text-white text-xs">{youth.activity_type}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-[11px]">{lang === 'ru' ? 'Образование:' : 'Маълумоти:'}</span>{' '}
-                    <strong className="text-slate-300 text-xs">{youth.education}</strong>
+                    <span className="text-slate-500 text-[11px]">{lang === 'ru' ? 'Образование:' : 'Ma’lumoti:'}</span>{' '}
+                    <strong className="text-slate-300 text-xs">{getEducationName(youth.education, lang)}</strong>
                   </div>
                 </div>
               </div>

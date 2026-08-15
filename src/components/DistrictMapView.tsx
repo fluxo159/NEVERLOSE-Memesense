@@ -21,6 +21,7 @@ import {
 import L from 'leaflet';
 import { MAKHALLAS_LIST, DISTRICT_POI_LIST } from '../data/mahallasData';
 import { YouthProfile, InfrastructurePOI } from '../types';
+import { getMahallaName } from '../data/translations';
 
 interface DistrictMapViewProps {
   youthList: YouthProfile[];
@@ -176,15 +177,16 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       });
 
       // Interactive Tooltip
+      const mahallaDisplayName = getMahallaName(mahalla.name, lang);
       const tooltipContent = `
         <div style="font-family: inherit; padding: 2px 4px;">
           <div style="font-weight: 800; font-size: 13px; color: #38bdf8; margin-bottom: 2px;">
-            Маҳалла «${mahalla.name}»
+            ${lang === 'ru' ? `Махалля «${mahalla.name}»` : `«${mahallaDisplayName}» mahallasi`}
           </div>
           <div style="font-size: 11px; color: #cbd5e1; display: flex; gap: 8px;">
-            <span>Молодёжь: <b style="color: #ffffff;">${mahallaYouth.length}</b></span>
+            <span>${lang === 'ru' ? 'Молодёжь' : 'Yoshlar'}: <b style="color: #ffffff;">${mahallaYouth.length}</b></span>
             <span>NEET: <b style="color: ${neetCount > 0 ? '#f43f5e' : '#10b981'};">${neetCount}</b></span>
-            <span>Занятость: <b style="color: #38bdf8;">${empRate}%</b></span>
+            <span>${lang === 'ru' ? 'Занятость' : 'Bandlik'}: <b style="color: #38bdf8;">${empRate}%</b></span>
           </div>
         </div>
       `;
@@ -242,7 +244,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             gap: 4px;
           ">
             <span style="width: 6px; height: 6px; border-radius: 9999px; background: ${fillColor};"></span>
-            ${mahalla.name}
+            ${mahallaDisplayName}
           </div>
         `,
         iconSize: [0, 0]
@@ -604,7 +606,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
                 <div>
                   <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider">{lang === 'ru' ? 'Паспорт территории:' : 'Hudud pasporti:'}</span>
-                  <h3 className="text-2xl font-extrabold text-white mt-1">Mahalla «{currentMahalla.name}»</h3>
+                  <h3 className="text-2xl font-extrabold text-white mt-1">{lang === 'ru' ? `Махалля «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi`}</h3>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${
                       currentMahalla.riskLevel === 'high' 
@@ -714,7 +716,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             className="w-full py-3 bg-gradient-to-r from-gov-600 to-cyan-600 hover:from-gov-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-900/30 flex items-center justify-center gap-2 transition-all"
           >
             <Eye className="w-4 h-4" />
-            <span>{lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${currentMahalla.name}» mahallasi yoshlar ro‘yxatini ochish`}</span>
+            <span>{lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi yoshlar ro‘yxatini ochish`}</span>
           </button>
 
         </div>

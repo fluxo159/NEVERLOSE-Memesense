@@ -3,7 +3,7 @@ import { Shield, MapPin, Globe, Building, User, Briefcase, Sparkles } from 'luci
 import { UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
-import { t } from '../data/translations';
+import { t, getMahallaName } from '../data/translations';
 
 interface HeaderProps {
   selectedRole: UserRole;
@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
               onChange={onSelectMakhalla}
               options={[
                 { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
-                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
               ]}
               className="min-w-[170px]"
             />

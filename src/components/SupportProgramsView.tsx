@@ -4,7 +4,7 @@ import {
   ArrowRight, Search, Plus
 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
-import { t } from '../data/translations';
+import { t, getProgramCategoryName } from '../data/translations';
 
 interface SupportProgramsViewProps {
   youthList: YouthProfile[];
@@ -37,14 +37,18 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   const filteredPrograms = useMemo(() => {
     return supportPrograms.filter(prog => {
       const matchesCategory = selectedCategory === 'all' || prog.category === selectedCategory;
+      const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+      const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+      const provider = (lang === 'uz' && prog.providerUz) ? prog.providerUz : prog.provider;
+
       const matchesSearch = 
-        prog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prog.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prog.provider.toLowerCase().includes(searchQuery.toLowerCase());
+        title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        provider.toLowerCase().includes(searchQuery.toLowerCase());
       
       return matchesCategory && matchesSearch;
     });
-  }, [supportPrograms, selectedCategory, searchQuery]);
+  }, [supportPrograms, selectedCategory, searchQuery, lang]);
 
   const getProgramIcon = (name: string) => {
     switch (name) {
@@ -74,7 +78,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 {tr.progHeaderTitle}
               </h2>
               <span className="text-xs text-slate-400 font-medium">
-                ({filteredPrograms.length} {lang === 'ru' ? 'программ' : 'та дастур'})
+                ({filteredPrograms.length} {lang === 'ru' ? 'программ' : 'ta dastur'})
               </span>
             </div>
             
@@ -136,6 +140,11 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
         {filteredPrograms.map(prog => {
           const countAssigned = youthList.filter(y => y.assigned_program?.id === prog.id).length;
           const countRecommended = youthList.filter(y => y.support_recommendation.includes(prog.id)).length;
+          const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+          const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+          const provider = (lang === 'uz' && prog.providerUz) ? prog.providerUz : prog.provider;
+          const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
+          const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
 
           return (
             <div
@@ -150,31 +159,31 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                   </div>
                   <div className="space-y-1 flex-1">
                     <span className="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-bold uppercase tracking-wider">
-                      {prog.category}
+                      {getProgramCategoryName(prog.category, lang)}
                     </span>
                     <h3 className="text-sm font-bold text-white leading-snug">
-                      {prog.title}
+                      {title}
                     </h3>
                     <div className="text-[11px] text-slate-400">
-                      {tr.progProvider} <span className="text-slate-200 font-medium">{prog.provider}</span>
+                      {tr.progProvider} <span className="text-slate-200 font-medium">{provider}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Description */}
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-2/70 p-3 rounded-xl border border-white/[0.06]">
-                  {prog.description}
+                  {description}
                 </p>
 
                 {/* Duration & Stipend Stats */}
                 <div className="grid grid-cols-2 gap-3 text-xs py-2.5 px-3 bg-surface-2/40 rounded-xl border border-white/[0.06]">
                   <div>
                     <span className="text-slate-500 text-[11px] block">{tr.progDuration}</span>
-                    <strong className="text-white text-xs mt-0.5 block">{prog.duration}</strong>
+                    <strong className="text-white text-xs mt-0.5 block">{duration}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 text-[11px] block">{tr.progStipend}</span>
-                    <strong className="text-emerald-400 text-xs mt-0.5 block">{prog.stipend}</strong>
+                    <strong className="text-emerald-400 text-xs mt-0.5 block">{stipend}</strong>
                   </div>
                 </div>
               </div>

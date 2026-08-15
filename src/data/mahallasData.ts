@@ -1,9 +1,10 @@
-import { MakhallaStats } from '../types';
+import { MakhallaStats, InfrastructurePOI } from '../types';
 
 export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_buyuk_ipak',
     name: 'Буюк Ипак Йўли',
+    nameUz: 'Buyuk Ipak Yo‘li',
     totalYouth: 1840,
     employed: 1420,
     studying: 260,
@@ -27,6 +28,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_oliy_himmat',
     name: 'Олий Ҳиммат',
+    nameUz: 'Oliy Himmat',
     totalYouth: 1420,
     employed: 920,
     studying: 210,
@@ -50,6 +52,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_shahriobod',
     name: 'Шаҳриобод',
+    nameUz: 'Shahriobod',
     totalYouth: 1650,
     employed: 1250,
     studying: 240,
@@ -73,6 +76,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_avaykhon',
     name: 'Авайхон',
+    nameUz: 'Avayxon',
     totalYouth: 1280,
     employed: 890,
     studying: 190,
@@ -96,6 +100,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_darxon',
     name: 'Дархон',
+    nameUz: 'Darxon',
     totalYouth: 2100,
     employed: 1720,
     studying: 290,
@@ -119,6 +124,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_feruza',
     name: 'Феруза',
+    nameUz: 'Feruza',
     totalYouth: 1530,
     employed: 1080,
     studying: 210,
@@ -142,6 +148,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_qorasuv',
     name: 'Қорасув',
+    nameUz: 'Qorasuv',
     totalYouth: 1950,
     employed: 1390,
     studying: 280,
@@ -165,6 +172,7 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
     id: 'm_humo',
     name: 'Ҳумо',
+    nameUz: 'Humo',
     totalYouth: 1190,
     employed: 910,
     studying: 180,
@@ -187,8 +195,6 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
   }
 ];
 
-import { InfrastructurePOI } from '../types';
-
 export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
   {
     id: 'poi_monocenter',
@@ -200,7 +206,7 @@ export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
     coordinates: [41.3285, 69.3310],
     servicesCount: 24,
     descriptionRu: 'Государственный центр бесплатного профессионального обучения и переподготовки по 24 специальностям со стипендией.',
-    descriptionUz: '24 ta mutaxassislik boʻyicha stipendiya bilan bepul kasb-hunarga oʻqitish va qayta tayyorlash davlat markazi.'
+    descriptionUz: '24 ta mutaxassislik bo‘yicha stipendiya bilan bepul kasb-hunarga o‘qitish va qayta tayyorlash davlat markazi.'
   },
   {
     id: 'poi_it_park',
@@ -212,19 +218,19 @@ export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
     coordinates: [41.3435, 69.3440],
     servicesCount: 16,
     descriptionRu: 'Курсы веб-разработки, QA, Python, Data Analytics со 100% субсидированием обучения и содействием в стажировках.',
-    descriptionUz: 'Veb-dasturlash, QA, Python va Data Analytics boʻyicha 100% davlat subsidiya kurslari va amaliyotlar.'
+    descriptionUz: 'Veb-dasturlash, QA, Python va Data Analytics bo‘yicha 100% davlat subsidiya kurslari va amaliyotlar.'
   },
   {
     id: 'poi_employment_center',
     name: 'Районный Центр содействия занятости (АББМ)',
-    nameUz: 'Aholi bandligiga koʻmaklashish markazi (ABKM)',
+    nameUz: 'Aholi bandligiga ko‘maklashish markazi (ABKM)',
     category: 'employment_center',
     address: 'г. Ташкент, массив Карасу-1, 28',
     phone: '+998 (71) 263-44-12',
     coordinates: [41.3495, 69.3580],
     servicesCount: 12,
     descriptionRu: 'Официальная регистрация безработных, выдача направлений на работу, оформление субсидий на открытие самозанятости.',
-    descriptionUz: 'Ishsizlarni rasmiy roʻyxatga olish, ishga yoʻllanma berish va oʻzini oʻzi band qilish subsidiyalari.'
+    descriptionUz: 'Ishsizlarni rasmiy ro‘yxatga olish, ishga yo‘llanma berish va o‘zini o‘zi band qilish subsidiyalari.'
   },
   {
     id: 'poi_youth_center',
@@ -236,7 +242,6 @@ export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
     coordinates: [41.3205, 69.3010],
     servicesCount: 8,
     descriptionRu: 'Бесплатное пространство для стартапов, консультации по грантам до 30 млн сум и программам льготного микрокредитования.',
-    descriptionUz: 'Startaplar uchun bepul maydon, 30 mln soʻmgacha grantlar va imtiyozli mikrokredit konsultatsiyalari.'
+    descriptionUz: 'Startaplar uchun bepul maydon, 30 mln so‘mgacha grantlar va imtiyozli mikrokredit konsultatsiyalari.'
   }
 ];
-

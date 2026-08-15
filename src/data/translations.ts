@@ -57,6 +57,22 @@ export const t = {
     dashChartNeet: 'Требуют проверки',
     dashPersonShort: 'человек',
 
+    // Dashboard Action Row
+    dashPriorityTitle: 'Кого необходимо посетить в первую очередь',
+    dashAllPending: 'Все на проверке',
+    dashNeedsVisit: 'Требует визита',
+    dashWhereToRouteTitle: 'Куда можно направить человека',
+    dashWhereToRouteSubtitle: 'Бесплатные государственные возможности',
+    dashMonoCenterTitle: 'Моноцентр «Ишга Мархамат»',
+    dashMonoCenterDesc: '24 рабочие специальности + стипендия',
+    dashMonoCenterTag: 'Обучение',
+    dashItParkTitle: 'IT-Park & IT-Bilim',
+    dashItParkDesc: 'Курсы веб-разработки + субсидия на ноутбук',
+    dashItParkTag: 'IT-Ваучер',
+    dashYoshlarDaftariTitle: 'Фонд «Ёшлар Дафтари»',
+    dashYoshlarDaftariDesc: 'Гранты на оборудование для открытия своего дела',
+    dashYoshlarDaftariTag: 'Субсидия',
+
     // NEET Triage View
     triageTitle: 'Молодёжь, требующая проверки',
     triagePendingBadge: 'чел. ждут визита',
@@ -289,6 +305,22 @@ export const t = {
     dashChartNeet: 'Tekshiruvda',
     dashPersonShort: 'nafar',
 
+    // Dashboard Action Row
+    dashPriorityTitle: 'Birinchi navbatda o‘rganiladigan yoshlar',
+    dashAllPending: 'Barchasi',
+    dashNeedsVisit: 'Ko‘rik zarur',
+    dashWhereToRouteTitle: 'Qaysi dasturlarga yo‘naltirish mumkin',
+    dashWhereToRouteSubtitle: 'Bepul davlat yordami imkoniyatlari',
+    dashMonoCenterTitle: '«Ishga marhamat» monomarkazi',
+    dashMonoCenterDesc: '24 ta kasb-hunar + stipendiya',
+    dashMonoCenterTag: 'Ta’lim',
+    dashItParkTitle: 'IT-Park & IT-Bilim',
+    dashItParkDesc: 'IT-kurslar + noutbuk uchun subsidiya',
+    dashItParkTag: 'IT-Vaucher',
+    dashYoshlarDaftariTitle: '«Yoshlar daftari» jamg‘armasi',
+    dashYoshlarDaftariDesc: 'Tadbirkorlik va uskunalar uchun grantlar',
+    dashYoshlarDaftariTag: 'Subsidiya',
+
     // NEET Triage View
     triageTitle: 'Tekshiruv kutayotgan yoshlar',
     triagePendingBadge: 'nafar ko‘rik kutilmoqda',
@@ -463,5 +495,54 @@ export const t = {
     profileCardBtnAssign: 'Yo‘naltirish',
     profileCardBtnPrint: 'Anketani chop etish',
     profileCardBtnClose: 'Yopish'
+  }
+};
+
+export const getMahallaName = (name: string, lang: Language): string => {
+  if (lang === 'ru') return name;
+  const map: Record<string, string> = {
+    'Буюк Ипак Йўли': 'Buyuk Ipak Yo‘li',
+    'Олий Ҳиммат': 'Oliy Himmat',
+    'Шаҳриобод': 'Shahriobod',
+    'Авайхон': 'Avayxon',
+    'Дархон': 'Darxon',
+    'Феруза': 'Feruza',
+    'Қорасув': 'Qorasuv',
+    'Ҳумо': 'Humo',
+    'Хумо': 'Humo'
+  };
+  return map[name] || name;
+};
+
+export const getEducationName = (edu: string, lang: Language): string => {
+  if (lang === 'ru') return edu;
+  const map: Record<string, string> = {
+    'Среднее': 'O‘rta',
+    'Средне-специальное': 'O‘rta-maxsus',
+    'Неоконченное высшее': 'Tugallanmagan oliy',
+    'Высшее': 'Oliy',
+    'Магистратура': 'Magistratura'
+  };
+  return map[edu] || edu;
+};
+
+export const getProgramCategoryName = (category: string, lang: Language): string => {
+  if (lang === 'ru') {
+    switch (category) {
+      case 'обучение': return 'Обучение';
+      case 'трудоустройство': return 'Трудоустройство';
+      case 'предпринимательство': return 'Предпринимательство';
+      case 'субсидия': return 'Субсидия';
+      case 'it_стажировка': return 'IT Стажировка';
+      default: return category;
+    }
+  }
+  switch (category) {
+    case 'обучение': return 'Kasbga o‘qitish';
+    case 'трудоустройство': return 'Ishga joylashish';
+    case 'предпринимательство': return 'Tadbirkorlik';
+    case 'субсидия': return 'Subsidiya';
+    case 'it_стажировка': return 'IT-Amaliyot';
+    default: return category;
   }
 };

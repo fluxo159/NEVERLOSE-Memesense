@@ -6,7 +6,7 @@ import {
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
-import { t } from '../data/translations';
+import { t, getMahallaName } from '../data/translations';
 
 interface NewYouthModalProps {
   onClose: () => void;
@@ -38,7 +38,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
 
   const makhallaOptions = MAKHALLAS_LIST.map(m => ({
     value: m.name,
-    label: m.name,
+    label: getMahallaName(m.name, lang),
     icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" />
   }));
 
@@ -89,7 +89,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
         {
           date: new Date().toISOString().split('T')[0],
           status: status,
-          comment: lang === 'ru' ? 'Первичное внесение в единую базу молодёжи' : 'Ягона ёшлар базасига дастлабки киритиш'
+          comment: lang === 'ru' ? 'Первичное внесение в единую базу молодёжи' : 'Yagona yoshlar bazasiga dastlabki kiritish'
         }
       ],
       last_updated: new Date().toISOString().split('T')[0]

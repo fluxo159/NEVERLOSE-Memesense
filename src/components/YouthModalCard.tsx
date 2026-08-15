@@ -5,7 +5,7 @@ import {
   Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
-import { t } from '../data/translations';
+import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
@@ -78,7 +78,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
                 <span className="flex items-center gap-1 text-slate-300 font-medium">
                   <MapPin className="w-3 h-3 text-slate-400" />
-                  {youth.makhalla}
+                  {getMahallaName(youth.makhalla, lang)}
                 </span>
                 <span>•</span>
                 <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'yosh'} ({youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale})</span>
@@ -216,7 +216,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                     <span>{tr.profileCardEducation} & {tr.profileCardSpecialty}</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
-                    <div>{lang === 'ru' ? 'Уровень:' : 'Darajasi:'} <strong className="text-white">{youth.education}</strong></div>
+                    <div>{lang === 'ru' ? 'Уровень:' : 'Darajasi:'} <strong className="text-white">{getEducationName(youth.education, lang)}</strong></div>
                     {youth.specialty && <div>{tr.profileCardSpecialty} <strong className="text-slate-300">{youth.specialty}</strong></div>}
                   </div>
                 </div>
@@ -288,6 +288,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {supportPrograms.map(prog => {
                 const isRecommended = youth.support_recommendation.includes(prog.id);
                 const isCurrentAssigned = youth.assigned_program?.id === prog.id;
+                const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+                const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+                const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
+                const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
 
                 return (
                   <div
@@ -307,7 +311,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h5 className="text-xs font-bold text-white">{prog.title}</h5>
+                            <h5 className="text-xs font-bold text-white">{title}</h5>
                             {isRecommended && (
                               <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold whitespace-nowrap">
                                 ★ {lang === 'ru' ? 'Рекомендовано' : 'Tavsiya etilgan'}
@@ -315,11 +319,11 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                             )}
                           </div>
                           <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                            {prog.description}
+                            {description}
                           </p>
                           <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
-                            <span>{tr.routingModalDuration} <strong className="text-white">{prog.duration}</strong></span>
-                            <span>{tr.routingModalStipend} <strong className="text-emerald-400">{prog.stipend}</strong></span>
+                            <span>{tr.routingModalDuration} <strong className="text-white">{duration}</strong></span>
+                            <span>{tr.routingModalStipend} <strong className="text-emerald-400">{stipend}</strong></span>
                           </div>
                         </div>
                       </div>

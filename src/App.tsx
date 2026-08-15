@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRole, YouthProfile, EmploymentStatus, SupportProgram } from './types';
 import { INITIAL_YOUTH_DATA } from './data/mockYouthData';
 import { Header } from './components/Header';
@@ -25,6 +25,12 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [lang, setLang] = useState<'ru' | 'uz'>('ru');
   const [supportPrograms, setSupportPrograms] = useState<SupportProgram[]>(SUPPORT_PROGRAMS);
+
+  useEffect(() => {
+    document.title = lang === 'ru' 
+      ? 'Ёшлар Бандлиги — Система мониторинга занятости и маршрутизации молодёжи'
+      : 'Yoshlar Bandligi — Yoshlar bandligi monitoringi va yo‘naltirish tizimi';
+  }, [lang]);
 
   // Modals & Drawers state
   const [selectedYouthForModal, setSelectedYouthForModal] = useState<YouthProfile | null>(null);
