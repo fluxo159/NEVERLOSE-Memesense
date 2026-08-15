@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   BookOpen, Wrench, Code, Gift, TrendingUp, GraduationCap, Briefcase, 
-  ArrowRight, Search, MapPin, Building, Clock, Filter
+  ArrowRight, Search, Plus
 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
 
@@ -30,7 +30,6 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
     { id: 'субсидия', label: lang === 'ru' ? 'Субсидии «Ёшлар дафтари»' : 'Субсидиялар', count: supportPrograms.filter(p => p.category === 'субсидия').length },
     { id: 'предпринимательство', label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар', count: supportPrograms.filter(p => p.category === 'предпринимательство').length },
     { id: 'трудоустройство', label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари', count: supportPrograms.filter(p => p.category === 'трудоустройство').length },
-
   ];
 
   const filteredPrograms = useMemo(() => {
@@ -43,7 +42,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
       
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, supportPrograms]);
 
   const getProgramIcon = (name: string) => {
     switch (name) {
@@ -62,37 +61,26 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
     <div className="max-w-7xl mx-auto space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-        <div className="space-y-1 max-w-2xl">
+      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               <BookOpen className="w-5 h-5" />
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              {lang === 'ru' 
-                ? 'Реестр государственных программ поддержки' 
-                : 'Давлат дастурлари реестри'}
-=
-            </h2>
-            <p className="text-slate-400 text-sm mt-1">
-              {lang === 'ru' 
-                ? `Найдено ${filteredPrograms.length} программ для молодежи.` 
-                : `Ёшлар учун ${filteredPrograms.length} та дастур топилди.`}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <button
-              onClick={onOpenNewProgram}
-              className="hidden md:flex px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all items-center gap-2"
-            >
-              <span>{lang === 'ru' ? '+ Добавить вакансию' : '+ Вакансия қўшиш'}</span>
-            </button>
-            <div className="bg-slate-800/90 px-5 py-2.5 rounded-xl border border-slate-700/50 flex flex-col items-end">
-              <span className="text-xs text-slate-400">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
-              <span className="text-xl font-bold text-emerald-400">{totalSupported} чел.</span>
+            <div>
+              <h2 className="text-lg font-bold text-white tracking-tight">
+                {lang === 'ru' 
+                  ? 'Реестр государственных программ поддержки' 
+                  : 'Давлат дастурлари реестри'}
+              </h2>
+              <p className="text-slate-400 text-xs mt-0.5">
+                {lang === 'ru' 
+                  ? `Найдено ${filteredPrograms.length} программ для молодежи.` 
+                  : `Ёшлар учун ${filteredPrograms.length} та дастур топилди.`}
+              </p>
             </div>
           </div>
+          
           <p className="text-xs text-slate-300 leading-relaxed">
             {lang === 'ru'
               ? 'Каталог действующих каналов содействия занятости: бесплатное обучение в Моноцентре, гранты на оборудование и льготные микрокредиты.'
@@ -100,45 +88,51 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
           </p>
         </div>
 
-        {/* Mobile Add Button */}
-        <button
-          onClick={onOpenNewProgram}
-          className="w-full md:hidden py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
-        >
-          <span>{lang === 'ru' ? '+ Добавить вакансию' : '+ Вакансия қўшиш'}</span>
-        </button>
-
-        {/* Search Input */}
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors" />
+        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+          <div className="bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] flex flex-col items-start md:items-end">
+            <span className="text-[11px] text-slate-400">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
+            <span className="text-base font-bold text-emerald-400">{totalSupported} чел.</span>
           </div>
+
+          <button
+            onClick={onOpenNewProgram}
+            className="px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-sm shadow-indigo-500/25 transition-all flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{lang === 'ru' ? 'Добавить вакансию' : 'Вакансия қўшиш'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Search & Category Filter */}
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
           <input
             type="text"
-            className="block w-full pl-11 pr-4 py-4 bg-slate-950/50 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all text-base shadow-inner"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface-1 border border-white/[0.08] rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500/50 transition-all shadow-inner"
             placeholder={lang === 'ru' ? 'Поиск по названию, провайдеру или ключевым словам...' : 'Номи, провайдер ёки калит сўзлар бўйича қидириш...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-
         </div>
-      </div>
 
-      {/* Category Filter Pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
-              selectedCategory === cat.id
-                ? 'bg-surface-3 text-white border border-white/[0.14] shadow-sm'
-                : 'bg-surface-1 text-slate-400 hover:text-slate-200 border border-white/[0.06]'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-surface-3 text-white border border-white/[0.14] shadow-sm'
+                  : 'bg-surface-1 text-slate-400 hover:text-slate-200 border border-white/[0.06]'
+              }`}
+            >
+              {cat.label} ({cat.count})
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Program Cards Grid */}
@@ -168,6 +162,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                       Провайдер: <span className="text-slate-200 font-medium">{prog.provider}</span>
                     </div>
                   </div>
+                </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-2/70 p-2.5 rounded-xl border border-white/[0.06]">
                   {prog.description}
@@ -185,7 +180,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 </div>
               </div>
 
-              <div className="pt-3 mt-1 flex items-center justify-between">
+              <div className="pt-3 mt-1 flex items-center justify-between border-t border-white/[0.06]">
                 <div className="text-[11px] text-slate-400">
                   Рекомендовано: <strong className="text-indigo-400">{countRecommended}</strong> • Направлено: <strong className="text-emerald-400">{countAssigned}</strong>
                 </div>
