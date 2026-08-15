@@ -34,15 +34,37 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-brand-linear to-cyan-500 shadow-glow-brand flex-shrink-0 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white drop-shadow-md" />
+            <div className="w-9 h-9 rounded-xl bg-surface-2 border border-white/[0.12] flex-shrink-0 flex items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
+              <svg viewBox="0 0 24 24" className="w-5 h-5 relative z-10" fill="none">
+                <path 
+                  d="M4.5 4.5L12 13L19.5 4.5" 
+                  stroke="url(#govtech-logo-grad)" 
+                  strokeWidth="2.4" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                />
+                <path 
+                  d="M12 13V20" 
+                  stroke="url(#govtech-logo-grad)" 
+                  strokeWidth="2.4" 
+                  strokeLinecap="round" 
+                />
+                <circle cx="12" cy="13" r="2" fill="#818CF8" />
+                <defs>
+                  <linearGradient id="govtech-logo-grad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#818CF8" />
+                    <stop offset="1" stopColor="#38BDF8" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
                   {tr.appName}
                 </h1>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-full tracking-wide">
+                <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono">
                   {tr.appBadge}
                 </span>
               </div>
@@ -91,9 +113,9 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Pitch Button */}
             <button
               onClick={onOpenPitchGuide}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-brand-linear to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold rounded-xl shadow-glow-brand border border-indigo-400/30 transition-all hover:scale-[1.02]"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm transition-all"
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-200 animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
               <span>{tr.pitchGuideBtn}</span>
             </button>
 
