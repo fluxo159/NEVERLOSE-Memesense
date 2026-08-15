@@ -6,6 +6,7 @@ import {
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
+
 interface NewYouthModalProps {
   onClose: () => void;
   onAddYouth: (youth: YouthProfile) => void;
@@ -97,8 +98,14 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.12] shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.12] shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar cursor-default"
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
@@ -130,16 +137,18 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
           <div>
             <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
               <User className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Ф.И.О. (демо-профиль)' : 'Ф.И.Ш. (демо-профил)'}</span>
+              <span>{lang === 'ru' ? 'Ф.И.О. гражданина' : 'Ф.И.Ш.'}</span>
             </label>
-            <input
-              type="text"
-              required
-              placeholder={lang === 'ru' ? 'Например: Каримов Жасур Бахтиёрович' : 'Масалан: Каримов Жасур Бахтиёрович'}
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
-            />
+            <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
+              <input
+                type="text"
+                required
+                placeholder={lang === 'ru' ? 'Например: Каримов Жасур Бахтиёрович' : 'Масалан: Каримов Жасур Бахтиёрович'}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Makhalla & Age */}
@@ -161,14 +170,16 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
                 <Calendar className="w-3.5 h-3.5 text-indigo-400" />
                 <span>{lang === 'ru' ? 'Возраст (18–30)' : 'Ёши (18–30)'}</span>
               </label>
-              <input
-                type="number"
-                min={18}
-                max={30}
-                value={age}
-                onChange={(e) => setAge(Number(e.target.value))}
-                className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none transition-all shadow-sm"
-              />
+              <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
+                <input
+                  type="number"
+                  min={18}
+                  max={30}
+                  value={age}
+                  onChange={(e) => setAge(Number(e.target.value))}
+                  className="w-full bg-transparent text-xs text-white focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 
@@ -218,13 +229,15 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
                 <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                 <span>{lang === 'ru' ? 'Специальность' : 'Мутахассислиги'}</span>
               </label>
-              <input
-                type="text"
-                placeholder={lang === 'ru' ? 'Электрик, бухгалтер и т.д.' : 'Электрик, бухгалтер ва ҳ.к.'}
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value)}
-                className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
-              />
+              <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
+                <input
+                  type="text"
+                  placeholder={lang === 'ru' ? 'Электрик, бухгалтер и т.д.' : 'Электрик, бухгалтер ва ҳ.к.'}
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
+                  className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 
@@ -234,12 +247,14 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
               <Wrench className="w-3.5 h-3.5 text-indigo-400" />
               <span>{lang === 'ru' ? 'Навыки (через запятую)' : 'Кўникмалар (вергул билан)'}</span>
             </label>
-            <input
-              type="text"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
-            />
+            <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl px-3 py-2 transition-all shadow-sm">
+              <input
+                type="text"
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
+                className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Notes */}
@@ -248,12 +263,14 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
               <FileText className="w-3.5 h-3.5 text-indigo-400" />
               <span>{lang === 'ru' ? 'Заметка инспектора' : 'Инспектор изоҳи'}</span>
             </label>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm resize-none"
-            />
+            <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 focus-within:ring-1 focus-within:ring-indigo-500/30 rounded-xl p-2.5 transition-all shadow-sm">
+              <textarea
+                rows={2}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none resize-none"
+              />
+            </div>
           </div>
 
           {/* Action Buttons */}
