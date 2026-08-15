@@ -1,0 +1,173 @@
+import React, { useState } from 'react';
+
+export interface DonutDataItem {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface AnimatedDonutChartProps {
+  data: DonutDataItem[];
+  total: number;
+  unitLabel?: string;
+  inRegistryLabel?: string;
+  title?: string;
+}
+
+export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
+  data,
+  total,
+  unitLabel = 'человек',
+  inRegistryLabel = 'чел. в реестре',
+  title
+}) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // SVG geometry constants
+  const size = 260;
+  const strokeWidth = 26;
+  const radius = (size - strokeWidth) / 2 - 10; // ~107
+  const center = size / 2;
+  const circumference = 2 * Math.PI * radius; // ~672.3
+
+  // Calculate segment lengths and cumulative offsets
+  const nonZeroData = data.filter(d => d.value > 0);
+  const totalVal = nonZeroData.reduce((acc, curr) => acc + curr.value, 0) || 1;
+
+  let cumulativeOffset = 0;
+  const segments = nonZeroData.map((item, idx) => {
+    const rawRatio = item.value / totalVal;
+    const strokeDash = rawRatio * circumference;
+    const gap = nonZeroData.length > 1 ? 4 : 0;
+    const visibleLength = Math.max(0, strokeDash - gap);
+    const startOffset = cumulativeOffset;
+    cumulativeOffset += strokeDash;
+
+    return {
+      ...item,
+      idx,
+      percentage: Math.round(rawRatio * 100),
+      strokeDasharray: `${visibleLength} ${circumference - visibleLength}`,
+      strokeDashoffset: -startOffset,
+      animationDelay: `${idx * 160}ms`
+    };
+  });
+
+  const activeItem = hoveredIndex !== null ? segments[hoveredIndex] : null;
+
+  return (
+    <div className="flex flex-col justify-between h-full space-y-4">
+      {title && (
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold text-white tracking-tight">{title}</h3>
+          <span className="text-[11px] text-slate-300 font-semibold bg-surface-2 px-2.5 py-1 rounded-lg border border-white/[0.08] font-mono">
+            {total} {inRegistryLabel}
+          </span>
+        </div>
+      )}
+
+      {/* SVG Donut Circle */}
+      <div className="relative flex items-center justify-center my-auto py-2">
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="transform -rotate-90 select-none overflow-visible"
+        >
+          {/* Subtle Background Track */}
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.04)"
+            strokeWidth={strokeWidth}
+          />
+
+          {/* Animated Slices */}
+          {segments.map((seg) => {
+            const isHovered = hoveredIndex === seg.idx;
+            const isDimmed = hoveredIndex !== null && !isHovered;
+
+            return (
+              <circle
+                key={seg.name}
+                cx={center}
+                cy={center}
+                r={radius}
+                fill="none"
+                stroke={seg.color}
+                strokeWidth={isHovered ? strokeWidth + 6 : strokeWidth}
+                strokeDasharray={seg.strokeDasharray}
+                strokeDashoffset={seg.strokeDashoffset}
+                strokeLinecap="round"
+                onMouseEnter={() => setHoveredIndex(seg.idx)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className="cursor-pointer transition-all duration-200"
+                style={{
+                  animation: `donutSliceDraw 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${seg.animationDelay} both`,
+                  opacity: isDimmed ? 0.35 : 1,
+                  filter: isHovered ? `drop-shadow(0 0 8px ${seg.color}80)` : 'none'
+                }}
+              />
+            );
+          })}
+        </svg>
+
+        {/* Center Dynamic Label */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
+          {activeItem ? (
+            <div className="space-y-0.5 animate-in fade-in zoom-in-95 duration-150">
+              <span className="text-2xl font-black text-white">{activeItem.value}</span>
+              <div className="text-[11px] font-bold text-slate-300 font-mono">
+                {activeItem.percentage}%
+              </div>
+              <span className="text-[10px] text-slate-400 truncate max-w-[120px] block">
+                {activeItem.name}
+              </span>
+            </div>
+          ) : (
+            <div className="space-y-0.5">
+              <span className="text-3xl font-black text-white tracking-tight">{total}</span>
+              <span className="text-xs text-slate-400 font-medium block">{unitLabel}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Interactive Legend */}
+      <div className="space-y-1.5 pt-3 border-t border-white/[0.06] text-xs">
+        {segments.map((seg) => {
+          const isHovered = hoveredIndex === seg.idx;
+          const isDimmed = hoveredIndex !== null && !isHovered;
+
+          return (
+            <div
+              key={seg.name}
+              onMouseEnter={() => setHoveredIndex(seg.idx)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className={`flex items-center justify-between p-1 rounded-lg transition-all cursor-pointer ${
+                isHovered ? 'bg-surface-2 text-white' : isDimmed ? 'opacity-40 text-slate-400' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2 truncate min-w-0 pr-2">
+                <span
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform"
+                  style={{
+                    backgroundColor: seg.color,
+                    transform: isHovered ? 'scale(1.3)' : 'scale(1)'
+                  }}
+                />
+                <span className="truncate text-xs">{seg.name}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0 font-mono">
+                <span className="text-slate-400 text-[11px]">{seg.percentage}%</span>
+                <span className="font-bold text-white text-xs">{seg.value}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

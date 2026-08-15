@@ -66,21 +66,32 @@
   will-change: opacity, transform;
 }
 
-@keyframes dropdownMenu {
+/* Sequential Chart Animations */
+@keyframes donutSliceDraw {
   0% {
+    stroke-dasharray: 0 1000;
     opacity: 0;
-    transform: translateY(-4px) scale(0.98);
+  }
+  20% {
+    opacity: 1;
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
-.dropdown-animate {
-  animation: dropdownMenu 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: top;
-  will-change: opacity, transform;
+@keyframes barGrowCascading {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
 }
 
 /* Linear / Raycast Style Surfaces */
