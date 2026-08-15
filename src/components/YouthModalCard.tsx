@@ -283,12 +283,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 3: SMART RECOMMENDATIONS */}
           {activeTab === 'recommendations' && (
-            <div className="space-y-4">
-              <div className="space-y-3">
-                {supportPrograms.map(prog => {
-                  const isRecommended = youth.support_recommendation.includes(prog.id);
-                  const isCurrentAssigned = youth.assigned_program?.id === prog.id;
-
+            <div className="space-y-3">
+              {supportPrograms.map(prog => {
+                const isRecommended = youth.support_recommendation.includes(prog.id);
+                const isCurrentAssigned = youth.assigned_program?.id === prog.id;
 
                 return (
                   <div
