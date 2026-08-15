@@ -25,21 +25,22 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
 
   // SVG geometry constants
   const size = 260;
-  const strokeWidth = 26;
-  const radius = (size - strokeWidth) / 2 - 10; // ~107
+  const strokeWidth = 28;
+  const radius = 88;
   const center = size / 2;
-  const circumference = 2 * Math.PI * radius; // ~672.3
+  const circumference = 2 * Math.PI * radius; // ~552.92
 
   // Calculate segment lengths and cumulative offsets
   const nonZeroData = data.filter(d => d.value > 0);
   const totalVal = nonZeroData.reduce((acc, curr) => acc + curr.value, 0) || 1;
 
   let cumulativeOffset = 0;
+  const gapPixels = nonZeroData.length > 1 ? 3 : 0;
+
   const segments = nonZeroData.map((item, idx) => {
     const rawRatio = item.value / totalVal;
     const strokeDash = rawRatio * circumference;
-    const gap = nonZeroData.length > 1 ? 4 : 0;
-    const visibleLength = Math.max(0, strokeDash - gap);
+    const visibleLength = Math.max(0, strokeDash - gapPixels);
     const startOffset = cumulativeOffset;
     cumulativeOffset += strokeDash;
 
@@ -49,7 +50,7 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
       percentage: Math.round(rawRatio * 100),
       strokeDasharray: `${visibleLength} ${circumference - visibleLength}`,
       strokeDashoffset: -startOffset,
-      animationDelay: `${idx * 160}ms`
+      animationDelay: `${idx * 120}ms`
     };
   });
 
@@ -66,13 +67,13 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
         </div>
       )}
 
-      {/* SVG Donut Circle */}
+      {/* SVG Donut Circle with Sharp Clean Cuts */}
       <div className="relative flex items-center justify-center my-auto py-2">
         <svg
           width={size}
           height={size}
           viewBox={`0 0 ${size} ${size}`}
-          className="transform -rotate-90 select-none overflow-visible"
+          className="transform -rotate-90 select-none"
         >
           {/* Subtle Background Track */}
           <circle
@@ -84,7 +85,7 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
             strokeWidth={strokeWidth}
           />
 
-          {/* Animated Slices */}
+          {/* Sharp Slices with Crisp Cut Boundaries (strokeLinecap="butt") */}
           {segments.map((seg) => {
             const isHovered = hoveredIndex === seg.idx;
             const isDimmed = hoveredIndex !== null && !isHovered;
@@ -97,17 +98,17 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
                 r={radius}
                 fill="none"
                 stroke={seg.color}
-                strokeWidth={isHovered ? strokeWidth + 6 : strokeWidth}
+                strokeWidth={isHovered ? strokeWidth + 4 : strokeWidth}
                 strokeDasharray={seg.strokeDasharray}
                 strokeDashoffset={seg.strokeDashoffset}
-                strokeLinecap="round"
+                strokeLinecap="butt"
                 onMouseEnter={() => setHoveredIndex(seg.idx)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer transition-all duration-150"
                 style={{
-                  animation: `donutSliceDraw 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${seg.animationDelay} both`,
-                  opacity: isDimmed ? 0.35 : 1,
-                  filter: isHovered ? `drop-shadow(0 0 8px ${seg.color}80)` : 'none'
+                  animation: `donutSliceDraw 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${seg.animationDelay} both`,
+                  opacity: isDimmed ? 0.3 : 1,
+                  filter: isHovered ? `drop-shadow(0 0 6px ${seg.color}60)` : 'none'
                 }}
               />
             );
@@ -146,23 +147,23 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
               key={seg.name}
               onMouseEnter={() => setHoveredIndex(seg.idx)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className={`flex items-center justify-between p-1 rounded-lg transition-all cursor-pointer ${
+              className={`flex items-center justify-between py-1 px-1.5 rounded-lg transition-all cursor-pointer ${
                 isHovered ? 'bg-surface-2 text-white' : isDimmed ? 'opacity-40 text-slate-400' : 'text-slate-300 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2 truncate min-w-0 pr-2">
                 <span
-                  className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform"
+                  className="w-2.5 h-2.5 rounded-sm flex-shrink-0 transition-transform"
                   style={{
                     backgroundColor: seg.color,
-                    transform: isHovered ? 'scale(1.3)' : 'scale(1)'
+                    transform: isHovered ? 'scale(1.25)' : 'scale(1)'
                   }}
                 />
                 <span className="truncate text-xs">{seg.name}</span>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0 font-mono">
-                <span className="text-slate-400 text-[11px]">{seg.percentage}%</span>
-                <span className="font-bold text-white text-xs">{seg.value}</span>
+              <div className="flex items-center gap-2 flex-shrink-0 font-mono text-[11px]">
+                <span className="text-slate-500">{seg.percentage}%</span>
+                <span className="font-semibold text-white">{seg.value} чел.</span>
               </div>
             </div>
           );
