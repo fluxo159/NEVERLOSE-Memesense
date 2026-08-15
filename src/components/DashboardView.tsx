@@ -65,14 +65,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-base font-bold text-white">
-                  {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
-                </h3>
-                <p className="text-xs text-slate-400">
-                  {lang === 'ru' ? 'Общее распределение по статусам' : 'Ҳолатлар бўйича тақсимот'}
-                </p>
-              </div>
+              <h3 className="text-base font-bold text-white">
+                {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
+              </h3>
               <span className="text-xs text-cyan-300 font-semibold bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/30">
                 {youthList.length} {lang === 'ru' ? 'чел. в реестре' : 'киши'}
               </span>
