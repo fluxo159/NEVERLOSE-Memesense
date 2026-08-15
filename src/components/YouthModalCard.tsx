@@ -5,6 +5,7 @@ import {
   Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
+import { t } from '../data/translations';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
@@ -25,6 +26,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   userRole,
   lang
 }) => {
+  const tr = t[lang];
   const [newStatus, setNewStatus] = useState<EmploymentStatus>(youth.employment_status);
   const [statusComment, setStatusComment] = useState<string>('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
@@ -32,7 +34,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
-      onUpdateStatus(youth.id, newStatus, statusComment || 'Обновление статуса в системе');
+      onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Тизимда ҳолат янгиланди'));
       setIsUpdatingStatus(false);
       setStatusComment('');
     }
@@ -80,7 +82,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   {youth.makhalla}
                 </span>
                 <span>•</span>
-                <span className="text-slate-400">{youth.age} лет ({youth.gender})</span>
+                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'ёш'} ({youth.gender === 'Мужской' ? tr.registryFilterMale : tr.registryFilterFemale})</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-400 font-mono">
                   <Phone className="w-3 h-3 text-slate-400" />
@@ -94,7 +96,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             <button
               onClick={() => window.print()}
               className="p-2 rounded-lg bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
-              title="Печать"
+              title={tr.profileCardBtnPrint}
             >
               <Printer className="w-3.5 h-3.5" />
             </button>
@@ -116,7 +118,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>Общие сведения</span>
+            <span>{tr.profileCardTabOverview}</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -125,7 +127,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <History className="w-3.5 h-3.5" />
-            <span>История ({youth.status_history.length})</span>
+            <span>{tr.profileCardTabHistory} ({youth.status_history.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('recommendations')}
@@ -134,7 +136,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Маршрутизация & Программы</span>
+            <span>{tr.profileCardTabRouting}</span>
           </button>
         </div>
 
@@ -148,7 +150,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {/* Status Box */}
               <div className="p-4 rounded-xl bg-surface-2 border border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Текущий статус занятости:</div>
+                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{tr.registryThStatus}:</div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className="text-base font-bold text-white capitalize">{youth.employment_status}</span>
                     {youth.is_neet && (
@@ -157,12 +159,12 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                           ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
                           : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
                       }`}>
-                        ⚠️ NEET ({youth.neet_verification === 'verified' ? 'Подтверждён' : 'На проверке'})
+                        ⚠️ NEET ({youth.neet_verification === 'verified' ? tr.triageCardVerifiedBadge : tr.triageTabPending})
                       </span>
                     )}
                   </div>
                   <div className="text-xs text-slate-400 mt-0.5">
-                    Сфера: <strong className="text-slate-200">{youth.activity_type}</strong>
+                    {tr.profileCardActivity} <strong className="text-slate-200">{youth.activity_type}</strong>
                   </div>
                 </div>
 
@@ -172,7 +174,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       onClick={() => setIsUpdatingStatus(true)}
                       className="px-3 py-1.5 bg-surface-3 hover:bg-surface-card border border-white/[0.12] text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-all"
                     >
-                      ✏️ Изменить статус
+                      ✏️ {tr.profileCardChangeStatus}
                     </button>
                   ) : (
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -182,25 +184,25 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                           onChange={(e) => setNewStatus(e.target.value as EmploymentStatus)}
                           className="bg-transparent text-xs text-white px-2.5 py-1 focus:outline-none cursor-pointer"
                         >
-                          <option value="занят" className="bg-surface-1">Работают (найм)</option>
-                          <option value="предприниматель" className="bg-surface-1">Свой бизнес / ИП</option>
-                          <option value="обучается" className="bg-surface-1">Учатся (ВУЗ)</option>
-                          <option value="направлен на обучение" className="bg-surface-1">На курсах Моноцентра</option>
-                          <option value="безработный" className="bg-surface-1">Ищут работу</option>
-                          <option value="не уточнено" className="bg-surface-1">Не уточнено</option>
+                          <option value="занят" className="bg-surface-1">{tr.registryFilterEmployed}</option>
+                          <option value="предприниматель" className="bg-surface-1">{tr.registryFilterBusiness}</option>
+                          <option value="обучается" className="bg-surface-1">{tr.registryFilterStudying}</option>
+                          <option value="направлен на обучение" className="bg-surface-1">{tr.registryFilterCourses}</option>
+                          <option value="безработный" className="bg-surface-1">{tr.registryFilterUnemployed}</option>
+                          <option value="не уточнено" className="bg-surface-1">{lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган'}</option>
                         </select>
                       </div>
                       <button
                         onClick={handleSaveStatus}
                         className="px-3 py-1 bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 border border-emerald-500/40 rounded-lg text-xs font-bold"
                       >
-                        Сохранить
+                        {tr.verifBtnSave}
                       </button>
                       <button
                         onClick={() => setIsUpdatingStatus(false)}
                         className="px-2 py-1 bg-surface-3 text-slate-400 hover:text-white rounded-lg text-xs"
                       >
-                        Отмена
+                        {tr.profileCardBtnCancelStatus}
                       </button>
                     </div>
                   )}
@@ -212,18 +214,18 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
                     <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Образование & Специальность</span>
+                    <span>{tr.profileCardEducation} & {tr.profileCardSpecialty}</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
-                    <div>Уровень: <strong className="text-white">{youth.education}</strong></div>
-                    {youth.specialty && <div>Специальность: <strong className="text-slate-300">{youth.specialty}</strong></div>}
+                    <div>{lang === 'ru' ? 'Уровень:' : 'Даражаси:'} <strong className="text-white">{youth.education}</strong></div>
+                    {youth.specialty && <div>{tr.profileCardSpecialty} <strong className="text-slate-300">{youth.specialty}</strong></div>}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
                     <Wrench className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Навыки и компетенции</span>
+                    <span>{tr.profileCardSkills}</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {youth.skills.map((skill, idx) => (
@@ -239,10 +241,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Заметки выездного опроса («Ёшлар етакчиси»)</span>
+                  <span>{tr.profileCardNotes} («Ёшлар етакчиси»)</span>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-1/80 p-2.5 rounded-lg border border-white/[0.04]">
-                  {youth.notes || 'Записи по выездным опросам отсутствуют.'}
+                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Хонадонбай ўрганиш бўйича ёзувлар мавжуд эмас.')}
                 </p>
               </div>
 
@@ -253,7 +255,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           {activeTab === 'history' && (
             <div className="space-y-3">
               <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">
-                Хронологический трекер жизненного цикла:
+                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Ҳолатлар хронологияси:'}
               </div>
 
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
@@ -309,7 +311,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                             <h5 className="text-xs font-bold text-white">{prog.title}</h5>
                             {isRecommended && (
                               <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold whitespace-nowrap">
-                                ★ Рекомендовано
+                                ★ {lang === 'ru' ? 'Рекомендовано' : 'Тавсия этилган'}
                               </span>
                             )}
                           </div>
@@ -317,8 +319,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                             {prog.description}
                           </p>
                           <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
-                            <span>Срок: <strong className="text-white">{prog.duration}</strong></span>
-                            <span>Стипендия/Грант: <strong className="text-emerald-400">{prog.stipend}</strong></span>
+                            <span>{tr.routingModalDuration} <strong className="text-white">{prog.duration}</strong></span>
+                            <span>{tr.routingModalStipend} <strong className="text-emerald-400">{prog.stipend}</strong></span>
                           </div>
                         </div>
                       </div>
@@ -326,14 +328,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       <div>
                         {isCurrentAssigned ? (
                           <span className="px-2.5 py-1 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1 whitespace-nowrap">
-                            <CheckCircle2 className="w-3 h-3" /> Направлен
+                            <CheckCircle2 className="w-3 h-3" /> {lang === 'ru' ? 'Направлен' : 'Бириктирилган'}
                           </span>
                         ) : (
                           <button
                             onClick={() => onAssignProgram(youth.id, prog)}
                             className="px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition-all whitespace-nowrap"
                           >
-                            Направить
+                            {tr.profileCardBtnAssign}
                           </button>
                         )}
                       </div>

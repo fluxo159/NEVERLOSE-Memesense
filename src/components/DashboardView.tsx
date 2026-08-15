@@ -5,7 +5,8 @@ import {
 } from 'recharts';
 import { YouthProfile, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-import { AlertCircle, ArrowRight, CheckCircle, Sparkles, MapPin, Building, GraduationCap, Briefcase, UserCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { t } from '../data/translations';
 
 interface DashboardViewProps {
   youthList: YouthProfile[];
@@ -26,14 +27,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateTab,
   onOpenProfile
 }) => {
+  const tr = t[lang];
+
   const statusCounts = {
-    'Работают по найму': youthList.filter(y => y.employment_status === 'занят').length,
-    'Свой бизнес / ИП': youthList.filter(y => y.employment_status === 'предприниматель').length,
-    'Учатся (ВУЗ / техникум)': youthList.filter(y => y.employment_status === 'обучается').length,
-    'Направлены на обучение': youthList.filter(y => y.employment_status === 'направлен на обучение').length,
-    'Ищут работу': youthList.filter(y => y.employment_status === 'безработный' && !y.is_neet).length,
-    'Требуют проверки (без работы/учёбы)': youthList.filter(y => y.is_neet).length,
-    'Не уточнено': youthList.filter(y => y.employment_status === 'не уточнено').length,
+    [tr.dashLegendEmployed]: youthList.filter(y => y.employment_status === 'занят').length,
+    [tr.dashLegendBusiness]: youthList.filter(y => y.employment_status === 'предприниматель').length,
+    [tr.dashLegendStudy]: youthList.filter(y => y.employment_status === 'обучается').length,
+    [tr.dashLegendCourses]: youthList.filter(y => y.employment_status === 'направлен на обучение').length,
+    [tr.dashLegendUnemployed]: youthList.filter(y => y.employment_status === 'безработный' && !y.is_neet).length,
+    [tr.dashLegendNeetPending]: youthList.filter(y => y.is_neet).length,
   };
 
   const donutData = Object.entries(statusCounts).map(([name, value]) => ({
@@ -46,9 +48,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     return {
       name: m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.'),
       fullName: m.name,
-      работают: listInM.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length,
-      учатся: listInM.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length,
-      на_проверке: listInM.filter(y => y.is_neet).length,
+      [tr.dashChartEmployed]: listInM.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length,
+      [tr.dashChartStudying]: listInM.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length,
+      [tr.dashChartNeet]: listInM.filter(y => y.is_neet).length,
       total: listInM.length
     };
   });
@@ -61,15 +63,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Main Visuals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* 1. Status Breakdown (Apple Clarity Donut) */}
+        {/* 1. Status Breakdown Donut */}
         <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
+                {tr.dashEmploymentStructure}
               </h3>
               <span className="text-xs text-cyan-300 font-semibold bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                {youthList.length} {lang === 'ru' ? 'чел. в реестре' : 'киши'}
+                {youthList.length} {tr.dashInRegistry}
               </span>
             </div>
 
@@ -107,12 +109,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {/* Center Label inside Donut */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-3xl font-black text-white">{youthList.length}</span>
-                <span className="text-xs text-slate-400">{lang === 'ru' ? 'человек' : 'киши'}</span>
+                <span className="text-xs text-slate-400">{tr.dashPersonShort}</span>
               </div>
             </div>
           </div>
 
-          {/* Clean Human Legend with Icons */}
+          {/* Clean Human Legend */}
           <div className="space-y-2 pt-4 border-t border-white/[0.06] text-xs">
             {donutData.map((entry, idx) => (
               <div key={entry.name} className="flex items-center justify-between text-slate-300">
@@ -120,7 +122,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: statusColors[idx % statusColors.length] }}></span>
                   <span className="truncate text-xs">{entry.name}</span>
                 </div>
-                <span className="font-bold text-white ml-2">{entry.value} чел.</span>
+                <span className="font-bold text-white ml-2">{entry.value} {tr.kpiPersons}</span>
               </div>
             ))}
           </div>
@@ -132,17 +134,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <h3 className="text-base font-bold text-white">
-                  {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
+                  {tr.dashMakhallaSituation}
                 </h3>
                 <span className="hidden sm:inline-block text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                  {lang === 'ru' ? 'Средняя занятость: 75%' : 'Ўртача бандлик: 75%'}
+                  {tr.dashAvgEmployment}
                 </span>
               </div>
               <button 
                 onClick={() => onNavigateTab('map')}
                 className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors shrink-0"
               >
-                <span>{lang === 'ru' ? 'Открыть карту' : 'Харитани очиш'}</span>
+                <span>{tr.dashOpenMap}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -159,43 +161,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     interval={0} 
                     angle={-25} 
                     textAnchor="end"
-                    dy={12} 
+                    tick={{ fill: '#cbd5e1' }}
                   />
                   <YAxis stroke="#94a3b8" fontSize={11} />
                   <RechartsTooltip 
+                    cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
                     itemStyle={{ color: '#ffffff', fontWeight: 600 }}
                     labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
                     contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: 'rgba(56, 189, 248, 0.4)', 
+                      backgroundColor: '#151922', 
+                      borderColor: 'rgba(255, 255, 255, 0.08)', 
                       borderRadius: '12px', 
                       color: '#ffffff', 
                       fontSize: '12px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
-                      padding: '8px 12px'
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)'
                     }}
                   />
-                  <Legend 
-                    verticalAlign="bottom"
-                    wrapperStyle={{ position: 'absolute', bottom: -25, width: '100%' }}
-                    content={(props) => {
-                      const { payload } = props;
-                      if (!payload) return null;
-                      return (
-                        <div className="flex justify-center gap-6 text-[11px] font-medium text-slate-300 w-full">
-                          {payload.map((entry, index) => (
-                            <div key={`item-${index}`} className="flex items-center gap-2">
-                              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: entry.color }}></div>
-                              <span>{entry.value}</span>
-                            </div>
-                          ))}
-                        </div>
-                      );
-                    }}
-                  />
-                  <Bar dataKey="работают" fill="#10B981" stackId="a" name={lang === 'ru' ? 'Работают' : 'Ишлайди'} />
-                  <Bar dataKey="учатся" fill="#06B6D4" stackId="a" name={lang === 'ru' ? 'Учатся' : 'Ўқийди'} />
-                  <Bar dataKey="на_проверке" fill="#F43F5E" stackId="a" radius={[4, 4, 0, 0]} name={lang === 'ru' ? 'Требуют проверки' : 'Текширувда'} />
+                  <Legend verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: '16px', fontSize: '11px' }} />
+                  <Bar dataKey={tr.dashChartEmployed} fill="#10B981" stackId="a" />
+                  <Bar dataKey={tr.dashChartStudying} fill="#06B6D4" stackId="a" />
+                  <Bar dataKey={tr.dashChartNeet} fill="#F43F5E" stackId="a" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -204,7 +189,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       </div>
 
-      {/* Action Row: Whom to visit & where to route */}
+      {/* Action Row: Priority visits & quick route */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* 1. Priority Visits */}
@@ -213,7 +198,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
               <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда кўриладиган ёшлар'}
+                {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда ўрганиладиган ёшлар'}
               </h3>
             </div>
             <button
@@ -250,7 +235,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <div className="flex items-center gap-2">
                   <span className="text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold whitespace-nowrap">
-                    {lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}
+                    {lang === 'ru' ? 'Требует визита' : 'Кўрик зарур'}
                   </span>
                   <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
@@ -275,11 +260,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-cyan-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Моноцентр «Ишга Мархамат»</div>
-                  <div className="text-xs text-slate-400 mt-0.5">24 рабочие специальности + стипендия</div>
+                  <div className="text-sm font-bold text-white">{lang === 'ru' ? 'Моноцентр «Ишга Мархамат»' : '«Ишга марҳамат» мономаркази'}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? '24 рабочие специальности + стипендия' : '24 та касб-ҳунар + стипендия'}</div>
                 </div>
                 <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                  Обучение
+                  {lang === 'ru' ? 'Обучение' : 'Таълим'}
                 </span>
               </div>
 
@@ -289,10 +274,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               >
                 <div>
                   <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Курсы веб-разработки + субсидия на ноутбук</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? 'Курсы веб-разработки + субсидия на ноутбук' : 'IT-курслар + ноутбук учун субсидия'}</div>
                 </div>
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                  IT-Ваучер
+                  {lang === 'ru' ? 'IT-Ваучер' : 'IT-Ваучер'}
                 </span>
               </div>
 
@@ -301,16 +286,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-purple-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Фонд «Ёшлар Дафтари»</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Гранты на оборудование для открытия своего дела</div>
+                  <div className="text-sm font-bold text-white">{lang === 'ru' ? 'Фонд «Ёшлар Дафтари»' : '«Ёшлар дафтари» жамғармаси'}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{lang === 'ru' ? 'Гранты на оборудование для открытия своего дела' : 'Тадбиркорлик ва ускуналар учун грантлар'}</div>
                 </div>
                 <span className="text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30">
-                  Субсидия
+                  {lang === 'ru' ? 'Субсидия' : 'Субсидия'}
                 </span>
               </div>
             </div>
           </div>
-
 
         </div>
 

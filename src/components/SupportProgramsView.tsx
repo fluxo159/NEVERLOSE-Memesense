@@ -4,6 +4,7 @@ import {
   ArrowRight, Search, Plus
 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
+import { t } from '../data/translations';
 
 interface SupportProgramsViewProps {
   youthList: YouthProfile[];
@@ -20,16 +21,17 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
   onNavigateRegistryWithFilter,
   onOpenNewProgram
 }) => {
+  const tr = t[lang];
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = [
-    { id: 'all', label: lang === 'ru' ? 'Все направления' : 'Барча йўналишлар', count: supportPrograms.length },
-    { id: 'обучение', label: lang === 'ru' ? 'Профобучение' : 'Касбга ўқитиш', count: supportPrograms.filter(p => p.category === 'обучение').length },
-    { id: 'it_стажировка', label: lang === 'ru' ? 'IT-Park' : 'IT-Park', count: supportPrograms.filter(p => p.category === 'it_стажировка').length },
-    { id: 'субсидия', label: lang === 'ru' ? 'Субсидии «Ёшлар дафтари»' : 'Субсидиялар', count: supportPrograms.filter(p => p.category === 'субсидия').length },
-    { id: 'предпринимательство', label: lang === 'ru' ? 'Микрокредиты' : 'Микрокредитлар', count: supportPrograms.filter(p => p.category === 'предпринимательство').length },
-    { id: 'трудоустройство', label: lang === 'ru' ? 'Ярмарки вакансий' : 'Бўш иш ўринлари', count: supportPrograms.filter(p => p.category === 'трудоустройство').length },
+    { id: 'all', label: tr.progCatAll, count: supportPrograms.length },
+    { id: 'обучение', label: tr.progCatTraining, count: supportPrograms.filter(p => p.category === 'обучение').length },
+    { id: 'it_стажировка', label: tr.progCatIt, count: supportPrograms.filter(p => p.category === 'it_стажировка').length },
+    { id: 'субсидия', label: tr.progCatSubsidy, count: supportPrograms.filter(p => p.category === 'субсидия').length },
+    { id: 'предпринимательство', label: tr.progCatCredit, count: supportPrograms.filter(p => p.category === 'предпринимательство').length },
+    { id: 'трудоустройство', label: tr.progCatJobs, count: supportPrograms.filter(p => p.category === 'трудоустройство').length },
   ];
 
   const filteredPrograms = useMemo(() => {
@@ -69,33 +71,29 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 <BookOpen className="w-5 h-5" />
               </div>
               <h2 className="text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' 
-                  ? 'Реестр государственных программ поддержки' 
-                  : 'Давлат дастурлари реестри'}
+                {tr.progHeaderTitle}
               </h2>
               <span className="text-xs text-slate-400 font-medium">
-                ({filteredPrograms.length} {lang === 'ru' ? 'программ' : 'дастур'})
+                ({filteredPrograms.length} {lang === 'ru' ? 'программ' : 'та дастур'})
               </span>
             </div>
             
             <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
-              {lang === 'ru'
-                ? 'Каталог действующих каналов содействия занятости: бесплатное обучение в Моноцентре, гранты на оборудование и льготные микрокредиты.'
-                : 'Бандликка кўмаклашиш давлат дастурлари каталоги: касбга бепул ўқитиш, грантлар ва микрокредитлар.'}
+              {tr.progHeaderSubtitle}
             </p>
           </div>
           
           <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end flex-wrap">
             <button
               onClick={onOpenNewProgram}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-glow-brand transition-all flex items-center gap-2"
+              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-glow-brand transition-all flex items-center gap-2 active:scale-[0.98]"
             >
               <Plus className="w-4 h-4" />
-              <span>{lang === 'ru' ? 'Добавить вакансию' : 'Вакансия қўшиш'}</span>
+              <span>{tr.progBtnAdd}</span>
             </button>
             <div className="bg-surface-2 px-4 py-2 rounded-xl border border-white/[0.08] text-right min-w-[120px]">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Уже направлено' : 'Йўналтирилган'}</span>
-              <div className="text-lg font-bold text-emerald-400">{totalSupported} чел.</div>
+              <span className="text-[10px] text-slate-400 font-semibold uppercase">{tr.progAlreadyRouted}</span>
+              <div className="text-lg font-bold text-emerald-400">{totalSupported} {tr.kpiPersons}</div>
             </div>
           </div>
         </div>
@@ -109,7 +107,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
           <input
             type="text"
             className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
-            placeholder={lang === 'ru' ? 'Поиск по названию, провайдеру...' : 'Номи, провайдер бўйича қидириш...'}
+            placeholder={tr.progSearchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -158,7 +156,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                       {prog.title}
                     </h3>
                     <div className="text-[11px] text-slate-400">
-                      Провайдер: <span className="text-slate-200 font-medium">{prog.provider}</span>
+                      {tr.progProvider} <span className="text-slate-200 font-medium">{prog.provider}</span>
                     </div>
                   </div>
                 </div>
@@ -171,11 +169,11 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 {/* Duration & Stipend Stats */}
                 <div className="grid grid-cols-2 gap-3 text-xs py-2.5 px-3 bg-surface-2/40 rounded-xl border border-white/[0.06]">
                   <div>
-                    <span className="text-slate-500 text-[11px] block">Длительность:</span>
+                    <span className="text-slate-500 text-[11px] block">{tr.progDuration}</span>
                     <strong className="text-white text-xs mt-0.5 block">{prog.duration}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-[11px] block">Стипендия / Грант:</span>
+                    <span className="text-slate-500 text-[11px] block">{tr.progStipend}</span>
                     <strong className="text-emerald-400 text-xs mt-0.5 block">{prog.stipend}</strong>
                   </div>
                 </div>
@@ -184,14 +182,14 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               {/* Card Footer */}
               <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
                 <div className="text-[11px] text-slate-400">
-                  Рекомендовано: <strong className="text-indigo-400">{countRecommended}</strong> • Направлено: <strong className="text-emerald-400">{countAssigned}</strong>
+                  {tr.progRecommended} <strong className="text-indigo-400">{countRecommended}</strong> • {tr.progRouted} <strong className="text-emerald-400">{countAssigned}</strong>
                 </div>
 
                 <button
                   onClick={() => onNavigateRegistryWithFilter('neet_pending')}
                   className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white rounded-lg text-xs font-semibold border border-white/[0.08] transition-all flex items-center gap-1.5"
                 >
-                  <span>Кандидаты</span>
+                  <span>{tr.progBtnCandidates}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                 </button>
               </div>

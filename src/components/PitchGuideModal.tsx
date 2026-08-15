@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  Sparkles, ShieldCheck, Target, CheckCircle2, ArrowRight, Award, 
-  Layers, Map, Users, AlertTriangle, ArrowLeft, Play, Zap, Cpu
+  Sparkles, Target, CheckCircle2, ArrowRight, Award, 
+  AlertTriangle, ArrowLeft, Play, Zap, Cpu
 } from 'lucide-react';
 
 interface PitchGuideModalProps {
@@ -17,7 +17,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  const slides = [
+  const slidesRu = [
     {
       title: "Питч для Жюри: Хакатон NEXUS30 (GovTech Кейс A)",
       subtitle: "«Система мониторинга занятости и маршрутизации молодёжи»",
@@ -188,9 +188,188 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
     }
   ];
 
+  const slidesUz = [
+    {
+      title: "Ҳайъат аъзолари учун Питч: NEXUS30 Хакатони (GovTech)",
+      subtitle: "«Ёшлар бандлиги мониторинги ва йўналтириш тизими»",
+      badge: "3 дақиқалик ҳимоя сценарийси",
+      content: (
+        <div className="space-y-4 text-xs text-slate-300">
+          <div className="p-3.5 bg-gov-950/60 rounded-2xl border border-cyan-500/30">
+            <h4 className="font-bold text-cyan-300 text-sm mb-1">🎯 Ҳайъат учун асосий ғоя:</h4>
+            <p className="leading-relaxed">
+              Биз шунчаки статистика дашбордини эмас, балки туман ҳокимлиги ва маҳалла етакчилари учун <strong>тўлиқ бошқарув тизимини</strong> яратдик. Тизим <em>яширин ишсизликни аниқлашдан</em> бошлаб <em>Мономарказлар орқали кафолатли банд қилишгача</em> бўлган жараённи қамраб олади.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+              <div className="text-emerald-400 font-bold text-xs flex items-center gap-1">
+                <Target className="w-3.5 h-3.5" /> 30% Муаммога мослик
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                18–30 ёш ягона базаси, маҳалла ва АБМ маълумотлари тарқоқлигини бартараф этиш.
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+              <div className="text-cyan-400 font-bold text-xs flex items-center gap-1">
+                <Zap className="w-3.5 h-3.5" /> 30% Жорий этиш имконияти
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                Soliq.uz, Mehnat.uz ва «Ишга марҳамат» мономарказлари билан интеграцияга тайёр.
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+              <div className="text-purple-400 font-bold text-xs flex items-center gap-1">
+                <Award className="w-3.5 h-3.5" /> 25% Прототип сифати
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                100% ишлайдиган интерактивлик, таймлайн, карточкалар, филтрлар ва экспорт.
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+              <div className="text-yellow-400 font-bold text-xs flex items-center gap-1">
+                <Cpu className="w-3.5 h-3.5" /> 15% Инновация
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                ГИС-харита + Human-in-the-Loop тамойилидаги NEET триажи.
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "1-Қадам: «Бош саҳифа / Таҳлил» бўлими",
+      subtitle: "Аниқ ва тушунарли умумий мониторинг",
+      badge: "Демо 1-қадам",
+      content: (
+        <div className="space-y-3 text-xs text-slate-300">
+          <p>
+            <strong>Ҳайъатга нима дейилади:</strong> «Бош саҳифада раҳбарият ортиқча маълумотларсиз энг муҳим кўрсаткичларни кўради: жами ёшлар сони, бандлар, ўқиётганлар ва эътибор талаб қиладиган тоифа. Барчаси маҳаллалар кесимида тақсимланган».
+          </p>
+          <p>
+            «Асосий устунлик — <strong>динамик «Бугунги асосий вазифа» карточкаси</strong>. Агар етакчига текшириш вазифаси бўлса, у қизил рангда ёнади. Текширувлар якунлангач (Zero Inbox), у тинчлантирувчи яшил муваффақият карточкасига айланади. Бу давлат ходими стрессини камайтирадиган ажойиб UX-ечим!»
+          </p>
+          
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            <div className="p-2.5 bg-rose-950/40 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5"/> Муаммога урғу</div>
+              Қизил карточка: "24 нафар текширувда" — ҳаракатга чақирув.
+            </div>
+            <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5"/> Рағбат (Zero Inbox)</div>
+              Яшил карточка: "Аъло натижа! Вазифалар йўқ" — меҳнат самараси.
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              onRunDemoStep(1);
+              onClose();
+            }}
+            className="w-full py-2.5 mt-2 bg-gradient-to-r from-gov-600 to-cyan-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+          >
+            <Play className="w-4 h-4" />
+            <span>Ҳайъатга Таҳлил саҳифасини кўрсатиш</span>
+          </button>
+        </div>
+      )
+    },
+    {
+      title: "2-Қадам: Human-in-the-Loop NEET Триажи",
+      subtitle: "Яширин ишсизликни хатоларсиз аниқлаш",
+      badge: "Демо 2-қадам (Муҳим)",
+      content: (
+        <div className="space-y-3 text-xs text-slate-300">
+          <p>
+            <strong>Ҳайъатга нима дейилади:</strong> «Тизим солиқ тўлови бўлмаган ёшларни автоматик равишда NEET номзоди деб белгилайди. Аммо GovTech талабига биноан тизим <em>автоматик қарор чиқармайди</em> — ҳолат маҳалла етакчисининг хонадонбай суҳбатидан сўнг тасдиқланади».
+          </p>
+          <div className="p-3 bg-rose-950/40 rounded-xl border border-rose-500/40 text-[11px] space-y-1 text-rose-200">
+            <div className="text-rose-300 font-bold">✓ ТЗ 3-талаби ва чекловларига жавоб беради:</div>
+            <div>«NEET» мақоми — бу кўрик учун тавсия, верификация 1 босишда амалга оширилади.</div>
+          </div>
+          <button
+            onClick={() => {
+              onRunDemoStep(2);
+              onClose();
+            }}
+            className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+          >
+            <Play className="w-4 h-4" />
+            <span>NEET Триаж саҳифасига ўтиш</span>
+          </button>
+        </div>
+      )
+    },
+    {
+      title: "3-Қадам: Йўналтириш ва Ҳолатлар тарихи",
+      subtitle: "Ишсизликдан чиқаришнинг индивидуал траекторияси",
+      badge: "Демо 3-қадам",
+      content: (
+        <div className="space-y-3 text-xs text-slate-300">
+          <p>
+            <strong>Ҳайъатга нима дейилади:</strong> «Ҳар бир ишсиз учун тавсия модули давлат кўмак чораларини танлаб беради: «Ишга марҳамат» мономаркази, IT-Park, «Ёшлар дафтари» субсидиялари. Дастур бириктирилганда профилда тўлиқ ўзгаришлар тарихи сақланади».
+          </p>
+          <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-500/40 text-[11px] space-y-1 text-emerald-200">
+            <div className="text-emerald-300 font-bold">✓ ТЗ 4 ва 5-талабларини ёпади:</div>
+            <div>Ақлли тавсиялар модули + ҳолатлар ҳаётий цикли хронологияси.</div>
+          </div>
+          <button
+            onClick={() => {
+              onRunDemoStep(3);
+              onClose();
+            }}
+            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+          >
+            <Play className="w-4 h-4" />
+            <span>Ёшлар рўйхати ва Карточкани очиш</span>
+          </button>
+        </div>
+      )
+    },
+    {
+      title: "4-Қадам: Туман бандлик ГИС-харитаси",
+      subtitle: "Шахсий маълумотларни ошкор қилмаган ҳолда ҳудудий визуаллаштириш",
+      badge: "Демо 4-қадам (Бонус)",
+      content: (
+        <div className="space-y-3 text-xs text-slate-300">
+          <p>
+            <strong>Ҳайъатга нима дейилади:</strong> «Бонус модули: Мирзо Улуғбек тумани маҳаллаларининг интерактив харитаси. Ранглар NEET зичлиги юқори бўлган маҳаллаларни (масалан, Олий Ҳиммат) кўрсатиб, туман ресурсларини тўғри йўналтириш имконини беради».
+          </p>
+          <div className="p-3 bg-cyan-950/40 rounded-xl border border-cyan-500/40 text-[11px] space-y-1 text-cyan-200">
+            <div className="text-cyan-300 font-bold">✓ ТЗ 6-бонус талабини бажаради:</div>
+            <div>Бандлик ҳолатининг агрегацияланган фазовий визуаллашуви.</div>
+          </div>
+          <button
+            onClick={() => {
+              onRunDemoStep(4);
+              onClose();
+            }}
+            className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+          >
+            <Play className="w-4 h-4" />
+            <span>Интерактив Харитани очиш</span>
+          </button>
+        </div>
+      )
+    }
+  ];
+
+  const slides = lang === 'ru' ? slidesRu : slidesUz;
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="glass-panel w-full max-w-2xl rounded-3xl border border-cyan-500/30 bg-slate-900 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="glass-panel w-full max-w-2xl rounded-3xl border border-cyan-500/30 bg-slate-900 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200 cursor-default"
+      >
         
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -225,7 +404,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
             className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 flex items-center gap-1"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Назад</span>
+            <span>{lang === 'ru' ? 'Назад' : 'Орқага'}</span>
           </button>
 
           {/* Dots */}
@@ -246,7 +425,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
             onClick={() => setCurrentSlide(prev => prev + 1)}
             className="px-3.5 py-1.5 rounded-xl bg-cyan-600 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500 font-semibold flex items-center gap-1 shadow"
           >
-            <span>Вперёд</span>
+            <span>{lang === 'ru' ? 'Вперёд' : 'Олдинга'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
