@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { 
   X, MapPin, Phone, GraduationCap, Calendar, 
   Sparkles, CheckCircle2, History, ArrowRight, ShieldCheck, 
-  Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
+  Printer, Wrench, Code, Gift, TrendingUp, Briefcase, User, AlertCircle
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
+import { CustomSelect } from './ui/CustomSelect';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
@@ -38,14 +39,23 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
     }
   };
 
+  const statusOptions = [
+    { value: 'безработный', label: lang === 'ru' ? 'Безработный (NEET)' : 'Ишсиз (NEET)' },
+    { value: 'занят', label: lang === 'ru' ? 'Занят (найм)' : 'Ишлайди (расмий)' },
+    { value: 'предприниматель', label: lang === 'ru' ? 'Бизнес / ИП' : 'Тадбиркор / ЯТТ' },
+    { value: 'обучается', label: lang === 'ru' ? 'Обучается (ВУЗ)' : 'Ўқимоқда (ОТМ)' },
+    { value: 'направлен на обучение', label: lang === 'ru' ? 'Направлен на обучение' : 'Ўқишга юборилган' },
+    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган' }
+  ];
+
   const getProgramIcon = (name: string) => {
     switch (name) {
-      case 'Wrench': return <Wrench className="w-4 h-4 text-slate-400" />;
-      case 'Code': return <Code className="w-4 h-4 text-slate-400" />;
-      case 'Gift': return <Gift className="w-4 h-4 text-slate-400" />;
-      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-slate-400" />;
-      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-slate-400" />;
-      default: return <Briefcase className="w-4 h-4 text-slate-400" />;
+      case 'Wrench': return <Wrench className="w-4 h-4 text-amber-400" />;
+      case 'Code': return <Code className="w-4 h-4 text-cyan-400" />;
+      case 'Gift': return <Gift className="w-4 h-4 text-purple-400" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-emerald-400" />;
+      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-indigo-400" />;
+      default: return <Briefcase className="w-4 h-4 text-indigo-400" />;
     }
   };
 
@@ -56,14 +66,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.14] shadow-surface-modal overflow-hidden my-auto max-h-[92vh] flex flex-col cursor-default"
+        className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.12] shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col cursor-default"
       >
         
         {/* Modal Header */}
         <div className="p-5 border-b border-white/[0.08] bg-surface-2/80 flex items-start justify-between">
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-brand-linear p-0.5 shadow-glow-brand flex-shrink-0">
-              <div className="w-full h-full bg-surface-1 rounded-[10px] flex items-center justify-center text-lg font-bold text-white">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 p-0.5 shadow-sm shadow-indigo-500/20 flex-shrink-0">
+              <div className="w-full h-full bg-surface-1 rounded-[10px] flex items-center justify-center text-base font-bold text-white">
                 {youth.full_name_demo.split(' ')[0][0]}{youth.full_name_demo.split(' ')[1] ? youth.full_name_demo.split(' ')[1][0] : ''}
               </div>
             </div>
@@ -76,14 +86,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               </div>
               <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
                 <span className="flex items-center gap-1 text-slate-300 font-medium">
-                  <MapPin className="w-3 h-3 text-slate-400" />
+                  <MapPin className="w-3.5 h-3.5 text-indigo-400" />
                   {youth.makhalla}
                 </span>
                 <span>•</span>
-                <span className="text-slate-400">{youth.age} лет ({youth.gender})</span>
+                <span className="text-slate-400">{youth.age} {lang === 'ru' ? 'лет' : 'ёш'} ({youth.gender})</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-400 font-mono">
-                  <Phone className="w-3 h-3 text-slate-400" />
+                  <Phone className="w-3.5 h-3.5 text-emerald-400" />
                   {youth.phone_demo}
                 </span>
               </div>
@@ -93,14 +103,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => window.print()}
-              className="p-2 rounded-lg bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
+              className="p-2 rounded-xl bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
               title="Печать"
             >
               <Printer className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
+              className="p-2 rounded-xl bg-surface-2 text-slate-400 hover:text-white border border-white/[0.08] hover:bg-surface-3 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -115,8 +125,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               activeTab === 'overview' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Общие сведения</span>
+            <User className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{lang === 'ru' ? 'Общие сведения' : 'Умумий маълумотлар'}</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -124,8 +134,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               activeTab === 'history' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <History className="w-3.5 h-3.5" />
-            <span>История ({youth.status_history.length})</span>
+            <History className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{lang === 'ru' ? `История (${youth.status_history.length})` : `Тарих (${youth.status_history.length})`}</span>
           </button>
           <button
             onClick={() => setActiveTab('recommendations')}
@@ -133,13 +143,13 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               activeTab === 'recommendations' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Маршрутизация & Программы</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>{lang === 'ru' ? 'Маршрутизация & Программы' : 'Йўналтириш ва дастурлар'}</span>
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 overflow-y-auto space-y-4 flex-1">
+        <div className="p-5 overflow-y-auto space-y-4 flex-1 no-scrollbar">
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
@@ -148,21 +158,20 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {/* Status Box */}
               <div className="p-4 rounded-xl bg-surface-2 border border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Текущий статус занятости:</div>
+                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                    {lang === 'ru' ? 'Текущий статус занятости:' : 'Жорий бандлик ҳолати:'}
+                  </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="text-base font-bold text-white capitalize">{youth.employment_status}</span>
+                    <span className="text-sm font-bold text-white capitalize">{youth.employment_status}</span>
                     {youth.is_neet && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold whitespace-nowrap ${
-                        youth.neet_verification === 'verified'
-                          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
-                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                      }`}>
-                        ⚠️ NEET ({youth.neet_verification === 'verified' ? 'Подтверждён' : 'На проверке'})
+                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold whitespace-nowrap flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 text-rose-400" />
+                        <span>NEET ({youth.neet_verification === 'verified' ? 'Подтверждён' : 'На проверке'})</span>
                       </span>
                     )}
                   </div>
                   <div className="text-xs text-slate-400 mt-0.5">
-                    Сфера: <strong className="text-slate-200">{youth.activity_type}</strong>
+                    {lang === 'ru' ? 'Сфера:' : 'Соҳа:'} <strong className="text-slate-200">{youth.activity_type}</strong>
                   </div>
                 </div>
 
@@ -170,37 +179,29 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   {!isUpdatingStatus ? (
                     <button
                       onClick={() => setIsUpdatingStatus(true)}
-                      className="px-3 py-1.5 bg-surface-3 hover:bg-surface-card border border-white/[0.12] text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-all"
+                      className="px-3 py-1.5 bg-surface-3 hover:bg-surface-2 border border-white/[0.12] text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-all"
                     >
-                      ✏️ Изменить статус
+                      {lang === 'ru' ? 'Изменить статус' : 'Ҳолатни ўзгартириш'}
                     </button>
                   ) : (
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <div className="bg-surface-1 border border-indigo-500/50 rounded-lg pr-2">
-                        <select
-                          value={newStatus}
-                          onChange={(e) => setNewStatus(e.target.value as EmploymentStatus)}
-                          className="bg-transparent text-xs text-white px-2.5 py-1 focus:outline-none cursor-pointer"
-                        >
-                          <option value="занят" className="bg-surface-1">Работают (найм)</option>
-                          <option value="предприниматель" className="bg-surface-1">Свой бизнес / ИП</option>
-                          <option value="обучается" className="bg-surface-1">Учатся (ВУЗ)</option>
-                          <option value="направлен на обучение" className="bg-surface-1">На курсах Моноцентра</option>
-                          <option value="безработный" className="bg-surface-1">Ищут работу</option>
-                          <option value="не уточнено" className="bg-surface-1">Не уточнено</option>
-                        </select>
-                      </div>
+                      <CustomSelect
+                        value={newStatus}
+                        onChange={(val) => setNewStatus(val as EmploymentStatus)}
+                        options={statusOptions}
+                        className="min-w-[170px]"
+                      />
                       <button
                         onClick={handleSaveStatus}
-                        className="px-3 py-1 bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 border border-emerald-500/40 rounded-lg text-xs font-bold"
+                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-all shadow-sm shadow-indigo-500/25"
                       >
-                        Сохранить
+                        {lang === 'ru' ? 'Сохранить' : 'Сақлаш'}
                       </button>
                       <button
                         onClick={() => setIsUpdatingStatus(false)}
-                        className="px-2 py-1 bg-surface-3 text-slate-400 hover:text-white rounded-lg text-xs"
+                        className="px-2.5 py-1.5 bg-surface-3 text-slate-400 hover:text-white rounded-lg text-xs transition-colors"
                       >
-                        Отмена
+                        {lang === 'ru' ? 'Отмена' : 'Бекор'}
                       </button>
                     </div>
                   )}
@@ -211,19 +212,19 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Образование & Специальность</span>
+                    <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>{lang === 'ru' ? 'Образование & Специальность' : 'Маълумот ва мутахассислик'}</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
-                    <div>Уровень: <strong className="text-white">{youth.education}</strong></div>
-                    {youth.specialty && <div>Специальность: <strong className="text-slate-300">{youth.specialty}</strong></div>}
+                    <div>{lang === 'ru' ? 'Уровень:' : 'Даражаси:'} <strong className="text-white">{youth.education}</strong></div>
+                    {youth.specialty && <div>{lang === 'ru' ? 'Специальность:' : 'Мутахассислиги:'} <strong className="text-slate-300">{youth.specialty}</strong></div>}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <Wrench className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Навыки и компетенции</span>
+                    <Wrench className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{lang === 'ru' ? 'Навыки и компетенции' : 'Кўникмалар'}</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {youth.skills.map((skill, idx) => (
@@ -238,11 +239,11 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {/* Leader Notes */}
               <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Заметки выездного опроса («Ёшлар етакчиси»)</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>{lang === 'ru' ? 'Заметки выездного опроса («Ёшлар етакчиси»)' : '«Ёшлар етакчиси» изоҳлари'}</span>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-1/80 p-2.5 rounded-lg border border-white/[0.04]">
-                  {youth.notes || 'Записи по выездным опросам отсутствуют.'}
+                  {youth.notes || (lang === 'ru' ? 'Записи по выездным опросам отсутствуют.' : 'Изоҳлар мавжуд эмас.')}
                 </p>
               </div>
 
@@ -253,21 +254,21 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           {activeTab === 'history' && (
             <div className="space-y-3">
               <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">
-                Хронологический трекер жизненного цикла:
+                {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Ҳаётий цикл хронологияси:'}
               </div>
 
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
                 {youth.status_history.map((hist, idx) => (
                   <div key={idx} className="relative">
-                    <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-slate-500 flex items-center justify-center">
-                      <div className="w-1 h-1 rounded-full bg-slate-400"></div>
+                    <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-indigo-400 flex items-center justify-center">
+                      <div className="w-1 h-1 rounded-full bg-indigo-400"></div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.06] space-y-0.5">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-white capitalize">{hist.status}</span>
                         <span className="text-slate-500 font-mono text-[11px] flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-slate-400" />
+                          <Calendar className="w-3 h-3 text-indigo-400" />
                           {hist.date}
                         </span>
                       </div>
@@ -331,7 +332,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                         ) : (
                           <button
                             onClick={() => onAssignProgram(youth.id, prog)}
-                            className="px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition-all whitespace-nowrap"
+                            className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm shadow-indigo-500/25 text-xs font-semibold transition-all whitespace-nowrap"
                           >
                             Направить
                           </button>
@@ -345,6 +346,18 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           )}
 
         </div>
+
+        {/* Modal Footer */}
+        <div className="p-3.5 border-t border-white/[0.08] bg-surface-2 flex items-center justify-between text-[11px] text-slate-500">
+          <span>Синтетический демо-профиль NEXUS30 | Персональные данные защищены</span>
+          <button
+            onClick={onClose}
+            className="px-3.5 py-1.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-lg font-semibold transition-colors"
+          >
+            Закрыть
+          </button>
+        </div>
+
       </div>
     </div>
   );
