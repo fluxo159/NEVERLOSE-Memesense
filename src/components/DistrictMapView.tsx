@@ -78,6 +78,17 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     ? Math.round(((employedInCurrent + studyingInCurrent) / totalInCurrent) * 100) 
     : 0;
 
+  // District-wide aggregate statistics
+  const totalDistrict = youthList.length;
+  const employedDistrict = youthList.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length;
+  const studyingDistrict = youthList.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length;
+  const neetPendingDistrict = youthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const supportedDistrict = youthList.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
+
+  const districtEmploymentRate = totalDistrict > 0 
+    ? Math.round(((employedDistrict + studyingDistrict) / totalDistrict) * 100) 
+    : 0;
+
   // Initialize and manage Leaflet map
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -485,6 +496,110 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 <div className="text-xl font-bold text-white font-mono">{selectedPoi.servicesCount}</div>
               </div>
             </div>
+          ) : selectedMakhalla === 'all' ? (
+            /* DISTRICT-WIDE SUMMARY PASSPORT (8 MAKHALLAS) */
+            <div className="space-y-4">
+              <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    {lang === 'ru' ? 'Сводный паспорт территории:' : 'Hudud umumiy pasporti:'}
+                  </span>
+                  <h3 className="text-lg font-bold text-white tracking-tight mt-0.5">
+                    {lang === 'ru' ? 'Мирзо-Улугбекский район' : 'Mirzo Ulug‘bek tumani'}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 text-slate-300 border border-white/[0.08] text-xs font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                      <span>{lang === 'ru' ? '8 махаллей на контроле' : '8 ta mahalla nazoratda'}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{lang === 'ru' ? 'Весь район' : 'Butun tuman'}</span>
+                </span>
+              </div>
+
+              {/* Dynamic District Metrics Grid */}
+              <div className="grid grid-cols-2 gap-2.5">
+                {/* 1. Молодёжь в базе */}
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Всего в реестре' : 'Jami reyestrda'}</div>
+                  <div className="text-xl font-bold text-white mt-0.5">
+                    {totalDistrict} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                  </div>
+                </div>
+
+                {/* 2. Занятость */}
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Средняя занятость' : 'O‘rtacha bandlik'}</div>
+                  <div className="text-xl font-bold text-emerald-400 mt-0.5">
+                    {districtEmploymentRate}%
+                  </div>
+                </div>
+
+                {/* 3. Кандидаты NEET */}
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Кандидаты NEET (район)' : 'NEET nomzodlari (tuman)'}</div>
+                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                    {neetPendingDistrict} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                  </div>
+                </div>
+
+                {/* 4. Господдержка */}
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Охвачено программами' : 'Dasturlarga qamrab olingan'}</div>
+                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                    {supportedDistrict} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Responsible District Coordinator */}
+              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-1">
+                <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{lang === 'ru' ? 'Координатор молодёжной политики района:' : 'Tuman yoshlar siyosati koordinatori:'}</span>
+                </div>
+                <div className="text-xs text-white font-bold">Алимов Дониёр Бахтиёрович (Хокимият)</div>
+                <a 
+                  href="tel:+998712680010"
+                  className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
+                >
+                  <Phone className="w-3 h-3 text-slate-400" />
+                  <span>+998 (71) 268-00-10</span>
+                </a>
+              </div>
+
+              {/* 8 Makhallas breakdown */}
+              <div>
+                <div className="text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>{lang === 'ru' ? 'Махалли района (выберите для зума):' : 'Tuman mahallalari (kattalashtirish):'}</span>
+                  <span className="text-[10px] text-slate-500 font-mono">8 / 8</span>
+                </div>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                  {MAKHALLAS_LIST.map(m => {
+                    const mCount = youthList.filter(y => y.makhalla === m.name).length;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => onSelectMakhalla(m.name)}
+                        className="w-full p-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-white/[0.06] hover:border-white/[0.14] flex items-center justify-between text-xs transition-all text-left group"
+                      >
+                        <span className="text-white font-medium truncate max-w-[160px] text-xs group-hover:text-indigo-300">
+                          {lang === 'ru' ? m.name : m.nameUz}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
+                          <span className={`w-1.5 h-1.5 rounded-full ${m.riskLevel === 'high' ? 'bg-rose-400' : m.riskLevel === 'medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
+                          <span>{mCount} {lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           ) : (
             /* Selected Makhalla Passport */
             <div className="space-y-4">
@@ -608,13 +723,19 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           {/* Direct CTA button to filter registry */}
           <button
             onClick={() => {
-              onSelectMakhalla(currentMahalla.name);
+              if (selectedMakhalla !== 'all') {
+                onSelectMakhalla(currentMahalla.name);
+              }
               onNavigateRegistry();
             }}
             className="w-full py-2.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm flex items-center justify-center gap-2 transition-all group"
           >
             <Eye className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300" />
-            <span>{lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi yoshlar ro‘yxatini ochish`}</span>
+            <span>
+              {selectedMakhalla === 'all'
+                ? (lang === 'ru' ? 'Открыть реестр молодёжи района (100 чел.)' : 'Butun tuman yoshlar ro‘yxatini ochish (100 nafar)')
+                : (lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi yoshlar ro‘yxatini ochish`)}
+            </span>
           </button>
 
         </div>
