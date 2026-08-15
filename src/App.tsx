@@ -195,7 +195,7 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-canvas text-slate-100 flex flex-col font-sans selection:bg-brand selection:text-white">
       
       {/* Sticky Header & Navigation Container */}
-      <div className="sticky top-0 z-40 shadow-2xl backdrop-blur-xl border-b border-white/[0.08]">
+      <div className="sticky top-0 z-50 shadow-2xl backdrop-blur-xl border-b border-white/[0.08]">
         <Header
           selectedRole={selectedRole}
           onSelectRole={setSelectedRole}
@@ -217,7 +217,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="relative z-0 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
         {/* KPI Stats Strip */}
         <StatsOverview

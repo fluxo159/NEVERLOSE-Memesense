@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Shield, UserCheck, Sparkles, MapPin, Globe, ChevronDown, Check } from 'lucide-react';
+import React from 'react';
+import { Shield, MapPin, Globe, Building, User, Briefcase, Sparkles } from 'lucide-react';
 import { UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
+import { CustomSelect } from './ui/CustomSelect';
 
 interface HeaderProps {
   selectedRole: UserRole;
@@ -22,19 +23,6 @@ export const Header: React.FC<HeaderProps> = ({
   lang,
   onToggleLang
 }) => {
-  const [isMakhallaOpen, setIsMakhallaOpen] = useState(false);
-  const makhallaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (makhallaRef.current && !makhallaRef.current.contains(event.target as Node)) {
-        setIsMakhallaOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   return (
     <header className="bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl relative z-50">
       {/* Main Header */}
@@ -66,79 +54,28 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Selectors & Actions */}
           <div className="flex items-center gap-2 flex-wrap">
             
-            {/* Custom Makhalla Dropdown */}
-            <div className="relative" ref={makhallaRef}>
-              <button
-                onClick={() => setIsMakhallaOpen(!isMakhallaOpen)}
-                className="flex items-center justify-between w-[200px] bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 transition-colors focus:outline-none"
-              >
-                <div className="flex items-center gap-1.5 truncate">
-                  <MapPin className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-                  <span className="font-medium truncate text-slate-100">
-                    {selectedMakhalla === 'all' 
-                      ? (lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар') 
-                      : selectedMakhalla}
-                  </span>
-                </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 flex-shrink-0 ml-1 transition-transform ${isMakhallaOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isMakhallaOpen && (
-                <div className="absolute z-50 w-full min-w-[220px] mt-1.5 bg-[#151922] border border-white/[0.14] rounded-xl shadow-2xl shadow-black/80 overflow-hidden py-1.5 right-0">
-                  <button
-                    onClick={() => { onSelectMakhalla('all'); setIsMakhallaOpen(false); }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/[0.08] transition-colors ${
-                      selectedMakhalla === 'all' 
-                        ? 'text-indigo-300 bg-indigo-500/20 font-semibold' 
-                        : 'text-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <span className="truncate">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</span>
-                    </div>
-                    {selectedMakhalla === 'all' && <Check className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 ml-2" />}
-                  </button>
-                  
-                  {MAKHALLAS_LIST.map((m) => (
-                    <button
-                      key={m.id}
-                      onClick={() => { onSelectMakhalla(m.name); setIsMakhallaOpen(false); }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/[0.08] transition-colors ${
-                        selectedMakhalla === m.name 
-                          ? 'text-indigo-300 bg-indigo-500/20 font-semibold' 
-                          : 'text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <span className="truncate">{m.name}</span>
-                      </div>
-                      {selectedMakhalla === m.name && <Check className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 ml-2" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Makhalla Selector */}
+            <CustomSelect
+              value={selectedMakhalla}
+              onChange={onSelectMakhalla}
+              options={[
+                { value: 'all', label: lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар', icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
+                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+              ]}
+              className="min-w-[170px]"
+            />
 
             {/* Role Switcher */}
-            <div className="flex items-center bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2 py-1 text-xs transition-colors">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400 mx-1 flex-shrink-0" />
-              <select
-                aria-label="Выбор роли пользователя"
-                value={selectedRole}
-                onChange={(e) => onSelectRole(e.target.value as UserRole)}
-                className="bg-transparent text-slate-200 font-medium px-1 focus:outline-none cursor-pointer text-xs"
-              >
-                <option value="district_officer" className="bg-surface-2 text-white">
-                  🏛️ {lang === 'ru' ? 'Хокимият' : 'Ҳокимлик'}
-                </option>
-                <option value="mahalla_leader" className="bg-surface-2 text-white">
-                  👤 {lang === 'ru' ? 'Лидер Махалли' : 'Маҳалла етакчиси'}
-                </option>
-                <option value="employment_center" className="bg-surface-2 text-white">
-                  💼 {lang === 'ru' ? 'Центр занятости' : 'Бандлик маркази'}
-                </option>
-              </select>
-            </div>
+            <CustomSelect
+              value={selectedRole}
+              onChange={(val) => onSelectRole(val as UserRole)}
+              options={[
+                { value: 'district_officer', label: lang === 'ru' ? 'Хокимият' : 'Ҳокимлик', icon: <Building className="w-3.5 h-3.5 text-indigo-400" /> },
+                { value: 'mahalla_leader', label: lang === 'ru' ? 'Лидер Махалли' : 'Маҳалла етакчиси', icon: <User className="w-3.5 h-3.5 text-emerald-400" /> },
+                { value: 'employment_center', label: lang === 'ru' ? 'Центр занятости' : 'Бандлик маркази', icon: <Briefcase className="w-3.5 h-3.5 text-purple-400" /> }
+              ]}
+              className="min-w-[150px]"
+            />
 
             {/* Language Switch */}
             <button

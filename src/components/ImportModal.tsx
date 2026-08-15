@@ -38,7 +38,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           setPreviewCount(0);
         }
       } catch (err) {
-        setError('Ошибка при чтении файла');
+        setError(lang === 'ru' ? 'Ошибка при чтении файла' : 'Файлни ўқишда хатолик');
       }
     };
     reader.readAsText(file);
@@ -50,47 +50,50 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     try {
       const lines = fileContent.split(/\r?\n/).filter(l => l.trim() !== '');
       if (lines.length < 2) {
-        setError('Файл пуст или содержит только заголовки');
+        setError(lang === 'ru' ? 'Файл пуст или содержит только заголовки' : 'Файл бўш ёки фақат сарлавҳалардан иборат');
         return;
       }
 
       const separator = lines[0].includes(';') ? ';' : ',';
       const parsedProfiles: YouthProfile[] = [];
+      const today = new Date().toISOString().split('T')[0];
 
       for (let i = 1; i < lines.length; i++) {
         const cols = lines[i].split(separator).map(c => c.replace(/^"|"$/g, '').trim());
-        if (cols.length >= 4) {
-          const id = `y_imp_${Date.now().toString().slice(-4)}_${i}`;
-          const fullName = cols[1] || cols[0] || `Импортированный Профиль ${i}`;
+        if (cols.length >= 3) {
+          const rawName = cols[1] || cols[0] || `Импортированный Профиль ${i}`;
+          const cleanName = rawName.replace(/\s*\(Демо\)$/i, '');
           const makhalla = cols[2] || 'Олий Ҳиммат';
           const age = parseInt(cols[3], 10) || 22;
           const gender: Gender = (cols[4] && cols[4].includes('Жен')) ? 'Женский' : 'Мужской';
           const status: EmploymentStatus = (cols[5] as EmploymentStatus) || 'безработный';
           const activity = cols[6] || 'нет деятельности';
           const education: EducationLevel = (cols[7] as EducationLevel) || 'Средне-специальное';
-          const isNeet = status === 'безработный' || status === 'не уточнено';
+          const specialty = cols[8] || '—';
+          const isNeet = Boolean(status === 'безработный' || status === 'не уточнено' || (cols[9] && cols[9].toUpperCase() === 'ДА'));
+          const neetVerification = cols[10] === 'verified' ? 'verified' : cols[10] === 'rejected' ? 'rejected' : 'pending_verification';
 
           parsedProfiles.push({
-            id,
-            full_name_demo: `${fullName}`,
+            id: `y_imp_${Date.now().toString().slice(-4)}_${i}`,
+            full_name_demo: `${cleanName}`,
             makhalla,
             age,
             gender,
-            phone_demo: `+998 (90) ${100 + i}-22-33`,
+            phone_demo: `+998 (90) ${100 + (i % 800)}-${String(i).padStart(2, '0')}-00`,
             employment_status: status,
             activity_type: activity,
             education,
-            specialty: cols[8] || '—',
+            specialty,
             skills: ['Импортированные навыки'],
             is_neet: isNeet,
-            neet_verification: isNeet ? 'pending_verification' : 'rejected',
+            neet_verification: isNeet ? neetVerification : 'rejected',
             needs_support: isNeet,
             support_recommendation: ['prog_ishga_marhamat_tech', 'prog_district_job_fair'],
-            last_updated: new Date().toISOString().split('T')[0],
+            last_updated: cols[12] || today,
             notes: 'Импортировано из внешней таблицы',
             status_history: [
               {
-                date: new Date().toISOString().split('T')[0],
+                date: cols[12] || today,
                 status,
                 comment: 'Импорт из реестра'
               }
@@ -103,43 +106,56 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         onImportProfiles(parsedProfiles);
         onClose();
       } else {
-        setError('Не удалось распознать строки таблицы');
+        setError(lang === 'ru' ? 'Не удалось распознать строки таблицы' : 'Жадвал қаторларини таниб бўлмади');
       }
     } catch (e: any) {
-      setError(e.message || 'Ошибка обработки данных');
+      setError(e.message || (lang === 'ru' ? 'Ошибка обработки данных' : 'Маълумотларни қайта ишлашда хатолик'));
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150">
-      <div className="bg-surface-1 w-full max-w-md rounded-2xl border border-white/[0.14] shadow-surface-modal p-5 space-y-3.5">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150 cursor-pointer"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface-1 w-full max-w-md rounded-2xl border border-white/[0.12] shadow-2xl p-5 space-y-4 cursor-default"
+      >
         
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm">
               <Upload className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white tracking-tight">
-              {lang === 'ru' ? 'Импорт таблицы данных (CSV/Excel)' : 'Маълумотларни юклаш'}
-            </h3>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-tight">
+                {lang === 'ru' ? 'Импорт таблицы данных (CSV)' : 'Маълумотларни юклаш (CSV)'}
+              </h3>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                {lang === 'ru' ? 'Быстрая загрузка списка молодёжи в реестр' : 'Ёшлар рўйхатини реестрга тезкор юклаш'}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-xs p-1 rounded-lg hover:bg-surface-3 transition-colors">✕</button>
+          <button 
+            onClick={onClose} 
+            className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <p className="text-xs text-slate-400">
-          {lang === 'ru'
-            ? 'Загрузите CSV-файл со списком молодёжи для мгновенного обновления реестра.'
-            : 'Маҳалла ёшлари бўйича CSV файлни юкланг.'}
-        </p>
-
         {/* File Dropzone */}
-        <label className="block p-5 rounded-xl border border-dashed border-white/[0.16] hover:border-indigo-500/60 bg-surface-2/60 text-center cursor-pointer transition-all">
-          <FileSpreadsheet className="w-7 h-7 text-indigo-400 mx-auto mb-1.5" />
-          <span className="text-xs font-bold text-white block">
-            {fileName ? fileName : (lang === 'ru' ? 'Нажмите для выбора CSV файла' : 'Файлни танланг')}
+        <label className="group block p-6 rounded-2xl border border-dashed border-white/[0.16] hover:border-indigo-500/60 bg-surface-2/60 hover:bg-surface-2 text-center cursor-pointer transition-all duration-200">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-2 text-indigo-400 group-hover:scale-105 transition-transform">
+            <FileSpreadsheet className="w-5 h-5" />
+          </div>
+          <span className="text-xs font-semibold text-white block">
+            {fileName ? fileName : (lang === 'ru' ? 'Нажмите для выбора CSV файла' : 'CSV файлни танланг')}
           </span>
-          <span className="text-[10px] text-slate-500 mt-1 block">
-            Поддерживаются файлы .CSV (с разделителями ; или ,)
+          <span className="text-[11px] text-slate-500 mt-1 block">
+            {lang === 'ru' ? 'Поддерживаются файлы .CSV (разделители «;» или «,»)' : '.CSV форматдаги файллар'}
           </span>
           <input
             type="file"
@@ -150,33 +166,39 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         </label>
 
         {previewCount > 0 && (
-          <div className="p-2.5 bg-emerald-950/20 rounded-xl border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
-            <span>Распознано строк:</span>
-            <strong className="text-white font-bold">{previewCount} записей</strong>
+          <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-xs text-indigo-300 flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{lang === 'ru' ? 'Распознано строк:' : 'Аниқланган қаторлар:'}</span>
+            </span>
+            <strong className="text-white font-bold bg-indigo-500/20 px-2 py-0.5 rounded-md">
+              {previewCount} {lang === 'ru' ? 'записей' : 'та ёзув'}
+            </strong>
           </div>
         )}
 
         {error && (
-          <div className="p-2.5 bg-rose-950/20 rounded-xl border border-rose-500/30 text-xs text-rose-300 flex items-center gap-2">
-            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 text-xs text-rose-300 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
             <span>{error}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2.5 pt-1">
+        {/* Buttons */}
+        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/[0.06]">
           <button
             disabled={previewCount === 0}
             onClick={handleProcessImport}
-            className="py-2 px-3 bg-emerald-600/30 hover:bg-emerald-600/40 disabled:opacity-30 disabled:cursor-not-allowed text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+            className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-indigo-400/30 rounded-xl text-xs font-semibold transition-all shadow-sm shadow-indigo-500/25 hover:shadow-indigo-500/40 flex items-center justify-center gap-1.5 active:scale-[0.98]"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Импортировать</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-indigo-200" />
+            <span>{lang === 'ru' ? 'Импортировать' : 'Юклаш'}</span>
           </button>
           <button
             onClick={onClose}
-            className="py-2 px-3 bg-surface-3 hover:bg-surface-card text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all"
+            className="py-2.5 px-4 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-xl font-medium text-xs transition-all flex items-center justify-center"
           >
-            Отмена
+            {lang === 'ru' ? 'Отмена' : 'Бекор қилиш'}
           </button>
         </div>
 

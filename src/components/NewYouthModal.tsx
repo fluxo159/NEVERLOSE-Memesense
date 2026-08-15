@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { X, UserPlus, MapPin, Phone, GraduationCap, Briefcase, Sparkles } from 'lucide-react';
+import { 
+  X, UserPlus, MapPin, Calendar, User, Briefcase, GraduationCap, 
+  Sparkles, FileText, Wrench, AlertTriangle, Building2
+} from 'lucide-react';
 import { YouthProfile, EmploymentStatus, Gender, EducationLevel, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-
+import { CustomSelect } from './ui/CustomSelect';
 interface NewYouthModalProps {
   onClose: () => void;
   onAddYouth: (youth: YouthProfile) => void;
@@ -29,6 +32,32 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   const [specialty, setSpecialty] = useState('');
   const [skills, setSkills] = useState('Водительские права, Базовый ПК');
   const [notes, setNotes] = useState('Первичное внесение через опрос «Ёшлар етакчиси»');
+
+  const makhallaOptions = MAKHALLAS_LIST.map(m => ({
+    value: m.name,
+    label: m.name,
+    icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+  }));
+
+  const genderOptions = [
+    { value: 'Мужской', label: lang === 'ru' ? 'Мужской' : 'Эркак', icon: <User className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Женский', label: lang === 'ru' ? 'Женский' : 'Аёл', icon: <User className="w-3.5 h-3.5 text-rose-400" /> }
+  ];
+
+  const statusOptions = [
+    { value: 'безработный', label: lang === 'ru' ? 'Безработный (NEET риск)' : 'Ишсиз (NEET хавфи)', icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> },
+    { value: 'занят', label: lang === 'ru' ? 'Занят (официальный найм)' : 'Ишлайди (расмий)', icon: <Briefcase className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'предприниматель', label: lang === 'ru' ? 'Предприниматель / ИП' : 'Тадбиркор / ЯТТ', icon: <Building2 className="w-3.5 h-3.5 text-purple-400" /> },
+    { value: 'обучается', label: lang === 'ru' ? 'Обучается (ВУЗ/Колледж)' : 'Ўқимоқда (ОТМ/Коллеж)', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган', icon: <User className="w-3.5 h-3.5 text-slate-400" /> }
+  ];
+
+  const educationOptions = [
+    { value: 'Среднее', label: lang === 'ru' ? 'Среднее' : 'Ўрта', icon: <GraduationCap className="w-3.5 h-3.5 text-slate-400" /> },
+    { value: 'Средне-специальное', label: lang === 'ru' ? 'Средне-специальное' : 'Ўрта-махсус', icon: <GraduationCap className="w-3.5 h-3.5 text-indigo-400" /> },
+    { value: 'Неоконченное высшее', label: lang === 'ru' ? 'Неоконченное высшее' : 'Тугалланмаган олий', icon: <GraduationCap className="w-3.5 h-3.5 text-sky-400" /> },
+    { value: 'Высшее', label: lang === 'ru' ? 'Высшее' : 'Олий', icon: <GraduationCap className="w-3.5 h-3.5 text-emerald-400" /> }
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,151 +98,179 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.14] shadow-surface-modal p-5 space-y-3.5">
+      <div className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.12] shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
         
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm">
               <UserPlus className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white tracking-tight">
-              {lang === 'ru' ? 'Добавить молодого человека в реестр' : 'Реестрга янги ёш киритиш'}
-            </h3>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-tight">
+                {lang === 'ru' ? 'Добавить молодого человека в реестр' : 'Реестрга янги ёш киритиш'}
+              </h3>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                {lang === 'ru' ? 'Внесение анкеты в единую базу данных района' : 'Туман ягона маълумотлар базасига киритиш'}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-xs p-1 rounded-lg hover:bg-surface-3 transition-colors">✕</button>
+          <button 
+            onClick={onClose} 
+            className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           
+          {/* Full Name */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Ф.И.О. (демо-профиль):</label>
+            <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+              <User className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{lang === 'ru' ? 'Ф.И.О. (демо-профиль)' : 'Ф.И.Ш. (демо-профил)'}</span>
+            </label>
             <input
               type="text"
               required
-              placeholder="Например: Каримов Жасур Бахтиёрович"
+              placeholder={lang === 'ru' ? 'Например: Каримов Жасур Бахтиёрович' : 'Масалан: Каримов Жасур Бахтиёрович'}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Makhalla & Age */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Махалля:</label>
-              <select
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Махалля' : 'Маҳалла'}</span>
+              </label>
+              <CustomSelect
                 value={makhalla}
-                onChange={(e) => setMakhalla(e.target.value)}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-              >
-                {MAKHALLAS_LIST.map(m => (
-                  <option key={m.id} value={m.name} className="bg-surface-1">{m.name}</option>
-                ))}
-              </select>
+                onChange={setMakhalla}
+                options={makhallaOptions}
+              />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Возраст (18–30):</label>
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Возраст (18–30)' : 'Ёши (18–30)'}</span>
+              </label>
               <input
                 type="number"
                 min={18}
                 max={30}
                 value={age}
                 onChange={(e) => setAge(Number(e.target.value))}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none transition-all shadow-sm"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Gender & Employment Status */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Пол:</label>
-              <select
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <User className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Пол' : 'Жинси'}</span>
+              </label>
+              <CustomSelect
                 value={gender}
-                onChange={(e) => setGender(e.target.value as Gender)}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-              >
-                <option value="Мужской" className="bg-surface-1">Мужской</option>
-                <option value="Женский" className="bg-surface-1">Женский</option>
-              </select>
+                onChange={(val) => setGender(val as Gender)}
+                options={genderOptions}
+              />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Статус занятости:</label>
-              <select
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Статус занятости' : 'Бандлик ҳолати'}</span>
+              </label>
+              <CustomSelect
                 value={status}
-                onChange={(e) => setStatus(e.target.value as EmploymentStatus)}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-              >
-                <option value="безработный" className="bg-surface-1">Безработный (NEET риск)</option>
-                <option value="занят" className="bg-surface-1">Занят (официальный найм)</option>
-                <option value="предприниматель" className="bg-surface-1">Предприниматель / ИП</option>
-                <option value="обучается" className="bg-surface-1">Обучается (ВУЗ/Колледж)</option>
-                <option value="не уточнено" className="bg-surface-1">Не уточнено</option>
-              </select>
+                onChange={(val) => setStatus(val as EmploymentStatus)}
+                options={statusOptions}
+              />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Education & Specialty */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Образование:</label>
-              <select
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Образование' : 'Маълумоти'}</span>
+              </label>
+              <CustomSelect
                 value={education}
-                onChange={(e) => setEducation(e.target.value as EducationLevel)}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-              >
-                <option value="Среднее" className="bg-surface-1">Среднее</option>
-                <option value="Средне-специальное" className="bg-surface-1">Средне-специальное</option>
-                <option value="Неоконченное высшее" className="bg-surface-1">Неоконченное высшее</option>
-                <option value="Высшее" className="bg-surface-1">Высшее</option>
-              </select>
+                onChange={(val) => setEducation(val as EducationLevel)}
+                options={educationOptions}
+              />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Специальность:</label>
+              <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{lang === 'ru' ? 'Специальность' : 'Мутахассислиги'}</span>
+              </label>
               <input
                 type="text"
-                placeholder="Электрик, бухгалтер и т.д."
+                placeholder={lang === 'ru' ? 'Электрик, бухгалтер и т.д.' : 'Электрик, бухгалтер ва ҳ.к.'}
                 value={specialty}
                 onChange={(e) => setSpecialty(e.target.value)}
-                className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
               />
             </div>
           </div>
 
+          {/* Skills */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Навыки (через запятую):</label>
+            <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+              <Wrench className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{lang === 'ru' ? 'Навыки (через запятую)' : 'Кўникмалар (вергул билан)'}</span>
+            </label>
             <input
               type="text"
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm"
             />
           </div>
 
+          {/* Notes */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wide">Заметка инспектора:</label>
+            <label className="text-slate-300 font-medium text-xs flex items-center gap-1.5 mb-1.5">
+              <FileText className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{lang === 'ru' ? 'Заметка инспектора' : 'Инспектор изоҳи'}</span>
+            </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/70 focus:ring-1 focus:ring-indigo-500/30 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-sm resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 pt-2">
+          {/* Action Buttons */}
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/[0.06]">
             <button
               type="submit"
-              className="py-2 px-3 bg-emerald-600/30 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 rounded-lg font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+              className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 rounded-xl font-semibold text-xs transition-all shadow-sm shadow-indigo-500/25 hover:shadow-indigo-500/40 flex items-center justify-center gap-1.5 active:scale-[0.98]"
             >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Зарегистрировать</span>
+              <UserPlus className="w-3.5 h-3.5 text-indigo-200" />
+              <span>{lang === 'ru' ? 'Зарегистрировать' : 'Рўйхатга олиш'}</span>
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="py-2 px-3 bg-surface-3 hover:bg-surface-card text-slate-300 border border-white/[0.08] rounded-lg font-semibold text-xs transition-all"
+              className="py-2.5 px-4 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-xl font-medium text-xs transition-all flex items-center justify-center"
             >
-              Отмена
+              {lang === 'ru' ? 'Отмена' : 'Бекор қилиш'}
             </button>
           </div>
 
