@@ -91,9 +91,9 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Pitch Button */}
             <button
               onClick={onOpenPitchGuide}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-brand-linear to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-xl shadow-glow-brand border border-indigo-400/30 transition-all hover:scale-[1.02]"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-brand-linear to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold rounded-xl shadow-glow-brand border border-indigo-400/30 transition-all hover:scale-[1.02]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-200 animate-pulse" />
               <span>{tr.pitchGuideBtn}</span>
             </button>
 
