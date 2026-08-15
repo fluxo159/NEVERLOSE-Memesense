@@ -110,8 +110,10 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
               {tr.kpiActiveDb}
             </div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06]">
-            {tr.kpiAgeSpan}
+          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06] truncate">
+            {selectedMakhalla === 'all' 
+              ? tr.kpiAgeSpan 
+              : `${lang === 'ru' ? '18–30 лет • Махалля' : '18–30 yosh •'} «${getMahallaName(selectedMakhalla, lang)}»`}
           </div>
         </div>
 

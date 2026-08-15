@@ -251,9 +251,10 @@ export const App: React.FC = () => {
 
           {activeTab === 'triage' && (
             <NeetTriageView
-              youthList={currentScopedList}
+              youthList={youthList}
               supportPrograms={supportPrograms}
               selectedMakhalla={selectedMakhalla}
+              onSelectMakhalla={setSelectedMakhalla}
               userRole={selectedRole}
               lang={lang}
               onVerifyNeet={handleVerifyNeet}
@@ -264,8 +265,9 @@ export const App: React.FC = () => {
 
           {activeTab === 'registry' && (
             <YouthRegistryView
-              youthList={currentScopedList}
+              youthList={youthList}
               selectedMakhalla={selectedMakhalla}
+              onSelectMakhalla={setSelectedMakhalla}
               userRole={selectedRole}
               lang={lang}
               onOpenProfile={setSelectedYouthForModal}

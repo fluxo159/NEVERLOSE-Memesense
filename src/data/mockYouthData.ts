@@ -250,6 +250,17 @@ function generate100Profiles(): YouthProfile[] {
     const month = i % 2 === 0 ? '05' : '06';
     const dateStr = `2026-${month}-${dayStr}`;
 
+    const note = template.note
+      .replace('Выпускница', isFemale ? 'Выпускница' : 'Выпускник')
+      .replace('Получила', isFemale ? 'Получила' : 'Получил')
+      .replace('Зачислен', isFemale ? 'Зачислена' : 'Зачислен')
+      .replace('Владелец', isFemale ? 'Владелица' : 'Владелец');
+
+    const historyText = template.historyText
+      .replace('Безработный', isFemale ? 'Безработная' : 'Безработный')
+      .replace('Выявлен', isFemale ? 'Выявлена' : 'Выявлен')
+      .replace('Направлен', isFemale ? 'Направлена' : 'Направлен');
+
     list.push({
       id: idStr,
       full_name_demo: fullName,
@@ -267,7 +278,7 @@ function generate100Profiles(): YouthProfile[] {
       needs_support: template.needsSupport,
       support_recommendation: template.recs,
       last_updated: dateStr,
-      notes: template.note,
+      notes: note,
       status_history: [
         {
           date: '2025-09-01',
@@ -277,7 +288,7 @@ function generate100Profiles(): YouthProfile[] {
         {
           date: dateStr,
           status: template.status,
-          comment: template.historyText
+          comment: historyText
         }
       ]
     });

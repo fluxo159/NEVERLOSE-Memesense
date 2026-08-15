@@ -1,13 +1,29 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { YouthProfile } from '../types';
 
-export function useYouthFilters(youthList: YouthProfile[], initialMakhalla: string, initialFilterStatus?: string) {
+export function useYouthFilters(
+  youthList: YouthProfile[], 
+  initialMakhalla: string, 
+  initialFilterStatus?: string,
+  onMakhallaChange?: (makhalla: string) => void
+) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>(initialFilterStatus || 'all');
-  const [makhallaFilter, setMakhallaFilter] = useState<string>(initialMakhalla !== 'all' ? initialMakhalla : 'all');
+  const [makhallaFilter, setMakhallaFilterState] = useState<string>(initialMakhalla !== 'all' ? initialMakhalla : 'all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [ageFilter, setAgeFilter] = useState<string>('all');
   const [neetOnly, setNeetOnly] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMakhallaFilterState(initialMakhalla !== 'all' ? initialMakhalla : 'all');
+  }, [initialMakhalla]);
+
+  const setMakhallaFilter = (val: string) => {
+    setMakhallaFilterState(val);
+    if (onMakhallaChange) {
+      onMakhallaChange(val);
+    }
+  };
 
   const filteredYouth = useMemo(() => {
     return youthList.filter(youth => {

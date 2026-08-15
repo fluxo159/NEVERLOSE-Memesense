@@ -12,6 +12,7 @@ interface NeetTriageViewProps {
   youthList: YouthProfile[];
   supportPrograms: SupportProgram[];
   selectedMakhalla: string;
+  onSelectMakhalla?: (makhalla: string) => void;
   userRole: UserRole;
   lang: 'ru' | 'uz';
   onVerifyNeet: (youthId: string, isConfirmed: boolean, comment: string) => void;
@@ -23,13 +24,13 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   youthList,
   supportPrograms,
   selectedMakhalla,
+  onSelectMakhalla,
   lang,
   onVerifyNeet,
   onOpenProfile,
   onRouteProgram
 }) => {
   const tr = t[lang];
-  const [filterMakhalla, setFilterMakhalla] = useState<string>(selectedMakhalla !== 'all' ? selectedMakhalla : 'all');
   const [filterVerification, setFilterVerification] = useState<string>('pending');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -42,9 +43,12 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   // Success Toast Banner State
   const [toastMessage, setToastMessage] = useState<{ title: string; desc: string } | null>(null);
 
-  const neetCandidates = youthList.filter(youth => {
+  const scopedYouthList = selectedMakhalla === 'all'
+    ? youthList
+    : youthList.filter(y => y.makhalla === selectedMakhalla);
+
+  const neetCandidates = scopedYouthList.filter(youth => {
     if (!youth.is_neet && youth.neet_verification !== 'verified') return false;
-    if (filterMakhalla !== 'all' && youth.makhalla !== filterMakhalla) return false;
 
     if (filterVerification === 'pending' && youth.neet_verification !== 'pending_verification') return false;
     if (filterVerification === 'verified' && youth.neet_verification !== 'verified') return false;
@@ -63,8 +67,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
     return true;
   });
 
-  const pendingCount = youthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
-  const verifiedCount = youthList.filter(y => y.is_neet && y.neet_verification === 'verified').length;
+  const pendingCount = scopedYouthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const verifiedCount = scopedYouthList.filter(y => y.is_neet && y.neet_verification === 'verified').length;
 
   const handleStartVerify = (youth: YouthProfile) => {
     setVerifyingId(youth.id);
@@ -222,8 +226,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
 
           {/* Makhalla Quick Filter */}
           <CustomSelect
-            value={filterMakhalla}
-            onChange={setFilterMakhalla}
+            value={selectedMakhalla}
+            onChange={(val) => onSelectMakhalla && onSelectMakhalla(val)}
             options={[
               { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> },
               ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> }))
@@ -359,7 +363,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       )}
 
       {/* Candidates Grid */}
-      <div key={filterVerification + filterMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div key={filterVerification + selectedMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {neetCandidates.map((youth, idx) => {
           const isPending = youth.neet_verification === 'pending_verification';
           const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);

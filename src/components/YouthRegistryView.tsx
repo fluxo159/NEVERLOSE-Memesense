@@ -16,6 +16,7 @@ import { t, getMahallaName, getEducationName } from '../data/translations';
 interface YouthRegistryViewProps {
   youthList: YouthProfile[];
   selectedMakhalla: string;
+  onSelectMakhalla?: (makhalla: string) => void;
   userRole: UserRole;
   lang: 'ru' | 'uz';
   onOpenProfile: (youth: YouthProfile) => void;
@@ -28,6 +29,7 @@ interface YouthRegistryViewProps {
 export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
   youthList,
   selectedMakhalla,
+  onSelectMakhalla,
   lang,
   onOpenProfile,
   onOpenNewYouth,
@@ -48,7 +50,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
     filteredYouth,
     resetFilters,
     hasActiveFilters
-  } = useYouthFilters(youthList, selectedMakhalla, initialFilterStatus);
+  } = useYouthFilters(youthList, selectedMakhalla, initialFilterStatus, onSelectMakhalla);
 
   const {
     currentPage,
