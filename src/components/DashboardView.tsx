@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { YouthProfile, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface DashboardViewProps {
