@@ -211,14 +211,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-rose-400"></span>
               <h3 className="text-base font-bold text-white">
                 {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда кўриладиган ёшлар'}
               </h3>
             </div>
             <button
               onClick={() => onNavigateTab('triage')}
-              className="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-white font-medium flex items-center gap-1 transition-colors"
             >
               <span>{lang === 'ru' ? 'Все на проверке' : 'Барчаси'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -230,18 +230,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div
                 key={youth.id}
                 onClick={() => onOpenProfile(youth)}
-                className="bg-surface-2 p-4 rounded-xl border border-white/[0.08] hover:border-rose-500/30 cursor-pointer flex items-center justify-between gap-3 transition-all shadow-sm"
+                className="bg-surface-2 p-3.5 rounded-xl border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between gap-3 transition-all shadow-sm group"
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-surface-3 border border-white/[0.04] flex items-center justify-center font-bold text-sm text-cyan-400 flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-surface-3 border border-white/[0.06] flex items-center justify-center font-bold text-xs text-slate-300 flex-shrink-0">
                     {youth.age}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white hover:text-cyan-400 transition-colors">
+                    <h4 className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
                       {youth.full_name_demo}
                     </h4>
                     <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                      <span className="text-slate-300">📍 {youth.makhalla}</span>
+                      <span className="text-slate-300 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-slate-400" />
+                        {youth.makhalla}
+                      </span>
                       <span>•</span>
                       <span>{youth.education}</span>
                     </div>
@@ -249,10 +252,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold whitespace-nowrap">
-                    {lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}
+                  <span className="text-xs px-2.5 py-1 rounded-lg bg-surface-3 text-slate-300 border border-white/[0.08] font-medium whitespace-nowrap flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400/80"></span>
+                    <span>{lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}</span>
                   </span>
-                  <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
               </div>
             ))}
@@ -272,45 +276,47 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="space-y-3">
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-cyan-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Моноцентр «Ишга Мархамат»</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">Моноцентр «Ишга Мархамат»</div>
                   <div className="text-xs text-slate-400 mt-0.5">24 рабочие специальности + стипендия</div>
                 </div>
-                <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                  Обучение
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{lang === 'ru' ? 'Обучение' : 'Ўқитиш'}</span>
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">IT-Park & IT-Bilim</div>
                   <div className="text-xs text-slate-400 mt-0.5">Курсы веб-разработки + субсидия на ноутбук</div>
                 </div>
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                  IT-Ваучер
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>IT-Ваучер</span>
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-purple-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Фонд «Ёшлар Дафтари»</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">Фонд «Ёшлар Дафтари»</div>
                   <div className="text-xs text-slate-400 mt-0.5">Гранты на оборудование для открытия своего дела</div>
                 </div>
-                <span className="text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30">
-                  Субсидия
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{lang === 'ru' ? 'Субсидия' : 'Субсидия'}</span>
                 </span>
               </div>
             </div>
           </div>
-
 
         </div>
 
