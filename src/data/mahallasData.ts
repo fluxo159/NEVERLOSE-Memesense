@@ -1,4 +1,4 @@
-import { MakhallaStats } from '../types';
+import { MakhallaStats, InfrastructurePOI } from '../types';
 
 export const MAKHALLAS_LIST: MakhallaStats[] = [
   {
@@ -186,3 +186,55 @@ export const MAKHALLAS_LIST: MakhallaStats[] = [
     ]
   }
 ];
+
+export const DISTRICT_POI_LIST: InfrastructurePOI[] = [
+  {
+    id: 'poi_monocenter',
+    name: 'Моноцентр «Ишга Мархамат» (Мирзо-Улугбек)',
+    nameUz: '«Ishga Marhamat» Monomarkazi',
+    category: 'monocenter',
+    address: 'г. Ташкент, ул. Буюк Ипак Йули, 15',
+    phone: '+998 (71) 207-69-00',
+    coordinates: [41.3285, 69.3310],
+    servicesCount: 24,
+    descriptionRu: 'Государственный центр бесплатного профессионального обучения и переподготовки по 24 специальностям со стипендией.',
+    descriptionUz: '24 ta mutaxassislik boʻyicha stipendiya bilan bepul kasb-hunarga oʻqitish va qayta tayyorlash davlat markazi.'
+  },
+  {
+    id: 'poi_it_park',
+    name: 'IT-Park Hub & Youth Digital Lab',
+    nameUz: 'IT-Park Hub va Raqamli Laboratoriya',
+    category: 'it_park',
+    address: 'г. Ташкент, ул. Тепамасжид, 4',
+    phone: '+998 (71) 209-11-99',
+    coordinates: [41.3435, 69.3440],
+    servicesCount: 16,
+    descriptionRu: 'Курсы веб-разработки, QA, Python, Data Analytics со 100% субсидированием обучения и содействием в стажировках.',
+    descriptionUz: 'Veb-dasturlash, QA, Python va Data Analytics boʻyicha 100% davlat subsidiya kurslari va amaliyotlar.'
+  },
+  {
+    id: 'poi_employment_center',
+    name: 'Районный Центр содействия занятости (АББМ)',
+    nameUz: 'Aholi bandligiga koʻmaklashish markazi (ABKM)',
+    category: 'employment_center',
+    address: 'г. Ташкент, массив Карасу-1, 28',
+    phone: '+998 (71) 263-44-12',
+    coordinates: [41.3495, 69.3580],
+    servicesCount: 12,
+    descriptionRu: 'Официальная регистрация безработных, выдача направлений на работу, оформление субсидий на открытие самозанятости.',
+    descriptionUz: 'Ishsizlarni rasmiy roʻyxatga olish, ishga yoʻllanma berish va oʻzini oʻzi band qilish subsidiyalari.'
+  },
+  {
+    id: 'poi_youth_center',
+    name: 'Молодёжный коворкинг «Келажак» & Фонд «Ёшлар Дафтари»',
+    nameUz: '«Kelajak» Yoshlar kovorkingi va «Yoshlar Daftari»',
+    category: 'youth_center',
+    address: 'г. Ташкент, ул. Мустакиллик, 102',
+    phone: '+998 (71) 241-02-02',
+    coordinates: [41.3205, 69.3010],
+    servicesCount: 8,
+    descriptionRu: 'Бесплатное пространство для стартапов, консультации по грантам до 30 млн сум и программам льготного микрокредитования.',
+    descriptionUz: 'Startaplar uchun bepul maydon, 30 mln soʻmgacha grantlar va imtiyozli mikrokredit konsultatsiyalari.'
+  }
+];
+
