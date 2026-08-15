@@ -12,7 +12,9 @@ import { SupportProgramsView } from './components/SupportProgramsView';
 import { YouthModalCard } from './components/YouthModalCard';
 import { SupportProgramRoutingModal } from './components/SupportProgramRoutingModal';
 import { NewYouthModal } from './components/NewYouthModal';
+import { NewProgramModal } from './components/NewProgramModal';
 import { ExportModal } from './components/ExportModal';
+import { SUPPORT_PROGRAMS } from './data/supportPrograms';
 import { ImportModal } from './components/ImportModal';
 import { PitchGuideModal } from './components/PitchGuideModal';
 
@@ -22,11 +24,13 @@ export const App: React.FC = () => {
   const [selectedMakhalla, setSelectedMakhalla] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [lang, setLang] = useState<'ru' | 'uz'>('ru');
+  const [supportPrograms, setSupportPrograms] = useState<SupportProgram[]>(SUPPORT_PROGRAMS);
 
   // Modals & Drawers state
   const [selectedYouthForModal, setSelectedYouthForModal] = useState<YouthProfile | null>(null);
   const [youthForRouting, setYouthForRouting] = useState<YouthProfile | null>(null);
   const [showNewYouthModal, setShowNewYouthModal] = useState<boolean>(false);
+  const [showNewProgramModal, setShowNewProgramModal] = useState<boolean>(false);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [showPitchGuide, setShowPitchGuide] = useState<boolean>(false);
@@ -242,6 +246,7 @@ export const App: React.FC = () => {
         {activeTab === 'triage' && (
           <NeetTriageView
             youthList={currentScopedList}
+            supportPrograms={supportPrograms}
             selectedMakhalla={selectedMakhalla}
             userRole={selectedRole}
             lang={lang}
@@ -277,11 +282,13 @@ export const App: React.FC = () => {
         {activeTab === 'programs' && (
           <SupportProgramsView
             youthList={currentScopedList}
+            supportPrograms={supportPrograms}
             lang={lang}
             onNavigateRegistryWithFilter={(f) => {
               setRegistryInitialFilter(f);
               setActiveTab('registry');
             }}
+            onOpenNewProgram={() => setShowNewProgramModal(true)}
           />
         )}
 
@@ -291,6 +298,7 @@ export const App: React.FC = () => {
       {selectedYouthForModal && (
         <YouthModalCard
           youth={selectedYouthForModal}
+          supportPrograms={supportPrograms}
           onClose={() => setSelectedYouthForModal(null)}
           onUpdateStatus={handleUpdateStatus}
           onAssignProgram={(yId, prog) => handleAssignProgram(yId, prog)}
@@ -302,6 +310,7 @@ export const App: React.FC = () => {
       {youthForRouting && (
         <SupportProgramRoutingModal
           youth={youthForRouting}
+          supportPrograms={supportPrograms}
           onClose={() => setYouthForRouting(null)}
           onConfirmRouting={handleAssignProgram}
           lang={lang}
@@ -310,9 +319,18 @@ export const App: React.FC = () => {
 
       {showNewYouthModal && (
         <NewYouthModal
+          supportPrograms={supportPrograms}
           onClose={() => setShowNewYouthModal(false)}
           onAddYouth={handleAddYouth}
           selectedMakhalla={selectedMakhalla}
+          lang={lang}
+        />
+      )}
+
+      {showNewProgramModal && (
+        <NewProgramModal
+          onClose={() => setShowNewProgramModal(false)}
+          onAddProgram={(prog) => setSupportPrograms(prev => [prog, ...prev])}
           lang={lang}
         />
       )}
