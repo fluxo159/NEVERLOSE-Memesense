@@ -66,7 +66,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 min-w-[220px] max-h-[300px] overflow-y-auto no-scrollbar mt-1.5 bg-[#151922] border border-white/[0.14] rounded-xl shadow-2xl shadow-black/80 py-1.5">
+        <div className="absolute top-full left-0 z-50 min-w-[220px] max-h-[300px] overflow-y-auto no-scrollbar mt-1.5 bg-[#151922] border border-white/[0.14] rounded-xl shadow-2xl shadow-black/80 py-1.5 dropdown-animate">
           {options.map((option) => (
             <button
               key={option.value}

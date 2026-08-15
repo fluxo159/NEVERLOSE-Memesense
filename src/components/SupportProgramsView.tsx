@@ -250,7 +250,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
 
           {/* Cards Grid */}
           {filteredPrograms.length > 0 ? (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div key={selectedCategory} className="grid grid-cols-1 xl:grid-cols-2 gap-4 view-transition">
               {filteredPrograms.map(prog => {
                 const countAssigned = youthList.filter(y => y.assigned_program?.id === prog.id).length;
                 const countRecommended = youthList.filter(y => y.support_recommendation.includes(prog.id)).length;

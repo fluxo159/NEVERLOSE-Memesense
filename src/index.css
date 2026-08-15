@@ -49,6 +49,40 @@
   background: #374151;
 }
 
+/* Linear / Raycast Smooth Micro-Transitions */
+@keyframes fadeInView {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.view-transition {
+  animation: fadeInView 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes dropdownMenu {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-animate {
+  animation: dropdownMenu 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top;
+  will-change: opacity, transform;
+}
+
 /* Linear / Raycast Style Surfaces */
 .glass-panel {
   background: rgba(14, 17, 23, 0.85);

@@ -154,7 +154,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
-            <div className="space-y-3.5">
+            <div className="space-y-3.5 view-transition">
               
               {/* Status Box */}
               <div className="p-4 rounded-xl bg-surface-2 border border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
@@ -253,7 +253,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 2: HISTORY TIMELINE */}
           {activeTab === 'history' && (
-            <div className="space-y-3">
+            <div className="space-y-3 view-transition">
               <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">
                 {lang === 'ru' ? 'Хронологический трекер жизненного цикла:' : 'Holatlar xronologiyasi:'}
               </div>
@@ -285,7 +285,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 3: SMART RECOMMENDATIONS */}
           {activeTab === 'recommendations' && (
-            <div className="space-y-3">
+            <div className="space-y-3 view-transition">
               {supportPrograms.map(prog => {
                 const isRecommended = youth.support_recommendation.includes(prog.id);
                 const isCurrentAssigned = youth.assigned_program?.id === prog.id;

@@ -236,66 +236,68 @@ export const App: React.FC = () => {
           }}
         />
 
-        {/* Tab Views */}
-        {activeTab === 'dashboard' && (
-          <DashboardView
-            youthList={currentScopedList}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onNavigateTab={setActiveTab}
-            onOpenProfile={setSelectedYouthForModal}
-          />
-        )}
+        {/* Tab Views with Smooth Micro-Transition */}
+        <div key={activeTab} className="view-transition">
+          {activeTab === 'dashboard' && (
+            <DashboardView
+              youthList={currentScopedList}
+              selectedMakhalla={selectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onNavigateTab={setActiveTab}
+              onOpenProfile={setSelectedYouthForModal}
+            />
+          )}
 
-        {activeTab === 'triage' && (
-          <NeetTriageView
-            youthList={currentScopedList}
-            supportPrograms={supportPrograms}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onVerifyNeet={handleVerifyNeet}
-            onOpenProfile={setSelectedYouthForModal}
-            onRouteProgram={setYouthForRouting}
-          />
-        )}
+          {activeTab === 'triage' && (
+            <NeetTriageView
+              youthList={currentScopedList}
+              supportPrograms={supportPrograms}
+              selectedMakhalla={selectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onVerifyNeet={handleVerifyNeet}
+              onOpenProfile={setSelectedYouthForModal}
+              onRouteProgram={setYouthForRouting}
+            />
+          )}
 
-        {activeTab === 'registry' && (
-          <YouthRegistryView
-            youthList={currentScopedList}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onOpenProfile={setSelectedYouthForModal}
-            onOpenNewYouth={() => setShowNewYouthModal(true)}
-            onOpenExport={() => setShowExportModal(true)}
-            onOpenImport={() => setShowImportModal(true)}
-            initialFilterStatus={registryInitialFilter}
-          />
-        )}
+          {activeTab === 'registry' && (
+            <YouthRegistryView
+              youthList={currentScopedList}
+              selectedMakhalla={selectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onOpenProfile={setSelectedYouthForModal}
+              onOpenNewYouth={() => setShowNewYouthModal(true)}
+              onOpenExport={() => setShowExportModal(true)}
+              onOpenImport={() => setShowImportModal(true)}
+              initialFilterStatus={registryInitialFilter}
+            />
+          )}
 
-        {activeTab === 'map' && (
-          <DistrictMapView
-            youthList={youthList}
-            onSelectMakhalla={setSelectedMakhalla}
-            lang={lang}
-            onNavigateRegistry={() => setActiveTab('registry')}
-          />
-        )}
+          {activeTab === 'map' && (
+            <DistrictMapView
+              youthList={youthList}
+              onSelectMakhalla={setSelectedMakhalla}
+              lang={lang}
+              onNavigateRegistry={() => setActiveTab('registry')}
+            />
+          )}
 
-        {activeTab === 'programs' && (
-          <SupportProgramsView
-            youthList={currentScopedList}
-            supportPrograms={supportPrograms}
-            lang={lang}
-            onNavigateRegistryWithFilter={(f) => {
-              setRegistryInitialFilter(f);
-              setActiveTab('registry');
-            }}
-            onOpenNewProgram={() => setShowNewProgramModal(true)}
-          />
-        )}
+          {activeTab === 'programs' && (
+            <SupportProgramsView
+              youthList={currentScopedList}
+              supportPrograms={supportPrograms}
+              lang={lang}
+              onNavigateRegistryWithFilter={(f) => {
+                setRegistryInitialFilter(f);
+                setActiveTab('registry');
+              }}
+              onOpenNewProgram={() => setShowNewProgramModal(true)}
+            />
+          )}
+        </div>
 
       </main>
 

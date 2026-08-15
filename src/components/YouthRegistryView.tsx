@@ -229,7 +229,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                   <th className="py-3 px-4 text-right">{tr.registryThAction}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody key={currentPage} className="divide-y divide-white/[0.04] view-transition">
                 {paginatedItems.map(youth => (
                   <tr 
                     key={youth.id}

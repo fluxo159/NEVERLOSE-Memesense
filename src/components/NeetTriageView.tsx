@@ -359,7 +359,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       )}
 
       {/* Candidates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div key={filterVerification + filterMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 view-transition">
         {neetCandidates.map(youth => {
           const isPending = youth.neet_verification === 'pending_verification';
           const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
