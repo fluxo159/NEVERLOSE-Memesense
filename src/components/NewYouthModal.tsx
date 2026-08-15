@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { X, UserPlus, MapPin, Phone, GraduationCap, Briefcase, Sparkles } from 'lucide-react';
-import { YouthProfile, EmploymentStatus, Gender, EducationLevel } from '../types';
+import { YouthProfile, EmploymentStatus, Gender, EducationLevel, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
 
 interface NewYouthModalProps {
   onClose: () => void;
   onAddYouth: (youth: YouthProfile) => void;
+  supportPrograms: SupportProgram[];
   selectedMakhalla: string;
   lang: 'ru' | 'uz';
 }
@@ -14,6 +14,7 @@ interface NewYouthModalProps {
 export const NewYouthModal: React.FC<NewYouthModalProps> = ({
   onClose,
   onAddYouth,
+  supportPrograms,
   selectedMakhalla,
   lang
 }) => {

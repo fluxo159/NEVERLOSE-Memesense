@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { X, Sparkles, CheckCircle2, ArrowRight, Wrench, Code, Gift, TrendingUp, GraduationCap, Briefcase } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
-import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
 
 interface SupportProgramRoutingModalProps {
   youth: YouthProfile;
+  supportPrograms: SupportProgram[];
   onClose: () => void;
   onConfirmRouting: (youthId: string, program: SupportProgram, notes: string) => void;
   lang: 'ru' | 'uz';
@@ -12,16 +12,17 @@ interface SupportProgramRoutingModalProps {
 
 export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProps> = ({
   youth,
+  supportPrograms,
   onClose,
   onConfirmRouting,
   lang
 }) => {
   const [selectedProgramId, setSelectedProgramId] = useState<string>(
-    youth.support_recommendation[0] || SUPPORT_PROGRAMS[0].id
+    youth.support_recommendation[0] || supportPrograms[0]?.id || ''
   );
   const [routingNotes, setRoutingNotes] = useState<string>('Направление выдано в рамках районной программы содействия занятости молодёжи');
 
-  const selectedProg = SUPPORT_PROGRAMS.find(p => p.id === selectedProgramId) || SUPPORT_PROGRAMS[0];
+  const selectedProg = supportPrograms.find(p => p.id === selectedProgramId) || supportPrograms[0];
 
   const handleConfirm = () => {
     onConfirmRouting(youth.id, selectedProg, routingNotes);
@@ -61,7 +62,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
             Выберите траекторию поддержки:
           </label>
           <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-            {SUPPORT_PROGRAMS.map(prog => {
+            {supportPrograms.map(prog => {
               const isSelected = prog.id === selectedProgramId;
               const isRecommended = youth.support_recommendation.includes(prog.id);
 
