@@ -337,22 +337,22 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     <div className="space-y-6 max-w-7xl mx-auto">
       
       {/* Top Header Controls Panel */}
-      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
         
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0 flex-1">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08]">
+            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08] flex-shrink-0">
               <MapIcon className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
                 {lang === 'ru' 
                   ? 'Интерактивная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
                   : 'Mirzo Ulug‘bek tumani interaktiv GIS xaritasi'}
-                <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono">
-                  GIS v2.0
-                </span>
               </h2>
+              <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono whitespace-nowrap flex-shrink-0">
+                GIS v2.0
+              </span>
             </div>
           </div>
           <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
@@ -363,13 +363,13 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         </div>
 
         {/* Mode Switcher & Tools */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-shrink-0">
           
           {/* GIS vs Scheme Tab Toggle */}
           <div className="bg-surface-2 p-1 rounded-xl border border-white/[0.08] flex items-center shadow-inner">
             <button
               onClick={() => setMapMode('leaflet_gis')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 mapMode === 'leaflet_gis'
                   ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                   : 'text-slate-400 hover:text-white'
@@ -380,7 +380,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </button>
             <button
               onClick={() => setMapMode('raster_scheme')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 mapMode === 'raster_scheme'
                   ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                   : 'text-slate-400 hover:text-white'
@@ -391,18 +391,16 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </button>
           </div>
 
-          {mapMode === 'raster_scheme' && (
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs font-semibold cursor-pointer transition-all">
+          {mapMode === 'raster_scheme' ? (
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs font-semibold cursor-pointer transition-all whitespace-nowrap animate-in fade-in duration-150">
               <Upload className="w-3.5 h-3.5 text-slate-400" />
               <span>{lang === 'ru' ? 'Загрузить схему' : 'Yuklash'}</span>
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
-          )}
-
-          {mapMode === 'leaflet_gis' && (
+          ) : (
             <button
               onClick={handleResetMapPosition}
-              className="p-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs transition-all"
+              className="p-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs transition-all animate-in fade-in duration-150"
               title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
             >
               <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
