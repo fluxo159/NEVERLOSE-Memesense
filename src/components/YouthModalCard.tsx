@@ -51,12 +51,12 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
   const getProgramIcon = (name: string) => {
     switch (name) {
-      case 'Wrench': return <Wrench className="w-4 h-4 text-amber-400" />;
-      case 'Code': return <Code className="w-4 h-4 text-cyan-400" />;
-      case 'Gift': return <Gift className="w-4 h-4 text-purple-400" />;
-      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-emerald-400" />;
-      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-indigo-400" />;
-      default: return <Briefcase className="w-4 h-4 text-indigo-400" />;
+      case 'Wrench': return <Wrench className="w-4 h-4 text-slate-300" />;
+      case 'Code': return <Code className="w-4 h-4 text-slate-300" />;
+      case 'Gift': return <Gift className="w-4 h-4 text-slate-300" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-slate-300" />;
+      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-slate-300" />;
+      default: return <Briefcase className="w-4 h-4 text-slate-300" />;
     }
   };
 
@@ -144,7 +144,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               activeTab === 'recommendations' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
             <span>{tr.profileCardTabRouting}</span>
           </button>
         </div>

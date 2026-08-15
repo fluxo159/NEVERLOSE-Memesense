@@ -6,7 +6,7 @@ import {
 import { YouthProfile, UserRole, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
-import { t } from '../data/translations';
+import { t, getMahallaName, getEducationName } from '../data/translations';
 
 interface NeetTriageViewProps {
   youthList: YouthProfile[];
@@ -148,21 +148,22 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
           
           {/* Title & Badge */}
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              <AlertCircle className="w-4 h-4" />
+            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08]">
+              <AlertCircle className="w-4 h-4 text-slate-400" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-white tracking-tight flex items-center gap-2 flex-wrap">
                 <span>{tr.triageTitle}</span>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded-full">
-                  {pendingCount} {tr.triagePendingBadge}
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium bg-surface-2 text-slate-300 border border-white/[0.08] rounded-full font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{pendingCount} {tr.triagePendingBadge}</span>
                 </span>
               </h2>
             </div>
           </div>
 
           {/* Search */}
-          <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-lg focus-within:border-indigo-500 transition-colors">
+          <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-xl focus-within:border-indigo-500/60 transition-colors">
             <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -183,13 +184,13 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
               onClick={() => setFilterVerification('pending')}
               className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
                 filterVerification === 'pending' 
-                  ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
-                  : 'text-slate-400 hover:text-slate-300 border border-transparent'
+                  ? 'bg-indigo-600/90 text-white shadow-sm border border-indigo-500/30 font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent font-medium'
               }`}
             >
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              {tr.triageTabPending}
-              <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'pending' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+              <Clock className={`w-3.5 h-3.5 ${filterVerification === 'pending' ? 'text-white' : 'text-slate-400'}`} />
+              <span>{tr.triageTabPending}</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono ${filterVerification === 'pending' ? 'bg-white/20 text-white' : 'bg-surface-3 text-slate-400'}`}>
                 {pendingCount}
               </span>
             </button>
@@ -197,13 +198,13 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
               onClick={() => setFilterVerification('verified')}
               className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
                 filterVerification === 'verified' 
-                  ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
-                  : 'text-slate-400 hover:text-slate-300 border border-transparent'
+                  ? 'bg-indigo-600/90 text-white shadow-sm border border-indigo-500/30 font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent font-medium'
               }`}
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              {tr.triageTabVerified}
-              <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'verified' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+              <ShieldCheck className={`w-3.5 h-3.5 ${filterVerification === 'verified' ? 'text-white' : 'text-slate-400'}`} />
+              <span>{tr.triageTabVerified}</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono ${filterVerification === 'verified' ? 'bg-white/20 text-white' : 'bg-surface-3 text-slate-400'}`}>
                 {verifiedCount}
               </span>
             </button>
@@ -211,8 +212,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
               onClick={() => setFilterVerification('all')}
               className={`px-3 py-1.5 rounded-lg transition-colors border ${
                 filterVerification === 'all' 
-                  ? 'bg-surface-3 text-white border-white/[0.12]' 
-                  : 'text-slate-400 hover:text-slate-300 border-transparent'
+                  ? 'bg-surface-3 text-white border-white/[0.12] font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border-transparent font-medium'
               }`}
             >
               {tr.triageTabAll}
@@ -224,8 +225,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
             value={filterMakhalla}
             onChange={setFilterMakhalla}
             options={[
-              { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
-              ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+              { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> },
+              ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> }))
             ]}
           />
 
@@ -303,12 +304,15 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                       <div className="p-3.5 bg-surface-2 rounded-xl border border-white/[0.08] space-y-1.5">
                         <div className="text-sm font-bold text-white">{target.full_name_demo}</div>
                         <div className="text-xs text-slate-300 flex items-center gap-3">
-                          <span>📍 {tr.makhallaPrefix}: <strong className="text-white">{target.makhalla}</strong></span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-slate-400" />
+                            <span>{getMahallaName(target.makhalla, lang)}</span>
+                          </span>
                           <span>•</span>
                           <span>{lang === 'ru' ? 'Возраст:' : 'Yoshi:'} <strong className="text-white">{target.age} {lang === 'ru' ? 'лет' : 'yosh'}</strong></span>
                         </div>
                         <div className="text-xs text-slate-300 pt-0.5">
-                          {tr.newYouthEducation}: <strong className="text-indigo-400">{target.education} ({target.specialty})</strong>
+                          {tr.newYouthEducation}: <strong className="text-slate-200">{getEducationName(target.education, lang)} ({target.specialty})</strong>
                         </div>
                       </div>
 
@@ -359,6 +363,9 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         {neetCandidates.map(youth => {
           const isPending = youth.neet_verification === 'pending_verification';
           const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
+          const progTitle = firstProg 
+            ? ((lang === 'uz' && firstProg.titleUz) ? firstProg.titleUz : firstProg.title) 
+            : '';
 
           return (
             <div
@@ -374,23 +381,17 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                       {youth.full_name_demo}
                     </h3>
                     <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-                        {youth.makhalla}
+                      <span className="flex items-center gap-1 text-slate-300">
+                        <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                        {getMahallaName(youth.makhalla, lang)}
                       </span>
                       <span>•</span>
                       <span>{youth.age} {lang === 'ru' ? 'лет' : 'yosh'}</span>
                     </div>
                   </div>
 
-                  <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap flex items-center gap-1 ${
-                      isPending
-                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                    }`}
-                  >
-                    {isPending ? <Clock className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 text-slate-300 border border-white/[0.08] text-[11px] font-medium whitespace-nowrap">
+                    <span className={`w-1.5 h-1.5 rounded-full ${isPending ? 'bg-amber-400/80' : 'bg-emerald-400/80'}`}></span>
                     <span>{isPending ? tr.triageCardNeetBadge : tr.triageCardVerifiedBadge}</span>
                   </span>
                 </div>
@@ -398,8 +399,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 {/* Education & Situation Summary */}
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-center gap-1.5 text-slate-300 text-[11px]">
-                    <GraduationCap className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-                    <span className="font-medium text-white">{youth.education}</span>
+                    <GraduationCap className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                    <span className="font-medium text-white">{getEducationName(youth.education, lang)}</span>
                     {youth.specialty && youth.specialty !== '—' && (
                       <span className="text-slate-400 truncate">({youth.specialty})</span>
                     )}
@@ -414,9 +415,9 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 {firstProg && (
                   <div className="pt-0.5">
                     <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                      <Sparkles className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400/80 flex-shrink-0" />
                       <span className="text-slate-300 font-medium truncate">
-                        {firstProg.title.split('—')[0]}
+                        {progTitle.split('—')[0]}
                       </span>
                     </div>
                   </div>
@@ -444,7 +445,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 ) : (
                   <button
                     onClick={() => onRouteProgram(youth)}
-                    className="flex-1 h-8 px-3.5 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="flex-1 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>{tr.triageCardBtnRoute}</span>

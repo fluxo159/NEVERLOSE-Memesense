@@ -47,8 +47,8 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-              <Sparkles className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-surface-2 text-slate-300 border border-white/[0.08]">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
             </div>
             <h3 className="text-sm font-bold text-white tracking-tight">
               {tr.routingModalTitle}
