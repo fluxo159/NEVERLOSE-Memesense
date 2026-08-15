@@ -5,10 +5,10 @@ import {
   Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
-import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
+  supportPrograms: SupportProgram[];
   onClose: () => void;
   onUpdateStatus: (id: string, newStatus: EmploymentStatus, comment: string) => void;
   onAssignProgram: (id: string, program: SupportProgram) => void;
@@ -18,6 +18,7 @@ interface YouthModalCardProps {
 
 export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   youth,
+  supportPrograms,
   onClose,
   onUpdateStatus,
   onAssignProgram,
@@ -282,10 +283,12 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 3: SMART RECOMMENDATIONS */}
           {activeTab === 'recommendations' && (
-            <div className="space-y-3">
-              {SUPPORT_PROGRAMS.map(prog => {
-                const isRecommended = youth.support_recommendation.includes(prog.id);
-                const isCurrentAssigned = youth.assigned_program?.id === prog.id;
+            <div className="space-y-4">
+              <div className="space-y-3">
+                {supportPrograms.map(prog => {
+                  const isRecommended = youth.support_recommendation.includes(prog.id);
+                  const isCurrentAssigned = youth.assigned_program?.id === prog.id;
+
 
                 return (
                   <div
