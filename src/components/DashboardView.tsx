@@ -8,6 +8,7 @@ import { AnimatedStackedBarChart, MahallaBarItem } from './charts/AnimatedStacke
 
 interface DashboardViewProps {
   youthList: YouthProfile[];
+  allYouthList?: YouthProfile[];
   selectedMakhalla: string;
   userRole: UserRole;
   lang: 'ru' | 'uz';
@@ -17,11 +18,14 @@ interface DashboardViewProps {
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   youthList,
+  allYouthList,
+  selectedMakhalla,
   lang,
   onNavigateTab,
   onOpenProfile
 }) => {
   const tr = t[lang];
+  const listForBars = allYouthList || youthList;
 
   const donutData: DonutDataItem[] = [
     { name: tr.dashLegendEmployed, value: youthList.filter(y => y.employment_status === 'занят').length, color: '#10B981' },
@@ -33,7 +37,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   ].filter(d => d.value > 0);
 
   const mahallaBarData: MahallaBarItem[] = MAKHALLAS_LIST.map(m => {
-    const listInM = youthList.filter(y => y.makhalla === m.name);
+    const listInM = listForBars.filter(y => y.makhalla === m.name);
     const mName = getMahallaName(m.name, lang);
     const shortName = lang === 'ru' 
       ? m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.')

@@ -29,6 +29,14 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const engagementPercent = total > 0 ? Math.round((totalEngaged / total) * 100) : 0;
   const isAllClear = neetPending === 0;
 
+  // Dynamic monthly dynamics calculation for this scoped mahalla
+  // Youth who received support / assistance in current month (June 2026)
+  const supportedThisMonth = youthList.filter(
+    y => (y.assigned_program || y.employment_status === 'направлен на обучение') && y.last_updated.startsWith('2026-06')
+  ).length;
+
+  const growthPercent = total > 0 ? Math.round((supportedThisMonth / total) * 100) : 0;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
       
@@ -155,13 +163,19 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
             </div>
             <div className="text-4xl font-black text-slate-100 mt-1.5">{supported} <span className="text-sm font-normal text-slate-500">{tr.kpiPersons}</span></div>
             <div className="mt-3 text-[11px] text-slate-300 font-medium flex items-center gap-1.5">
-              <div className="flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-surface-3 text-emerald-400 border border-white/[0.08]">
-                +12%
+              <div className={`flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold border transition-colors ${
+                growthPercent > 0 
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                  : 'bg-surface-3 text-slate-400 border-white/[0.08]'
+              }`}>
+                {growthPercent > 0 ? `+${growthPercent}%` : '0%'}
               </div>
-              <span>{tr.kpiGrowthMonth}</span>
+              <span className="truncate">
+                {growthPercent > 0 ? tr.kpiGrowthMonth : (lang === 'ru' ? 'Без изменений за месяц' : 'Bu oyda o‘zgarishsiz')}
+              </span>
             </div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06]">
+          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06] truncate">
             {tr.kpiMonoAndGrants}
           </div>
         </div>

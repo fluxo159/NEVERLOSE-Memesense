@@ -241,6 +241,7 @@ export const App: React.FC = () => {
           {activeTab === 'dashboard' && (
             <DashboardView
               youthList={currentScopedList}
+              allYouthList={youthList}
               selectedMakhalla={selectedMakhalla}
               userRole={selectedRole}
               lang={lang}
