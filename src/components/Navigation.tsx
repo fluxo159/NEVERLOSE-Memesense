@@ -55,7 +55,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   ];
 
   return (
-    <nav className="bg-surface-1/90 backdrop-blur-xl border-b border-white/[0.08]">
+    <nav className="relative z-40 bg-surface-1/90 backdrop-blur-xl border-b border-white/[0.08]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-3">
           
@@ -98,9 +98,9 @@ export const Navigation: React.FC<NavigationProps> = ({
           {/* Add Profile Button */}
           <button
             onClick={onOpenNewYouth}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 text-xs font-bold rounded-xl transition-all shadow-sm flex-shrink-0"
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 text-xs font-semibold rounded-lg transition-all shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/30 active:scale-[0.98] flex-shrink-0"
           >
-            <UserPlus className="w-3.5 h-3.5" />
+            <UserPlus className="w-3.5 h-3.5 text-indigo-200" />
             <span className="hidden sm:inline">
               {lang === 'ru' ? '+ Добавить человека' : '+ Янги ёш киритиш'}
             </span>

@@ -139,6 +139,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                       Провайдер: <span className="text-slate-200 font-medium">{prog.provider}</span>
                     </div>
                   </div>
+                </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-2/70 p-2.5 rounded-xl border border-white/[0.06]">
                   {prog.description}
