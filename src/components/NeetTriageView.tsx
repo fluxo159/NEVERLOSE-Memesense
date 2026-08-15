@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  AlertOctagon, CheckCircle, XCircle, Search, UserCheck, 
-  MapPin, GraduationCap, Sparkles, Filter, Check, ArrowRight, ShieldCheck
+  AlertCircle, CheckCircle, XCircle, Search, UserCheck, 
+  MapPin, GraduationCap, Sparkles, Check, ArrowRight, ShieldCheck, Clock
 } from 'lucide-react';
 import { YouthProfile, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
@@ -73,7 +73,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
     if (!verifyingId) return;
 
     const targetYouth = youthList.find(y => y.id === verifyingId);
-    const youthName = targetYouth?.full_name_demo || 'Кандидат';
+    const youthName = targetYouth?.full_name_demo || 'Человек';
 
     setIsSuccessAnimating(true);
     setSuccessInfo({ name: youthName, isConfirmed: isNeetConfirmed });
@@ -85,8 +85,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       setVerificationComment('');
 
       setToastMessage({
-        title: isNeetConfirmed ? '✓ Статус NEET успешно подтверждён!' : '✓ Категория NEET снята (Занят)',
-        desc: `Профиль «${youthName}» перемещён во вкладку «Подтверждённые NEET». Запись внесена в Единый Реестр.`
+        title: isNeetConfirmed ? '✓ Статус подтверждён: Нуждается в помощи' : '✓ Статус обновлён: Работает',
+        desc: `Данные гражданина «${youthName}» зафиксированы и перенесены в соответствующий список.`
       });
 
       setTimeout(() => {
@@ -126,7 +126,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   }}
                   className="text-xs text-emerald-400 font-bold hover:text-emerald-300 flex items-center gap-1"
                 >
-                  <span>Открыть список подтверждённых</span>
+                  <span>Посмотреть подтверждённых</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -135,37 +135,37 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
       )}
 
-      {/* Calm & Clear Header Banner */}
+      {/* Human-Centered Header Banner */}
       <div className="bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div className="space-y-1 max-w-2xl">
             <div className="flex items-center gap-2.5 flex-wrap">
               <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                <AlertOctagon className="w-5 h-5" />
+                <AlertCircle className="w-5 h-5" />
               </div>
               <h2 className="text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'Верификация группы внимания (NEET)' : 'NEET ёшлар текшируви'}
+                {lang === 'ru' ? 'Молодёжь, требующая проверки' : 'Текширув кутаётган ёшлар'}
               </h2>
-              <span className="px-2 py-0.5 rounded-full bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-semibold whitespace-nowrap">
-                {lang === 'ru' ? 'Личный обход махалли' : 'Маҳалла кўриги'}
+              <span className="px-2.5 py-0.5 rounded-full bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-semibold whitespace-nowrap">
+                {lang === 'ru' ? 'Личный подворовой обход' : 'Маҳалла кўриги'}
               </span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
               {lang === 'ru'
-                ? 'Система автоматически помечает кандидатов в NEET. Уполномоченный сотрудник подтверждает статус после личного визита и подбирает меры господдержки.'
-                : 'Тизим ишсиз ёшларни аниқлайди. Маҳалла етакчиси суҳбат асосида мақомни тасдиқлайди ва ёрдам беради.'}
+                ? 'Список молодых людей, у которых более 6 месяцев нет налоговых отчислений или записей об учёбе. Проведите личный опрос, чтобы подтвердить статус или помочь с работой.'
+                : 'Солиқ ёки таълим базасида 6 ойдан ортиқ маълумоти бўлмаган ёшлар рўйхати.'}
             </p>
           </div>
 
           {/* Quick Metric Chips */}
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
             <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'На проверке' : 'Кутмоқда'}</div>
-              <div className="text-xl font-black text-rose-400 mt-0.5">{pendingCount}</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Ожидают обхода' : 'Кутмоқда'}</div>
+              <div className="text-xl font-black text-rose-400 mt-0.5">{pendingCount} чел.</div>
             </div>
             <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Подтверждено' : 'Тасдиқланган'}</div>
-              <div className="text-xl font-black text-emerald-400 mt-0.5">{verifiedCount}</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Опрошены' : 'Текширилган'}</div>
+              <div className="text-xl font-black text-emerald-400 mt-0.5">{verifiedCount} чел.</div>
             </div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
           <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder={lang === 'ru' ? 'Поиск по имени, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
+            placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-surface-2 border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
@@ -196,8 +196,9 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>⏳ {lang === 'ru' ? 'Требуют проверки' : 'Текширувда'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px]">{pendingCount}</span>
+            <Clock className="w-3 h-3" />
+            <span>{lang === 'ru' ? 'Нужен визит' : 'Текширувда'}</span>
+            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{pendingCount}</span>
           </button>
 
           <button
@@ -208,8 +209,9 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>✅ {lang === 'ru' ? 'Подтверждённые NEET' : 'Тасдиқланган'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px]">{verifiedCount}</span>
+            <CheckCircle className="w-3 h-3" />
+            <span>{lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}</span>
+            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{verifiedCount}</span>
           </button>
 
           <button
@@ -231,7 +233,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
             onChange={(e) => setFilterMakhalla(e.target.value)}
             className="bg-surface-2 border border-white/[0.08] text-slate-300 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all">{lang === 'ru' ? 'Все махалли района' : 'Барча маҳаллалар'}</option>
+            <option value="all">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
             {MAKHALLAS_LIST.map(m => (
               <option key={m.id} value={m.name} className="bg-surface-1 text-white">{m.name}</option>
             ))}
@@ -253,10 +255,10 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white tracking-tight">
-                    {successInfo?.isConfirmed ? 'Статус NEET подтверждён!' : 'Категория NEET снята!'}
+                    {successInfo?.isConfirmed ? 'Статус подтверждён: Нуждается в помощи' : 'Статус обновлён: Работает'}
                   </h3>
                   <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto leading-relaxed">
-                    Профиль «<strong className="text-white">{successInfo?.name}</strong>» зафиксирован инспектором и обновлён в Реестре.
+                    Данные по гражданину «<strong className="text-white">{successInfo?.name}</strong>» зафиксированы инспектором махалли.
                   </p>
                 </div>
                 <div className="w-40 h-1 bg-surface-3 rounded-full mx-auto overflow-hidden">
@@ -273,10 +275,10 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-white tracking-tight">
-                        {lang === 'ru' ? 'Акт выездной верификации' : 'Верификация акти'}
+                        {lang === 'ru' ? 'Результат подворового опроса' : 'Суҳбат натижаси'}
                       </h3>
                       <p className="text-[11px] text-slate-400">
-                        {lang === 'ru' ? 'Подтверждение статуса личным визитом' : 'Маҳалла суҳбати асосида'}
+                        {lang === 'ru' ? 'Фиксация реального статуса занятости' : 'Бандлик ҳолатини қайд этиш'}
                       </p>
                     </div>
                   </div>
@@ -308,14 +310,14 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
 
                       <div>
                         <label className="block text-[11px] font-semibold text-slate-300 mb-1.5 uppercase tracking-wide">
-                          {lang === 'ru' ? 'Заключение лидера молодёжи по итогам выездного визита:' : 'Маҳалла етакчиси хулосаси:'}
+                          {lang === 'ru' ? 'Заметка инспектора по итогам беседы:' : 'Инспектор хулосаси:'}
                         </label>
                         <textarea
                           value={verificationComment}
                           onChange={(e) => setVerificationComment(e.target.value)}
                           rows={3}
                           className="w-full bg-surface-2 border border-white/[0.08] rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
-                          placeholder={lang === 'ru' ? 'Укажите причину подтверждения или факт занятости...' : 'Хулоса ёзинг...'}
+                          placeholder={lang === 'ru' ? 'Например: не работает, желает пройти курсы в Моноцентре...' : 'Хулоса ёзинг...'}
                         />
                       </div>
 
@@ -325,7 +327,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                           className="py-2.5 px-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-glow-rose transition-all flex items-center justify-center gap-1.5"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Подтвердить NEET' : 'NEET деб тасдиқлаш'}</span>
+                          <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Ёрдамга муҳтож'}</span>
                         </button>
 
                         <button
@@ -333,7 +335,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                           className="py-2.5 px-3.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Отклонить (Занят)' : 'Рад этиш (Банд)'}</span>
+                          <span>{lang === 'ru' ? 'Работает / Занят' : 'Банд (ишлайди)'}</span>
                         </button>
                       </div>
                     </div>
@@ -380,15 +382,14 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   </div>
 
                   <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap ${
+                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap flex items-center gap-1 ${
                       isPending
                         ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
                         : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                     }`}
                   >
-                    {isPending 
-                      ? (lang === 'ru' ? 'На проверке' : 'Текширувда') 
-                      : (lang === 'ru' ? 'NEET подтверждён' : 'Тасдиқланган')}
+                    {isPending ? <Clock className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
+                    <span>{isPending ? (lang === 'ru' ? 'Ожидает визита' : 'Текширувда') : (lang === 'ru' ? 'Опрошен' : 'Тасдиқланган')}</span>
                   </span>
                 </div>
 
@@ -427,7 +428,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   onClick={() => onOpenProfile(youth)}
                   className="px-2.5 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-3 text-slate-300 text-xs font-semibold transition-all border border-white/[0.08]"
                 >
-                  {lang === 'ru' ? 'Карточка' : 'Профиль'}
+                  {lang === 'ru' ? 'Анкета' : 'Анкета'}
                 </button>
 
                 {isPending ? (
@@ -436,7 +437,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     className="flex-1 py-1.5 px-3 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <UserCheck className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Верифицировать' : 'Текшириш'}</span>
+                    <span>{lang === 'ru' ? 'Провести опрос' : 'Суҳбат ўтказиш'}</span>
                   </button>
                 ) : (
                   <button
@@ -444,7 +445,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     className="flex-1 py-1.5 px-3 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Направить' : 'Йўналтириш'}</span>
+                    <span>{lang === 'ru' ? 'Направить на обучение' : 'Ўқишга йўналтириш'}</span>
                   </button>
                 )}
               </div>
@@ -458,12 +459,12 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         <div className="bg-surface-1 rounded-2xl p-12 text-center text-slate-400 border border-white/[0.08]">
           <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2 opacity-90" />
           <h3 className="text-sm font-bold text-white mb-1">
-            {lang === 'ru' ? 'Все профили в выбранной категории верифицированы' : 'Барча профиллар текширилган'}
+            {lang === 'ru' ? 'Все визиты завершены!' : 'Барча суҳбатлар ўтказилган'}
           </h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
             {lang === 'ru' 
-              ? 'Нет ожидающих проверки записей в данной выборке.' 
-              : 'Текширув кутаётган ёшлар қолмади.'}
+              ? 'В выбранной махалле нет неработающей молодёжи, ожидающей проверки.' 
+              : 'Ушбу маҳаллада текширув кутаётган ёшлар қолмади.'}
           </p>
         </div>
       )}

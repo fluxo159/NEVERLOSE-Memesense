@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  Search, Download, UserPlus, Eye, MapPin, SlidersHorizontal, LayoutGrid, List, Users
+  Search, Download, UserPlus, Eye, MapPin, SlidersHorizontal, LayoutGrid, List, Users,
+  CheckCircle, Briefcase, GraduationCap, AlertCircle, Sparkles
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
@@ -73,8 +74,9 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
   const getStatusBadge = (status: EmploymentStatus, isNeet: boolean) => {
     if (isNeet) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-rose-500/15 text-rose-300 border border-rose-500/30">
-          ⚠️ NEET Риск
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-rose-500/15 text-rose-300 border border-rose-500/30 shadow-sm">
+          <AlertCircle className="w-3 h-3 text-rose-400" />
+          <span>{lang === 'ru' ? 'Без работы/учёбы' : 'Ишсиз'}</span>
         </span>
       );
     }
@@ -82,39 +84,44 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
     switch (status) {
       case 'занят':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-            ✓ Занят
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            <CheckCircle className="w-3 h-3 text-emerald-400" />
+            <span>{lang === 'ru' ? 'Работает (найм)' : 'Ишлайди'}</span>
           </span>
         );
       case 'предприниматель':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-purple-500/15 text-purple-300 border border-purple-500/30">
-            ★ Бизнес / ИП
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-purple-500/15 text-purple-300 border border-purple-500/30">
+            <Briefcase className="w-3 h-3 text-purple-400" />
+            <span>{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</span>
           </span>
         );
       case 'обучается':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-            🎓 Студент
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+            <GraduationCap className="w-3 h-3 text-cyan-400" />
+            <span>{lang === 'ru' ? 'Учится (ВУЗ)' : 'Ўқимоқда'}</span>
           </span>
         );
       case 'направлен на обучение':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-            ⚡ Моноцентр / Курс
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+            <Sparkles className="w-3 h-3 text-indigo-400" />
+            <span>{lang === 'ru' ? 'Курсы Моноцентра' : 'Мономарказда'}</span>
           </span>
         );
       case 'безработный':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            ⏳ Безработный
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <Users className="w-3 h-3 text-amber-400" />
+            <span>{lang === 'ru' ? 'Ищет работу' : 'Иш қидирмоқда'}</span>
           </span>
         );
       case 'не уточнено':
       default:
         return (
           <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-surface-3 text-slate-400 border border-white/[0.08]">
-            ? Не уточнено
+            ? {lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган'}
           </span>
         );
     }
@@ -170,7 +177,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                 onClick={onOpenImport}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 rounded-lg text-xs font-semibold border border-white/[0.08] transition-all"
               >
-                <span>📥 {lang === 'ru' ? 'Импорт' : 'Импорт'}</span>
+                <span>📥 {lang === 'ru' ? 'Импорт файла' : 'Импорт'}</span>
               </button>
             )}
 
@@ -180,7 +187,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
               className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 rounded-lg text-xs font-semibold border border-white/[0.08] transition-all"
             >
               <Download className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Экспорт' : 'Экспорт'}</span>
+              <span>{lang === 'ru' ? 'Скачать Excel/CSV' : 'Экспорт'}</span>
             </button>
 
             {/* Add Youth */}
@@ -189,7 +196,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 rounded-lg text-xs font-bold transition-all shadow-sm"
             >
               <UserPlus className="w-3.5 h-3.5" />
-              <span>{lang === 'ru' ? 'Добавить' : 'Қўшиш'}</span>
+              <span>{lang === 'ru' ? '+ Добавить человека' : '+ Қўшиш'}</span>
             </button>
 
           </div>
@@ -208,7 +215,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             onChange={(e) => setMakhallaFilter(e.target.value)}
             className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все махалли' : 'Барча маҳаллалар'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
             {MAKHALLAS_LIST.map(m => (
               <option key={m.id} value={m.name} className="bg-surface-1">{m.name}</option>
             ))}
@@ -219,15 +226,14 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             onChange={(e) => setStatusFilter(e.target.value)}
             className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все статусы' : 'Барча ҳолатлар'}</option>
-            <option value="занят" className="bg-surface-1">{lang === 'ru' ? 'Занят (найм)' : 'Банд'}</option>
-            <option value="предприниматель" className="bg-surface-1">{lang === 'ru' ? 'Бизнес / ИП' : 'Тадбиркор'}</option>
-            <option value="обучается" className="bg-surface-1">{lang === 'ru' ? 'Обучается (ВУЗ)' : 'Ўқимоқда'}</option>
-            <option value="направлен на обучение" className="bg-surface-1">{lang === 'ru' ? 'Направлен на обучение' : 'Ўқишга юборилган'}</option>
-            <option value="безработный" className="bg-surface-1">{lang === 'ru' ? 'Безработный' : 'Ишсиз'}</option>
-            <option value="не уточнено" className="bg-surface-1">{lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган'}</option>
-            <option value="neet_pending" className="bg-surface-1">{lang === 'ru' ? '⚠️ NEET на проверке' : '⚠️ NEET текширувда'}</option>
-            <option value="supported" className="bg-surface-1">{lang === 'ru' ? '✓ Охвачен поддержкой' : '✓ Қўллаб-қувватланган'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все статусы занятости' : 'Барча ҳолатлар'}</option>
+            <option value="занят" className="bg-surface-1">{lang === 'ru' ? 'Работают (найм)' : 'Ишлайди'}</option>
+            <option value="предприниматель" className="bg-surface-1">{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</option>
+            <option value="обучается" className="bg-surface-1">{lang === 'ru' ? 'Учатся (ВУЗ)' : 'Ўқимоқда'}</option>
+            <option value="направлен на обучение" className="bg-surface-1">{lang === 'ru' ? 'На курсах Моноцентра' : 'Ўқишга юборилган'}</option>
+            <option value="безработный" className="bg-surface-1">{lang === 'ru' ? 'Ищут работу' : 'Ишсиз'}</option>
+            <option value="neet_pending" className="bg-surface-1">{lang === 'ru' ? '⚠️ Без работы/учёбы (нужен визит)' : '⚠️ Текширувда'}</option>
+            <option value="supported" className="bg-surface-1">{lang === 'ru' ? '✓ Получили помощь' : '✓ Ёрдам олган'}</option>
           </select>
 
           <select
@@ -258,7 +264,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
               onChange={(e) => setNeetOnly(e.target.checked)}
               className="rounded accent-rose-500 cursor-pointer"
             />
-            <span className="font-semibold text-xs">{lang === 'ru' ? 'Только NEET' : 'Фақат NEET'}</span>
+            <span className="font-semibold text-xs">{lang === 'ru' ? 'Только без работы' : 'Фақат ишсизлар'}</span>
           </label>
 
           {(statusFilter !== 'all' || makhallaFilter !== 'all' || ageFilter !== 'all' || genderFilter !== 'all' || neetOnly || searchQuery) && (
@@ -278,7 +284,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
           )}
 
           <div className="text-[11px] text-slate-400 ml-auto font-medium">
-            Найдено: <strong className="text-white font-bold">{filteredYouth.length}</strong> из {youthList.length}
+            Найдено: <strong className="text-white font-bold">{filteredYouth.length}</strong> из {youthList.length} чел.
           </div>
 
         </div>
@@ -291,13 +297,13 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-2/80 text-slate-400 font-bold border-b border-white/[0.06] text-[11px] uppercase tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Ф.И.О. (Демо)</th>
+                  <th className="py-3 px-4">Ф.И.О. гражданина</th>
                   <th className="py-3 px-4">Возраст / Пол</th>
                   <th className="py-3 px-4">Махалля</th>
                   <th className="py-3 px-4">Текущий статус</th>
-                  <th className="py-3 px-4">Деятельность / Специальность</th>
+                  <th className="py-3 px-4">Сфера / Специальность</th>
                   <th className="py-3 px-4">Дата</th>
-                  <th className="py-3 px-4 text-right">Действие</th>
+                  <th className="py-3 px-4 text-right">Анкета</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.04]">
@@ -396,7 +402,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
               <div className="pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-500">
                 <span className="font-mono">{youth.last_updated}</span>
                 <span className="text-indigo-400 font-bold flex items-center gap-1">
-                  Подробнее →
+                  Открыть анкету →
                 </span>
               </div>
             </div>

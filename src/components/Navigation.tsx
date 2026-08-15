@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, AlertTriangle, Users, Map, BookOpen, UserPlus } from 'lucide-react';
+import { LayoutDashboard, AlertCircle, Users, Map, BookOpen, UserPlus } from 'lucide-react';
 
 export type ActiveTab = 'dashboard' | 'triage' | 'registry' | 'map' | 'programs';
 
@@ -23,32 +23,32 @@ export const Navigation: React.FC<NavigationProps> = ({
   const tabs = [
     {
       id: 'dashboard' as ActiveTab,
-      label: lang === 'ru' ? 'Дашборд' : 'Дашборд',
+      label: lang === 'ru' ? 'Главная / Обзор' : 'Бош саҳифа',
       icon: LayoutDashboard,
       badge: null
     },
     {
       id: 'triage' as ActiveTab,
-      label: lang === 'ru' ? 'NEET Триаж' : 'NEET Текширув',
-      icon: AlertTriangle,
+      label: lang === 'ru' ? 'Требуют проверки' : 'Текширув кутмоқда',
+      icon: AlertCircle,
       badge: neetPendingCount > 0 ? `${neetPendingCount}` : null,
       badgeColor: 'bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse'
     },
     {
       id: 'registry' as ActiveTab,
-      label: lang === 'ru' ? 'Реестр молодёжи' : 'Ёшлар реестри',
+      label: lang === 'ru' ? 'Список молодёжи' : 'Ёшлар рўйхати',
       icon: Users,
       badge: `${totalYouthCount}`
     },
     {
       id: 'map' as ActiveTab,
-      label: lang === 'ru' ? 'ГИС-Карта' : 'ГИС-Харита',
+      label: lang === 'ru' ? 'Карта махаллей' : 'Маҳаллалар харитаси',
       icon: Map,
       badge: null
     },
     {
       id: 'programs' as ActiveTab,
-      label: lang === 'ru' ? 'Госпрограммы' : 'Дастурлар',
+      label: lang === 'ru' ? 'Программы помощи' : 'Ёрдам дастурлари',
       icon: BookOpen,
       badge: null
     }
@@ -102,7 +102,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">
-              {lang === 'ru' ? 'Добавить анкету' : 'Қўшиш'}
+              {lang === 'ru' ? '+ Добавить человека' : '+ Янги ёш киритиш'}
             </span>
           </button>
 

@@ -220,6 +220,7 @@ export const App: React.FC = () => {
           youthList={currentScopedList}
           selectedMakhalla={selectedMakhalla}
           lang={lang}
+          onNavigateTriage={() => setActiveTab('triage')}
           onFilterStatus={(status) => {
             setRegistryInitialFilter(status);
             setActiveTab('registry');
