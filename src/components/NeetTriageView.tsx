@@ -359,8 +359,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       )}
 
       {/* Candidates Grid */}
-      <div key={filterVerification + filterMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 view-transition">
-        {neetCandidates.map(youth => {
+      <div key={filterVerification + filterMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {neetCandidates.map((youth, idx) => {
           const isPending = youth.neet_verification === 'pending_verification';
           const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
           const progTitle = firstProg 
@@ -370,7 +370,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
           return (
             <div
               key={youth.id}
-              className="bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all flex flex-col justify-between shadow-surface-card"
+              style={{ animationDelay: `${idx * 45}ms` }}
+              className="animate-card-cascade bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all flex flex-col justify-between shadow-surface-card"
             >
               <div className="space-y-2.5">
                 

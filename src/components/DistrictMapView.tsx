@@ -553,7 +553,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         </div>
 
         {/* Right: Territory Passport / POI Detail Inspector */}
-        <div className="lg:col-span-5 glass-panel rounded-3xl p-6 border border-slate-700/60 bg-slate-900/90 shadow-xl flex flex-col justify-between space-y-4">
+        <div key={selectedMahallaId || selectedPoi?.id || 'default'} className="lg:col-span-5 glass-panel rounded-3xl p-6 border border-slate-700/60 bg-slate-900/90 shadow-xl flex flex-col justify-between space-y-4 view-transition">
           
           {selectedPoi ? (
             /* Selected POI Center Card */

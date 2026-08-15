@@ -229,11 +229,12 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                   <th className="py-3 px-4 text-right">{tr.registryThAction}</th>
                 </tr>
               </thead>
-              <tbody key={currentPage} className="divide-y divide-white/[0.04] view-transition">
-                {paginatedItems.map(youth => (
+              <tbody key={currentPage} className="divide-y divide-white/[0.04]">
+                {paginatedItems.map((youth, idx) => (
                   <tr 
                     key={youth.id}
-                    className="hover:bg-surface-2/60 transition-colors group cursor-pointer"
+                    style={{ animationDelay: `${idx * 25}ms` }}
+                    className="animate-row-slide hover:bg-surface-2/60 transition-colors group cursor-pointer"
                     onClick={() => onOpenProfile(youth)}
                   >
                     <td className="py-3.5 px-4 font-semibold text-white group-hover:text-indigo-400 transition-colors">
@@ -286,11 +287,12 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
       ) : (
         /* Cards View */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {paginatedItems.map(youth => (
+          {paginatedItems.map((youth, idx) => (
             <div
               key={youth.id}
+              style={{ animationDelay: `${idx * 40}ms` }}
               onClick={() => onOpenProfile(youth)}
-              className="bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.18] cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
+              className="animate-card-cascade bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.18] cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2.5">

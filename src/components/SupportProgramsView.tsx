@@ -250,8 +250,8 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
 
           {/* Cards Grid */}
           {filteredPrograms.length > 0 ? (
-            <div key={selectedCategory} className="grid grid-cols-1 xl:grid-cols-2 gap-4 view-transition">
-              {filteredPrograms.map(prog => {
+            <div key={selectedCategory} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {filteredPrograms.map((prog, idx) => {
                 const countAssigned = youthList.filter(y => y.assigned_program?.id === prog.id).length;
                 const countRecommended = youthList.filter(y => y.support_recommendation.includes(prog.id)).length;
                 const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
@@ -263,7 +263,8 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
                 return (
                   <div
                     key={prog.id}
-                    className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-surface-card flex flex-col justify-between space-y-4 group"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                    className="animate-card-cascade bg-surface-1 p-5 rounded-2xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-surface-card flex flex-col justify-between space-y-4 group"
                   >
                     <div className="space-y-3">
                       

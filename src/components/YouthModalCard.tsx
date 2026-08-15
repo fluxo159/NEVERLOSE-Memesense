@@ -260,8 +260,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
                 {youth.status_history.map((hist, idx) => (
-                  <div key={idx} className="relative">
-                    <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-indigo-400 flex items-center justify-center">
+                  <div 
+                    key={idx} 
+                    style={{ animationDelay: `${idx * 60}ms` }}
+                    className="relative animate-row-slide"
+                  >
+                    <div className={`absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-indigo-400 flex items-center justify-center ${
+                      idx === youth.status_history.length - 1 ? 'animate-timeline-node ring-2 ring-indigo-400/40' : ''
+                    }`}>
                       <div className="w-1 h-1 rounded-full bg-indigo-400"></div>
                     </div>
 
@@ -285,8 +291,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 3: SMART RECOMMENDATIONS */}
           {activeTab === 'recommendations' && (
-            <div className="space-y-3 view-transition">
-              {supportPrograms.map(prog => {
+            <div className="space-y-3">
+              {supportPrograms.map((prog, idx) => {
                 const isRecommended = youth.support_recommendation.includes(prog.id);
                 const isCurrentAssigned = youth.assigned_program?.id === prog.id;
                 const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
@@ -297,7 +303,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                 return (
                   <div
                     key={prog.id}
-                    className={`p-3.5 rounded-xl border transition-all ${
+                    style={{ animationDelay: `${idx * 45}ms` }}
+                    className={`animate-card-cascade p-3.5 rounded-xl border transition-all ${
                       isCurrentAssigned
                         ? 'border-emerald-500/50 bg-emerald-950/15'
                         : isRecommended
