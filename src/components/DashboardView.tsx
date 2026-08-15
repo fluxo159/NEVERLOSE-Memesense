@@ -131,14 +131,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-base font-bold text-white">
-                  {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
-                </h3>
-                <p className="text-xs text-slate-400">
-                  {lang === 'ru' ? 'Где больше всего молодёжи нуждается в помощи' : 'Қайси маҳаллада ёрдамга муҳтожлар кўп'}
-                </p>
-              </div>
+              <h3 className="text-base font-bold text-white">
+                {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
+              </h3>
               <button 
                 onClick={() => onNavigateTab('map')}
                 className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors"
