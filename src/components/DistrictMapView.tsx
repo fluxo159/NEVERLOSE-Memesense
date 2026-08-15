@@ -1,24 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Map as MapIcon, 
-  Users, 
-  Briefcase, 
-  AlertOctagon, 
-  AlertTriangle,
-  AlertCircle,
   Phone, 
   UserCheck, 
   Eye, 
-  Upload, 
-  Layers, 
   Building2, 
-  Sparkles, 
-  Navigation2, 
-  GraduationCap, 
-  Award, 
-  ZoomIn, 
   RotateCcw,
-  CheckCircle2,
   Info
 } from 'lucide-react';
 import L from 'leaflet';
@@ -33,19 +20,7 @@ interface DistrictMapViewProps {
   onNavigateRegistry: () => void;
 }
 
-type MapMode = 'leaflet_gis' | 'raster_scheme';
-type ActiveLayer = 'neet' | 'employment' | 'poi';
-
-const MAP_CIRCLE_PINS: { [key: string]: { x: number; y: number; label: string; risk: 'low' | 'medium' | 'high' } } = {
-  'm_darxon': { x: 17.5, y: 64.2, label: 'Дархон', risk: 'low' },
-  'm_buyuk_ipak': { x: 29.8, y: 36.5, label: 'Буюк Ипак Йўли', risk: 'low' },
-  'm_shahriobod': { x: 36.2, y: 30.8, label: 'Шаҳриобод', risk: 'low' },
-  'm_oliy_himmat': { x: 48.2, y: 24.5, label: 'Олий Ҳиммат', risk: 'high' },
-  'm_feruza': { x: 50.2, y: 25.0, label: 'Феруза', risk: 'medium' },
-  'm_avaykhon': { x: 41.8, y: 43.0, label: 'Авайхон', risk: 'medium' },
-  'm_qorasuv': { x: 48.8, y: 67.5, label: 'Қорасув', risk: 'high' },
-  'm_humo': { x: 67.2, y: 61.0, label: 'Ҳумо', risk: 'low' },
-};
+type ActiveLayer = 'neet' | 'employment';
 
 const DISTRICT_CENTER: [number, number] = [41.3385, 69.3450];
 
@@ -55,12 +30,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   lang,
   onNavigateRegistry
 }) => {
-  const [mapMode, setMapMode] = useState<MapMode>('leaflet_gis');
   const [activeLayer, setActiveLayer] = useState<ActiveLayer>('neet');
   const [showPoi, setShowPoi] = useState<boolean>(true);
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
   const [selectedPoi, setSelectedPoi] = useState<InfrastructurePOI | null>(null);
-  const [customMapUrl, setCustomMapUrl] = useState<string>('/images/painted_district_map.png?v=5');
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -83,9 +56,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   // Initialize and manage Leaflet map
   useEffect(() => {
-    if (mapMode !== 'leaflet_gis' || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
 
-    // Destroy existing map if any
     if (mapInstanceRef.current) {
       mapInstanceRef.current.remove();
       mapInstanceRef.current = null;
@@ -122,11 +94,11 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [mapMode]);
+  }, []);
 
   // Update Polygons & Layers when dependencies change
   useEffect(() => {
-    if (mapMode !== 'leaflet_gis' || !mapInstanceRef.current || !polygonsGroupRef.current) return;
+    if (!mapInstanceRef.current || !polygonsGroupRef.current) return;
 
     const map = mapInstanceRef.current;
     const polyGroup = polygonsGroupRef.current;
@@ -141,34 +113,31 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         : 85;
 
       // Color computation based on active layer
-      let fillColor = '#10b981'; // Green
+      let fillColor = '#10b981';
       let strokeColor = '#34d399';
 
       if (activeLayer === 'neet') {
         if (mahalla.riskLevel === 'high' || neetCount >= 4) {
-          fillColor = '#f43f5e'; // Rose / Red
+          fillColor = '#f43f5e';
           strokeColor = '#fb7185';
         } else if (mahalla.riskLevel === 'medium' || neetCount >= 2) {
-          fillColor = '#f59e0b'; // Amber
+          fillColor = '#f59e0b';
           strokeColor = '#fbbf24';
         } else {
-          fillColor = '#10b981'; // Emerald
+          fillColor = '#10b981';
           strokeColor = '#34d399';
         }
       } else if (activeLayer === 'employment') {
         if (empRate >= 90) {
-          fillColor = '#06b6d4'; // Cyan
+          fillColor = '#06b6d4';
           strokeColor = '#38bdf8';
         } else if (empRate >= 80) {
-          fillColor = '#10b981'; // Emerald
+          fillColor = '#10b981';
           strokeColor = '#4ade80';
         } else {
-          fillColor = '#f97316'; // Orange
+          fillColor = '#f97316';
           strokeColor = '#fb923c';
         }
-      } else {
-        fillColor = isSelected ? '#0ea5e9' : '#334155';
-        strokeColor = '#0284c7';
       }
 
       const polygon = L.polygon(mahalla.geoPolygon, {
@@ -256,11 +225,11 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       L.marker(mahalla.geoCenter, { icon: centerIcon, interactive: false }).addTo(polyGroup);
     });
 
-  }, [mapMode, activeLayer, selectedMahallaId, youthList]);
+  }, [activeLayer, selectedMahallaId, youthList, lang]);
 
   // Update POI Infrastructure Markers
   useEffect(() => {
-    if (mapMode !== 'leaflet_gis' || !mapInstanceRef.current || !poiGroupRef.current) return;
+    if (!mapInstanceRef.current || !poiGroupRef.current) return;
 
     const poiGroup = poiGroupRef.current;
     poiGroup.clearLayers();
@@ -317,15 +286,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       marker.addTo(poiGroup);
     });
-  }, [mapMode, showPoi]);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setCustomMapUrl(url);
-    }
-  };
+  }, [showPoi]);
 
   const handleResetMapPosition = () => {
     if (mapInstanceRef.current) {
@@ -362,51 +323,16 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </p>
         </div>
 
-        {/* Mode Switcher & Tools */}
+        {/* Action Controls */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          
-          {/* GIS vs Scheme Tab Toggle */}
-          <div className="bg-surface-2 p-1 rounded-xl border border-white/[0.08] flex items-center shadow-inner">
-            <button
-              onClick={() => setMapMode('leaflet_gis')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                mapMode === 'leaflet_gis'
-                  ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Navigation2 className="w-3.5 h-3.5" />
-              <span>GIS (Leaflet)</span>
-            </button>
-            <button
-              onClick={() => setMapMode('raster_scheme')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                mapMode === 'raster_scheme'
-                  ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>{lang === 'ru' ? 'Схема района' : 'Tuman sxemasi'}</span>
-            </button>
-          </div>
-
-          {mapMode === 'raster_scheme' ? (
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs font-semibold cursor-pointer transition-all whitespace-nowrap animate-in fade-in duration-150">
-              <Upload className="w-3.5 h-3.5 text-slate-400" />
-              <span>{lang === 'ru' ? 'Загрузить схему' : 'Yuklash'}</span>
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-            </label>
-          ) : (
-            <button
-              onClick={handleResetMapPosition}
-              className="p-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs transition-all animate-in fade-in duration-150"
-              title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-            </button>
-          )}
-
+          <button
+            onClick={handleResetMapPosition}
+            className="px-3 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.16] text-xs font-semibold flex items-center gap-2 transition-all shadow-sm"
+            title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+            <span>{lang === 'ru' ? 'Центрировать' : 'Markazlashtirish'}</span>
+          </button>
         </div>
 
       </div>
@@ -417,128 +343,55 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         {/* Left: Map Container View */}
         <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-4 border border-white/[0.08] relative overflow-hidden flex flex-col justify-between shadow-surface-card min-h-[560px]">
           
-          {/* Layer Filter Toolbar (Only in GIS mode) */}
-          {mapMode === 'leaflet_gis' && (
-            <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
+          {/* Layer Filter Toolbar */}
+          <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
+            
+            <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
+              <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider">{lang === 'ru' ? 'Слой:' : 'Qatlam:'}</span>
               
-              <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
-                <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider">{lang === 'ru' ? 'Слой:' : 'Qatlam:'}</span>
-                
-                <button
-                  onClick={() => setActiveLayer('neet')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-                    activeLayer === 'neet'
-                      ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'neet' ? 'bg-rose-400' : 'bg-rose-400/50'}`}></span>
-                  <span>{lang === 'ru' ? 'Риск NEET' : 'NEET xavfi'}</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveLayer('employment')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-                    activeLayer === 'employment'
-                      ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'employment' ? 'bg-emerald-400' : 'bg-emerald-400/50'}`}></span>
-                  <span>{lang === 'ru' ? 'Занятость (%)' : 'Bandlik (%)'}</span>
-                </button>
-              </div>
-
-              {/* Toggle POI Centers */}
               <button
-                onClick={() => setShowPoi(prev => !prev)}
-                className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                  showPoi
-                    ? 'bg-surface-2 hover:bg-surface-3 text-slate-200 border-white/[0.12] shadow-sm'
-                    : 'bg-surface-2/60 text-slate-400 border-white/[0.06]'
+                onClick={() => setActiveLayer('neet')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                  activeLayer === 'neet'
+                    ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                <span>{lang === 'ru' ? 'Гос. центры (POI)' : 'Davlat markazlari (POI)'}</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'neet' ? 'bg-rose-400' : 'bg-rose-400/50'}`}></span>
+                <span>{lang === 'ru' ? 'Риск NEET' : 'NEET xavfi'}</span>
               </button>
 
+              <button
+                onClick={() => setActiveLayer('employment')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                  activeLayer === 'employment'
+                    ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'employment' ? 'bg-emerald-400' : 'bg-emerald-400/50'}`}></span>
+                <span>{lang === 'ru' ? 'Занятость (%)' : 'Bandlik (%)'}</span>
+              </button>
             </div>
-          )}
 
-          {/* Raster Scheme Legend (Only in Raster mode) */}
-          {mapMode === 'raster_scheme' && (
-            <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
-              <span className="text-xs font-semibold text-cyan-300 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
-                {lang === 'ru' ? 'Мирзо-Улугбекский район (Схема 8 махаллей)' : 'Mirzo Ulug‘bek tumani (8 ta mahalla sxemasi)'}
-              </span>
-              <div className="flex items-center gap-3 text-xs bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {lang === 'ru' ? 'Норма' : 'Me’yor'}</span>
-                <span className="flex items-center gap-1.5 text-amber-400 font-medium"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {lang === 'ru' ? 'Внимание' : 'Diqqat'}</span>
-                <span className="flex items-center gap-1.5 text-rose-400 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> {lang === 'ru' ? 'Зона NEET' : 'NEET zonasi'}</span>
-              </div>
-            </div>
-          )}
+            {/* Toggle POI Centers */}
+            <button
+              onClick={() => setShowPoi(prev => !prev)}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                showPoi
+                  ? 'bg-surface-2 hover:bg-surface-3 text-slate-200 border-white/[0.12] shadow-sm'
+                  : 'bg-surface-2/60 text-slate-400 border-white/[0.06]'
+              }`}
+            >
+              <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{lang === 'ru' ? 'Гос. центры (POI)' : 'Davlat markazlari (POI)'}</span>
+            </button>
+
+          </div>
 
           {/* Map Display Box */}
           <div className="relative w-full h-[470px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-slate-950">
-            
-            {/* 1. Leaflet Interactive GIS Map */}
-            {mapMode === 'leaflet_gis' && (
-              <div ref={mapContainerRef} className="w-full h-full z-0" />
-            )}
-
-            {/* 2. Raster Image Scheme with Circular Trigger Rings */}
-            {mapMode === 'raster_scheme' && (
-              <div className="relative w-full h-full flex items-center justify-center p-2 bg-white overflow-hidden">
-                <img
-                  src={customMapUrl}
-                  alt="Mirzo-Ulugbek District Painted Map"
-                  className="w-full h-full object-contain select-none rounded-xl"
-                />
-
-                {MAKHALLAS_LIST.map((m) => {
-                  const pin = MAP_CIRCLE_PINS[m.id] || { x: 50, y: 50, label: m.name, risk: 'low' };
-                  const isSelected = m.id === selectedMahallaId;
-
-                  return (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        setSelectedMahallaId(m.id);
-                        setSelectedPoi(null);
-                      }}
-                      style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
-                      aria-label={`Tanlash: ${m.name}`}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group p-2 focus:outline-none"
-                      title={`Tanlash: ${m.name}`}
-                    >
-                      {isSelected && (
-                        <div 
-                          className="absolute inset-0 rounded-full animate-ping opacity-80 pointer-events-none"
-                          style={{ 
-                            backgroundColor: pin.risk === 'high' ? '#f43f5e' : '#06b6d4',
-                            transform: 'scale(1.8)'
-                          }}
-                        />
-                      )}
-
-                      <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                          isSelected
-                            ? 'border-4 border-indigo-400 bg-indigo-400/30 scale-125 shadow-lg ring-4 ring-indigo-500/40'
-                            : 'border-2 border-transparent hover:border-white/80 hover:scale-120'
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
+            <div ref={mapContainerRef} className="w-full h-full z-0" />
           </div>
 
           {/* Bottom Hint Banner */}
@@ -546,9 +399,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             <span className="flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
               <span>
-                {mapMode === 'leaflet_gis' 
-                  ? (lang === 'ru' ? 'Кликните по полигону махалли для зума и паспорта территории' : 'Mahalla pasportini ochish uchun xaritadagi hududini bosing') 
-                  : (lang === 'ru' ? 'Кликните по кружку махалли для открытия паспорта' : 'Pasportni ochish uchun mahalla doirachasini bosing')}
+                {lang === 'ru' 
+                  ? 'Кликните по полигону махалли для зума и паспорта территории' 
+                  : 'Mahalla pasportini ochish uchun xaritadagi hududini bosing'}
               </span>
             </span>
             <span className="text-[11px] text-slate-500 font-mono">
