@@ -57,38 +57,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      
-      {/* Human-Centered Clean Banner */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-700/60 bg-gradient-to-r from-slate-900/90 via-[#0e1c31] to-slate-900/90 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl text-cyan-400 flex-shrink-0">
-            <UserCheck className="w-7 h-7" />
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'С чего начать работу сегодня?' : 'Бугунги иш режаси'}
-              </h2>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                {selectedMakhalla === 'all' ? (lang === 'ru' ? 'Весь район (8 махаллей)' : 'Туман бўйича') : `Махалля «${selectedMakhalla}»`}
-              </span>
-            </div>
-            <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
-              {lang === 'ru'
-                ? 'Проведите подворовой обход неработающей молодёжи, подтвердите их статус и направьте на бесплатные курсы в Моноцентр или субсидии IT-Park.'
-                : 'Ишсиз ёшлар билан суҳбат ўтказиб, касб-ҳунар ўрганиш ёки бандлик дастурларига йўналтиринг.'}
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => onNavigateTab('triage')}
-          className="flex items-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-rose-900/30 transition-all flex-shrink-0"
-        >
-          <AlertCircle className="w-4 h-4" />
-          <span>{lang === 'ru' ? 'Перейти к списку на проверку' : 'Текширув рўйхатига ўтиш'}</span>
-        </button>
-      </div>
 
       {/* Main Visuals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
