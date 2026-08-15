@@ -279,6 +279,7 @@ export const App: React.FC = () => {
           {activeTab === 'map' && (
             <DistrictMapView
               youthList={youthList}
+              selectedMakhalla={selectedMakhalla}
               onSelectMakhalla={setSelectedMakhalla}
               lang={lang}
               onNavigateRegistry={() => setActiveTab('registry')}

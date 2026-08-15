@@ -6,7 +6,8 @@ import {
   Eye, 
   Building2, 
   RotateCcw,
-  Info
+  Info,
+  CheckCircle2
 } from 'lucide-react';
 import L from 'leaflet';
 import { MAKHALLAS_LIST, DISTRICT_POI_LIST } from '../data/mahallasData';
@@ -15,6 +16,7 @@ import { getMahallaName } from '../data/translations';
 
 interface DistrictMapViewProps {
   youthList: YouthProfile[];
+  selectedMakhalla: string;
   onSelectMakhalla: (makhalla: string) => void;
   lang: 'ru' | 'uz';
   onNavigateRegistry: () => void;
@@ -26,19 +28,41 @@ const DISTRICT_CENTER: [number, number] = [41.3385, 69.3450];
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   youthList,
+  selectedMakhalla,
   onSelectMakhalla,
   lang,
   onNavigateRegistry
 }) => {
   const [activeLayer, setActiveLayer] = useState<ActiveLayer>('neet');
   const [showPoi, setShowPoi] = useState<boolean>(true);
-  const [selectedMahallaId, setSelectedMahallaId] = useState<string>('m_oliy_himmat');
+  
+  // Resolve initial selected ID from global selectedMakhalla
+  const initialMahalla = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla) || MAKHALLAS_LIST[0];
+  const [selectedMahallaId, setSelectedMahallaId] = useState<string>(initialMahalla.id);
   const [selectedPoi, setSelectedPoi] = useState<InfrastructurePOI | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const polygonsGroupRef = useRef<L.FeatureGroup | null>(null);
   const poiGroupRef = useRef<L.FeatureGroup | null>(null);
+
+  // Synchronize when global selectedMakhalla prop changes from Header dropdown
+  useEffect(() => {
+    if (selectedMakhalla && selectedMakhalla !== 'all') {
+      const match = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla);
+      if (match) {
+        setSelectedMahallaId(match.id);
+        setSelectedPoi(null);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 0.8 });
+        }
+      }
+    } else if (selectedMakhalla === 'all') {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.8 });
+      }
+    }
+  }, [selectedMakhalla]);
 
   const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
 
@@ -173,6 +197,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       polygon.on('click', () => {
         setSelectedMahallaId(mahalla.id);
         setSelectedPoi(null);
+        onSelectMakhalla(mahalla.name);
         map.flyTo(mahalla.geoCenter, 14, { duration: 0.8 });
       });
 
@@ -292,6 +317,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     if (mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.8 });
     }
+    onSelectMakhalla('all');
   };
 
   return (
@@ -486,12 +512,19 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   </div>
                 </div>
 
-                <button
-                  onClick={() => onSelectMakhalla(currentMahalla.name)}
-                  className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-sm"
-                >
-                  {lang === 'ru' ? 'Выбрать' : 'Tanlash'}
-                </button>
+                {selectedMakhalla === currentMahalla.name ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>{lang === 'ru' ? 'Активный фокус' : 'Tanlangan'}</span>
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => onSelectMakhalla(currentMahalla.name)}
+                    className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-sm"
+                  >
+                    {lang === 'ru' ? 'Выбрать' : 'Tanlash'}
+                  </button>
+                )}
               </div>
 
               {/* Dynamic Real Metrics Grid */}
