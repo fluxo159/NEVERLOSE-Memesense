@@ -73,15 +73,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </span>
             </div>
 
-            <div className="h-64 relative my-2">
+            <div className="h-72 relative my-4">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={donutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={95}
+                    innerRadius={85}
+                    outerRadius={120}
                     paddingAngle={4}
                     dataKey="value"
                   >
@@ -128,26 +128,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 2. Mahalla Comparative Bar Chart */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
-          <div>
+        <div className="lg:col-span-7 glass-panel rounded-2xl px-6 pt-6 pb-8 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+          <div className="flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
-              </h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-base font-bold text-white">
+                  {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
+                </h3>
+                <span className="hidden sm:inline-block text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                  {lang === 'ru' ? 'Средняя занятость: 75%' : 'Ўртача бандлик: 75%'}
+                </span>
+              </div>
               <button 
                 onClick={() => onNavigateTab('map')}
-                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors"
+                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors shrink-0"
               >
                 <span>{lang === 'ru' ? 'Открыть карту' : 'Харитани очиш'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="h-64">
+            <div className="flex-1 min-h-[256px] relative">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mahallaBarData} margin={{ top: 10, right: 10, left: -20, bottom: 15 }}>
+                <BarChart data={mahallaBarData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
-                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} interval={0} angle={-20} textAnchor="end" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#cbd5e1" 
+                    fontSize={12} 
+                    fontWeight={500} 
+                    interval={0} 
+                    angle={-25} 
+                    textAnchor="end"
+                    dy={12} 
+                  />
                   <YAxis stroke="#94a3b8" fontSize={11} />
                   <RechartsTooltip 
                     itemStyle={{ color: '#ffffff', fontWeight: 600 }}
@@ -162,18 +176,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       padding: '8px 12px'
                     }}
                   />
-                  <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Legend 
+                    verticalAlign="bottom"
+                    wrapperStyle={{ position: 'absolute', bottom: -25, width: '100%' }}
+                    content={(props) => {
+                      const { payload } = props;
+                      if (!payload) return null;
+                      return (
+                        <div className="flex justify-center gap-6 text-[11px] font-medium text-slate-300 w-full">
+                          {payload.map((entry, index) => (
+                            <div key={`item-${index}`} className="flex items-center gap-2">
+                              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: entry.color }}></div>
+                              <span>{entry.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
                   <Bar dataKey="работают" fill="#10B981" stackId="a" name={lang === 'ru' ? 'Работают' : 'Ишлайди'} />
                   <Bar dataKey="учатся" fill="#06B6D4" stackId="a" name={lang === 'ru' ? 'Учатся' : 'Ўқийди'} />
                   <Bar dataKey="на_проверке" fill="#F43F5E" stackId="a" radius={[4, 4, 0, 0]} name={lang === 'ru' ? 'Требуют проверки' : 'Текширувда'} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-            <span>Мирзо-Улугбекский район (8 махаллей)</span>
-            <span className="text-emerald-400 font-semibold">Средняя занятость: 75%</span>
           </div>
         </div>
 
@@ -286,12 +312,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-            <span>Интеграция: База налоговой и Минзанятости</span>
-            <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <CheckCircle className="w-3.5 h-3.5" /> Данные синхронизированы
-            </span>
-          </div>
+
         </div>
 
       </div>

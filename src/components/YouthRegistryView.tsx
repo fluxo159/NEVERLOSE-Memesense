@@ -74,8 +74,8 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
   const getStatusBadge = (status: EmploymentStatus, isNeet: boolean) => {
     if (isNeet) {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm">
-          <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-rose-500/15 text-rose-300 border border-rose-500/30 shadow-sm">
+          <AlertCircle className="w-3 h-3 text-rose-400" />
           <span>{lang === 'ru' ? 'Без работы/учёбы' : 'Ишсиз'}</span>
         </span>
       );
@@ -84,43 +84,43 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
     switch (status) {
       case 'занят':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            <CheckCircle className="w-3 h-3 text-emerald-400" />
             <span>{lang === 'ru' ? 'Работает (найм)' : 'Ишлайди'}</span>
           </span>
         );
       case 'предприниматель':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-purple-500/20 text-purple-300 border border-purple-500/40">
-            <Briefcase className="w-3.5 h-3.5 text-purple-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-purple-500/15 text-purple-300 border border-purple-500/30">
+            <Briefcase className="w-3 h-3 text-purple-400" />
             <span>{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</span>
           </span>
         );
       case 'обучается':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-            <GraduationCap className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+            <GraduationCap className="w-3 h-3 text-cyan-400" />
             <span>{lang === 'ru' ? 'Учится (ВУЗ)' : 'Ўқимоқда'}</span>
           </span>
         );
       case 'направлен на обучение':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-blue-500/20 text-blue-300 border border-blue-500/40">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+            <Sparkles className="w-3 h-3 text-indigo-400" />
             <span>{lang === 'ru' ? 'Курсы Моноцентра' : 'Мономарказда'}</span>
           </span>
         );
       case 'безработный':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-amber-500/20 text-amber-300 border border-amber-500/40">
-            <Users className="w-3.5 h-3.5 text-amber-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <Users className="w-3 h-3 text-amber-400" />
             <span>{lang === 'ru' ? 'Ищет работу' : 'Иш қидирмоқда'}</span>
           </span>
         );
       case 'не уточнено':
       default:
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 border border-slate-700">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap bg-surface-3 text-slate-400 border border-white/[0.08]">
             ? {lang === 'ru' ? 'Не уточнено' : 'Аниқланмаган'}
           </span>
         );
@@ -131,18 +131,18 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
     <div className="space-y-4 max-w-7xl mx-auto">
       
       {/* Control & Filter Toolbar */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 shadow-lg space-y-3">
+      <div className="bg-surface-1 p-4 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-3">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           
           {/* Search bar */}
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, навыкам...' : 'Ф.И.Ш., мутахассислик бўйича излаш...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-800/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-surface-2 border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
             />
           </div>
 
@@ -150,24 +150,24 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
           <div className="flex items-center gap-2 self-stretch md:self-auto justify-end flex-wrap">
             
             {/* View Mode Toggle */}
-            <div className="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+            <div className="flex bg-surface-2 p-1 rounded-lg border border-white/[0.06]">
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'table' ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'table' ? 'bg-surface-3 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
                 title="Таблица"
               >
-                <List className="w-4 h-4" />
+                <List className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => setViewMode('cards')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'cards' ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'cards' ? 'bg-surface-3 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
                 title="Карточки"
               >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGrid className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -175,7 +175,7 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             {onOpenImport && (
               <button
                 onClick={onOpenImport}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 rounded-lg text-xs font-semibold border border-white/[0.08] transition-all"
               >
                 <span>📥 {lang === 'ru' ? 'Импорт файла' : 'Импорт'}</span>
               </button>
@@ -184,18 +184,18 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             {/* Export */}
             <button
               onClick={onOpenExport}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 rounded-lg text-xs font-semibold border border-white/[0.08] transition-all"
             >
-              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <Download className="w-3.5 h-3.5 text-indigo-400" />
               <span>{lang === 'ru' ? 'Скачать Excel/CSV' : 'Экспорт'}</span>
             </button>
 
             {/* Add Youth */}
             <button
               onClick={onOpenNewYouth}
-              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 rounded-lg text-xs font-bold transition-all shadow-sm"
             >
-              <UserPlus className="w-4 h-4" />
+              <UserPlus className="w-3.5 h-3.5" />
               <span>{lang === 'ru' ? '+ Добавить человека' : '+ Қўшиш'}</span>
             </button>
 
@@ -203,68 +203,68 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
         </div>
 
         {/* Filter Dropdowns Row */}
-        <div className="flex items-center gap-2 flex-wrap pt-2.5 border-t border-slate-800 text-xs">
+        <div className="flex items-center gap-2 flex-wrap pt-2.5 border-t border-white/[0.06] text-xs">
           
-          <div className="flex items-center gap-1.5 text-slate-400 mr-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex items-center gap-1.5 text-slate-400 mr-1">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
             <span className="font-semibold">{lang === 'ru' ? 'Фильтры:' : 'Филтрлар:'}</span>
           </div>
 
           <select
             value={makhallaFilter}
             onChange={(e) => setMakhallaFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
             {MAKHALLAS_LIST.map(m => (
-              <option key={m.id} value={m.name}>{m.name}</option>
+              <option key={m.id} value={m.name} className="bg-surface-1">{m.name}</option>
             ))}
           </select>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all">{lang === 'ru' ? 'Все статусы занятости' : 'Барча ҳолатлар'}</option>
-            <option value="занят">{lang === 'ru' ? 'Работают (найм)' : 'Ишлайди'}</option>
-            <option value="предприниматель">{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</option>
-            <option value="обучается">{lang === 'ru' ? 'Учатся (ВУЗ)' : 'Ўқимоқда'}</option>
-            <option value="направлен на обучение">{lang === 'ru' ? 'На курсах Моноцентра' : 'Ўқишга юборилган'}</option>
-            <option value="безработный">{lang === 'ru' ? 'Ищут работу' : 'Ишсиз'}</option>
-            <option value="neet_pending">{lang === 'ru' ? '⚠️ Без работы/учёбы (нужен визит)' : '⚠️ Текширувда'}</option>
-            <option value="supported">{lang === 'ru' ? '✓ Получили помощь' : '✓ Ёрдам олган'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все статусы занятости' : 'Барча ҳолатлар'}</option>
+            <option value="занят" className="bg-surface-1">{lang === 'ru' ? 'Работают (найм)' : 'Ишлайди'}</option>
+            <option value="предприниматель" className="bg-surface-1">{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</option>
+            <option value="обучается" className="bg-surface-1">{lang === 'ru' ? 'Учатся (ВУЗ)' : 'Ўқимоқда'}</option>
+            <option value="направлен на обучение" className="bg-surface-1">{lang === 'ru' ? 'На курсах Моноцентра' : 'Ўқишга юборилган'}</option>
+            <option value="безработный" className="bg-surface-1">{lang === 'ru' ? 'Ищут работу' : 'Ишсиз'}</option>
+            <option value="neet_pending" className="bg-surface-1">{lang === 'ru' ? '⚠️ Без работы/учёбы (нужен визит)' : '⚠️ Текширувда'}</option>
+            <option value="supported" className="bg-surface-1">{lang === 'ru' ? '✓ Получили помощь' : '✓ Ёрдам олган'}</option>
           </select>
 
           <select
             value={ageFilter}
             onChange={(e) => setAgeFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all">{lang === 'ru' ? 'Любой возраст (18-30)' : 'Барча ёшлар'}</option>
-            <option value="18-21">18–21 {lang === 'ru' ? 'лет' : 'ёш'}</option>
-            <option value="22-25">22–25 {lang === 'ru' ? 'лет' : 'ёш'}</option>
-            <option value="26-30">26–30 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Любой возраст (18-30)' : 'Барча ёшлар'}</option>
+            <option value="18-21" className="bg-surface-1">18–21 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+            <option value="22-25" className="bg-surface-1">22–25 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+            <option value="26-30" className="bg-surface-1">26–30 {lang === 'ru' ? 'лет' : 'ёш'}</option>
           </select>
 
           <select
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="all">{lang === 'ru' ? 'Пол: Любой' : 'Жинси: Барчаси'}</option>
-            <option value="Мужской">{lang === 'ru' ? 'Мужской' : 'Эркак'}</option>
-            <option value="Женский">{lang === 'ru' ? 'Женский' : 'Аёл'}</option>
+            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Пол: Любой' : 'Жинси: Барчаси'}</option>
+            <option value="Мужской" className="bg-surface-1">{lang === 'ru' ? 'Мужской' : 'Эркак'}</option>
+            <option value="Женский" className="bg-surface-1">{lang === 'ru' ? 'Женский' : 'Аёл'}</option>
           </select>
 
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-950/20 border border-rose-500/30 text-rose-300 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={neetOnly}
               onChange={(e) => setNeetOnly(e.target.checked)}
               className="rounded accent-rose-500 cursor-pointer"
             />
-            <span className="font-semibold">{lang === 'ru' ? 'Только без работы/учёбы' : 'Фақат ишсизлар'}</span>
+            <span className="font-semibold text-xs">{lang === 'ru' ? 'Только без работы' : 'Фақат ишсизлар'}</span>
           </label>
 
           {(statusFilter !== 'all' || makhallaFilter !== 'all' || ageFilter !== 'all' || genderFilter !== 'all' || neetOnly || searchQuery) && (
@@ -277,13 +277,13 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                 setNeetOnly(false);
                 setSearchQuery('');
               }}
-              className="text-xs text-cyan-400 hover:text-cyan-300 underline font-semibold ml-2"
+              className="text-xs text-indigo-400 hover:text-indigo-300 underline font-semibold ml-1"
             >
-              {lang === 'ru' ? 'Сбросить фильтры' : 'Тозалаш'}
+              {lang === 'ru' ? 'Сбросить' : 'Тозалаш'}
             </button>
           )}
 
-          <div className="text-xs text-slate-400 ml-auto font-medium">
+          <div className="text-[11px] text-slate-400 ml-auto font-medium">
             Найдено: <strong className="text-white font-bold">{filteredYouth.length}</strong> из {youthList.length} чел.
           </div>
 
@@ -292,64 +292,64 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
 
       {/* Main Table or Cards View */}
       {viewMode === 'table' ? (
-        <div className="glass-panel rounded-2xl border border-slate-700/60 bg-slate-900/80 overflow-hidden shadow-xl">
+        <div className="bg-surface-1 rounded-2xl border border-white/[0.08] shadow-surface-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-800/90 text-slate-300 font-bold border-b border-slate-700 text-xs uppercase tracking-wider">
+              <thead className="bg-surface-2/80 text-slate-400 font-bold border-b border-white/[0.06] text-[11px] uppercase tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-5">Ф.И.О. гражданина</th>
-                  <th className="py-3.5 px-4">Возраст / Пол</th>
-                  <th className="py-3.5 px-4">Махалля</th>
-                  <th className="py-3.5 px-4">Текущий статус</th>
-                  <th className="py-3.5 px-4">Сфера / Специальность</th>
-                  <th className="py-3.5 px-4">Дата проверки</th>
-                  <th className="py-3.5 px-4 text-right">Анкета</th>
+                  <th className="py-3 px-4">Ф.И.О. гражданина</th>
+                  <th className="py-3 px-4">Возраст / Пол</th>
+                  <th className="py-3 px-4">Махалля</th>
+                  <th className="py-3 px-4">Текущий статус</th>
+                  <th className="py-3 px-4">Сфера / Специальность</th>
+                  <th className="py-3 px-4">Дата</th>
+                  <th className="py-3 px-4 text-right">Анкета</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/70">
+              <tbody className="divide-y divide-white/[0.04]">
                 {filteredYouth.map(youth => (
                   <tr 
                     key={youth.id}
-                    className="hover:bg-slate-800/50 transition-colors group cursor-pointer"
+                    className="hover:bg-surface-2/60 transition-colors group cursor-pointer"
                     onClick={() => onOpenProfile(youth)}
                   >
-                    <td className="py-4 px-5 font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 flex-shrink-0"></div>
-                        <span className="text-sm font-bold">{youth.full_name_demo}</span>
+                    <td className="py-3.5 px-4 font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-indigo-400 flex-shrink-0"></div>
+                        <span className="text-xs font-semibold">{youth.full_name_demo}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-slate-300 text-xs">
-                      <div className="font-semibold text-white text-sm">{youth.age} лет</div>
-                      <div className="text-slate-400 text-xs">{youth.gender}</div>
+                    <td className="py-3.5 px-4 text-slate-300 text-xs">
+                      <div className="font-semibold text-white">{youth.age} лет</div>
+                      <div className="text-slate-500 text-[11px]">{youth.gender}</div>
                     </td>
-                    <td className="py-4 px-4 text-slate-300 text-xs">
-                      <span className="flex items-center gap-1.5 font-medium text-sm">
-                        <MapPin className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <td className="py-3.5 px-4 text-slate-300 text-xs">
+                      <span className="flex items-center gap-1.5 font-medium text-slate-300">
+                        <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
                         {youth.makhalla}
                       </span>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-3.5 px-4">
                       {getStatusBadge(youth.employment_status, youth.is_neet)}
                     </td>
-                    <td className="py-4 px-4 text-slate-300 text-xs">
-                      <div className="font-semibold text-white truncate max-w-[220px] text-sm">
+                    <td className="py-3.5 px-4 text-slate-300 text-xs">
+                      <div className="font-semibold text-white truncate max-w-[200px]">
                         {youth.activity_type}
                       </div>
-                      <div className="text-slate-400 text-xs truncate max-w-[220px] mt-0.5">
+                      <div className="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">
                         {youth.specialty || youth.education}
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-slate-400 font-mono text-xs">
+                    <td className="py-3.5 px-4 text-slate-500 font-mono text-[11px]">
                       {youth.last_updated}
                     </td>
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onOpenProfile(youth);
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white font-bold text-xs transition-all border border-slate-700"
+                        className="px-2.5 py-1 rounded-lg bg-surface-2 hover:bg-indigo-600 text-slate-300 hover:text-white font-semibold text-xs transition-all border border-white/[0.08]"
                       >
                         Открыть
                       </button>
@@ -362,21 +362,21 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
         </div>
       ) : (
         /* Cards View */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredYouth.map(youth => (
             <div
               key={youth.id}
               onClick={() => onOpenProfile(youth)}
-              className="glass-panel p-5 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-cyan-500/50 cursor-pointer transition-all flex flex-col justify-between hover:translate-y-[-2px] shadow-lg"
+              className="bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.18] cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
             >
               <div>
-                <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="flex items-start justify-between gap-2 mb-2.5">
                   <div>
-                    <h4 className="text-base font-bold text-white hover:text-cyan-300 transition-colors">
+                    <h4 className="text-xs font-bold text-white hover:text-indigo-400 transition-colors">
                       {youth.full_name_demo}
                     </h4>
-                    <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                      <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
                       <span>{youth.makhalla}</span>
                       <span>•</span>
                       <span>{youth.age} лет</span>
@@ -387,21 +387,21 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-300 my-3 bg-slate-800/40 p-3 rounded-xl border border-slate-700/40">
+                <div className="space-y-1 text-xs text-slate-300 my-2 bg-surface-2/80 p-2.5 rounded-lg border border-white/[0.06]">
                   <div>
-                    <span className="text-slate-400">Сфера:</span>{' '}
-                    <strong className="text-white">{youth.activity_type}</strong>
+                    <span className="text-slate-500 text-[11px]">Сфера:</span>{' '}
+                    <strong className="text-white text-xs">{youth.activity_type}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400">Образование:</span>{' '}
-                    <strong className="text-slate-200">{youth.education}</strong>
+                    <span className="text-slate-500 text-[11px]">Образование:</span>{' '}
+                    <strong className="text-slate-300 text-xs">{youth.education}</strong>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+              <div className="pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-500">
                 <span className="font-mono">{youth.last_updated}</span>
-                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                <span className="text-indigo-400 font-bold flex items-center gap-1">
                   Открыть анкету →
                 </span>
               </div>
@@ -411,10 +411,10 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
       )}
 
       {filteredYouth.length === 0 && (
-        <div className="glass-panel p-12 rounded-3xl text-center text-slate-400 border border-slate-700/60">
-          <Users className="w-10 h-10 text-slate-500 mx-auto mb-2" />
-          <p className="text-base font-bold text-white">Ничего не найдено</p>
-          <p className="text-xs text-slate-400 mt-1">Попробуйте изменить параметры поиска или сбросить фильтры.</p>
+        <div className="bg-surface-1 p-10 rounded-2xl text-center text-slate-400 border border-white/[0.08]">
+          <Users className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+          <p className="text-sm font-bold text-white">Ничего не найдено</p>
+          <p className="text-xs text-slate-500 mt-1">Попробуйте изменить параметры поиска или сбросить фильтры.</p>
         </div>
       )}
 

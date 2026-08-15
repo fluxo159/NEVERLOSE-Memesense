@@ -72,27 +72,38 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       )
     },
     {
-      title: "Шаг 1: Ситуационный дашборд района",
-      subtitle: "Сводный мониторинг для Хокимията и Центра содействия занятости",
+      title: "Шаг 1: Вкладка «Главная / Обзор»",
+      subtitle: "Простой и наглядный сводный мониторинг",
       badge: "Демо-шаг 1",
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Что говорить жюри:</strong> «При входе руководство района сразу видит объективную картину занятости: общее число молодёжи, долю официально занятых (найм/ИП), студентов и зону риска. Графики показывают распределение по отраслям экономики района».
+            <strong>Что говорить жюри:</strong> «На главной вкладке руководство сразу видит понятную картину без перегруза данными. Мы мониторим самое главное: сколько всего молодёжи, кто работает, кто учится, а кто требует нашего внимания. Всё наглядно разбито по конкретным махаллям».
           </p>
-          <div className="p-3 bg-slate-800 rounded-xl border border-slate-700 text-[11px] space-y-1">
-            <div className="text-cyan-300 font-bold">✓ Закрывает требование ТЗ №2:</div>
-            <div>Обобщённый мониторинг по махалле и району, агрегированная картина.</div>
+          <p>
+            «Особая фишка — <strong>динамическая умная карточка "Главная задача на сегодня"</strong>. Если инспектору нужно проверить статус молодых людей, она горит тревожным красным. Но как только проверки завершены (Zero Inbox), она превращается в успокаивающую зелёную карточку успеха, хваля сотрудника. Это крутой UX-приём, который снимает стресс у госслужащих!»
+          </p>
+          
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            <div className="p-2.5 bg-rose-950/40 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5"/> Фокус на проблеме</div>
+              Красная карточка: "24 требуют проверки" — чёткий призыв к действию.
+            </div>
+            <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5"/> Мотивация (Zero Inbox)</div>
+              Зелёная карточка: "Отличная работа! Задач нет" — награда за труд.
+            </div>
           </div>
+
           <button
             onClick={() => {
               onRunDemoStep(1);
               onClose();
             }}
-            className="w-full py-2.5 bg-gradient-to-r from-gov-600 to-cyan-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 mt-2 bg-gradient-to-r from-gov-600 to-cyan-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
           >
             <Play className="w-4 h-4" />
-            <span>Перейти к экрану Дашборда</span>
+            <span>Показать жюри экран Обзора</span>
           </button>
         </div>
       )
