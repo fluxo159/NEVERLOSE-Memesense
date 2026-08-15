@@ -232,7 +232,7 @@ function generate100Profiles(): YouthProfile[] {
     const lastName = lastNames[(i * 3) % lastNames.length];
     const patronymic = patronymics[(i * 7) % patronymics.length];
 
-    const fullName = `${lastName} ${firstName} ${patronymic} (Демо)`;
+    const fullName = `${lastName} ${firstName} ${patronymic}`;
     const makhalla = MAKHALAS[i % MAKHALAS.length];
     const age = 18 + ((i * 7) % 13); // Range 18 to 30
 

@@ -17,7 +17,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const BOM = "\uFEFF";
     const headers = [
       "ID",
-      "ФИО (Демо)",
+      "ФИО",
       "Махалля",
       "Возраст",
       "Пол",

@@ -37,7 +37,7 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
 
     const newProfile: YouthProfile = {
       id: `y_${Date.now().toString().slice(-4)}`,
-      full_name_demo: `${fullName.trim()} (Демо)`,
+      full_name_demo: `${fullName.trim()}`,
       makhalla,
       age: Number(age),
       gender,

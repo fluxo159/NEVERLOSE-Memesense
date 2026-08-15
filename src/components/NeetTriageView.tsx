@@ -140,15 +140,12 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div className="space-y-1 max-w-2xl">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
+              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <AlertCircle className="w-5 h-5" />
               </div>
               <h2 className="text-lg font-bold text-white tracking-tight">
                 {lang === 'ru' ? 'Молодёжь, требующая проверки' : 'Текширув кутаётган ёшлар'}
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-semibold whitespace-nowrap">
-                {lang === 'ru' ? 'Личный подворовой обход' : 'Маҳалла кўриги'}
-              </span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
               {lang === 'ru'
@@ -161,7 +158,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
             <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
               <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Ожидают обхода' : 'Кутмоқда'}</div>
-              <div className="text-xl font-black text-rose-400 mt-0.5">{pendingCount} чел.</div>
+              <div className="text-xl font-black text-amber-400 mt-0.5">{pendingCount} чел.</div>
             </div>
             <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
               <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Опрошены' : 'Текширилган'}</div>
@@ -171,55 +168,56 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
       </div>
 
-      {/* Control Bar */}
-      <div className="bg-surface-1 p-3 rounded-xl border border-white/[0.08] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
-        
+      {/* Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
         {/* Search */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-lg focus-within:border-indigo-500 transition-colors">
           <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-2 border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
           />
         </div>
 
-        {/* Segmented Filter Tabs */}
-        <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-lg border border-white/[0.06] overflow-x-auto no-scrollbar">
+        {/* Verification Status Tabs */}
+        <div className="flex items-center p-1 bg-surface-2 border border-white/[0.08] rounded-xl text-[11px] font-semibold">
           <button
             onClick={() => setFilterVerification('pending')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-              filterVerification === 'pending'
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+              filterVerification === 'pending' 
+                ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
+                : 'text-slate-400 hover:text-slate-300 border border-transparent'
             }`}
           >
-            <Clock className="w-3 h-3" />
-            <span>{lang === 'ru' ? 'Нужен визит' : 'Текширувда'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{pendingCount}</span>
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            {lang === 'ru' ? 'Нужен визит' : 'Кўрик'}
+            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'pending' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+              {pendingCount}
+            </span>
           </button>
-
           <button
             onClick={() => setFilterVerification('verified')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-              filterVerification === 'verified'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+              filterVerification === 'verified' 
+                ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30' 
+                : 'text-slate-400 hover:text-slate-300 border border-transparent'
             }`}
           >
-            <CheckCircle className="w-3 h-3" />
-            <span>{lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{verifiedCount}</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            {lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}
+            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${filterVerification === 'verified' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-surface-3'}`}>
+              {verifiedCount}
+            </span>
           </button>
-
           <button
             onClick={() => setFilterVerification('all')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-              filterVerification === 'all'
-                ? 'bg-surface-3 text-white border border-white/[0.12]'
-                : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg transition-colors border ${
+              filterVerification === 'all' 
+                ? 'bg-surface-3 text-white border-white/[0.12]' 
+                : 'text-slate-400 hover:text-slate-300 border-transparent'
             }`}
           >
             {lang === 'ru' ? 'Все' : 'Барчаси'}
@@ -227,15 +225,15 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
 
         {/* Makhalla Quick Filter */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
           <select
             value={filterMakhalla}
             onChange={(e) => setFilterMakhalla(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer"
+            className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-1 pr-4"
           >
-            <option value="all">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
+            <option value="all" className="bg-surface-2">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
             {MAKHALLAS_LIST.map(m => (
-              <option key={m.id} value={m.name} className="bg-surface-1 text-white">{m.name}</option>
+              <option key={m.id} value={m.name} className="bg-surface-2">{m.name}</option>
             ))}
           </select>
         </div>
@@ -324,7 +322,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                       <div className="grid grid-cols-2 gap-2.5 pt-2">
                         <button
                           onClick={() => handleConfirmAction(true)}
-                          className="py-2.5 px-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-glow-rose transition-all flex items-center justify-center gap-1.5"
+                          className="py-2.5 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-glow-brand transition-all flex items-center justify-center gap-1.5"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
                           <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Ёрдамга муҳтож'}</span>
@@ -357,11 +355,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
           return (
             <div
               key={youth.id}
-              className={`bg-surface-1 p-4 rounded-xl border transition-all flex flex-col justify-between shadow-surface-card hover:border-white/[0.18] ${
-                isPending 
-                  ? 'border-rose-500/30 bg-gradient-to-b from-rose-950/10 to-surface-1' 
-                  : 'border-emerald-500/30 bg-gradient-to-b from-emerald-950/10 to-surface-1'
-              }`}
+              className="bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all flex flex-col justify-between shadow-surface-card"
             >
               <div className="space-y-2.5">
                 
@@ -384,8 +378,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   <span
                     className={`px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap flex items-center gap-1 ${
                       isPending
-                        ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
-                        : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                     }`}
                   >
                     {isPending ? <Clock className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
@@ -426,7 +420,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
               <div className="pt-3 mt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
                 <button
                   onClick={() => onOpenProfile(youth)}
-                  className="px-2.5 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-3 text-slate-300 text-xs font-semibold transition-all border border-white/[0.08]"
+                  className="h-8 px-3 rounded-lg bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-semibold transition-all border border-white/[0.08] flex items-center justify-center"
                 >
                   {lang === 'ru' ? 'Анкета' : 'Анкета'}
                 </button>
@@ -434,7 +428,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 {isPending ? (
                   <button
                     onClick={() => handleStartVerify(youth)}
-                    className="flex-1 py-1.5 px-3 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="flex-1 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <UserCheck className="w-3.5 h-3.5" />
                     <span>{lang === 'ru' ? 'Провести опрос' : 'Суҳбат ўтказиш'}</span>
@@ -442,7 +436,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 ) : (
                   <button
                     onClick={() => onRouteProgram(youth)}
-                    className="flex-1 py-1.5 px-3 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="flex-1 h-8 px-3.5 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>{lang === 'ru' ? 'Направить на обучение' : 'Ўқишга йўналтириш'}</span>

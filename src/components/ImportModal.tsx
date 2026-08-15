@@ -72,7 +72,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
           parsedProfiles.push({
             id,
-            full_name_demo: `${fullName} (Демо)`,
+            full_name_demo: `${fullName}`,
             makhalla,
             age,
             gender,

@@ -171,6 +171,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
               </div>
 
             </div>
+          </div>
           );
         })}
       </div>

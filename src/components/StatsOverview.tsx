@@ -96,12 +96,12 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
       </div>
 
       {/* 2. THREE CALM SECONDARY CONTEXT METRICS (Apple HIG: Deference & Clarity) */}
-      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3.5 h-full">
         
         {/* Metric 1: Всего молодёжи */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('all')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-slate-500 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="h-full bg-surface-1 p-4 rounded-2xl border border-white/[0.08] hover:border-white/[0.18] cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">
@@ -117,7 +117,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
               {lang === 'ru' ? 'База актуальна (онлайн)' : 'База янгиланган (онлайн)'}
             </div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-slate-800/80">
+          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06]">
             18–30 лет (8 махаллей)
           </div>
         </div>
@@ -125,7 +125,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         {/* Metric 2: Заняты или учатся */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('занят')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-emerald-500/60 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="h-full bg-surface-1 p-4 rounded-2xl border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">
@@ -136,14 +136,14 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
               <span className="text-4xl font-black text-emerald-400">{engagementPercent}%</span>
               <span className="text-sm font-medium text-slate-500">({totalEngaged} чел.)</span>
             </div>
-            <div className="mt-3.5 w-full bg-slate-800 rounded-full h-1.5 border border-slate-700/50 overflow-hidden relative">
+            <div className="mt-3.5 w-full bg-surface-3 rounded-full h-1.5 border border-white/[0.04] overflow-hidden relative">
               <div 
                 className="bg-gradient-to-r from-emerald-500 to-emerald-300 h-full rounded-full absolute left-0 top-0 transition-all duration-1000" 
                 style={{ width: `${engagementPercent}%` }}
               ></div>
             </div>
           </div>
-          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-slate-800/80">
+          <div className="text-[11px] text-slate-400 pt-2.5 mt-2 border-t border-white/[0.06]">
             {employed} работают • {studying} учатся
           </div>
         </div>
@@ -151,7 +151,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         {/* Metric 3: Получили господдержку */}
         <div 
           onClick={() => onFilterStatus && onFilterStatus('supported')}
-          className="glass-panel p-4 rounded-2xl border border-slate-700/60 bg-slate-900/80 hover:border-cyan-500/60 cursor-pointer transition-all flex flex-col justify-between shadow-md"
+          className="h-full bg-surface-1 p-4 rounded-2xl border border-white/[0.08] hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between shadow-surface-card"
         >
           <div>
             <div className="flex items-center justify-between text-slate-400 mb-1">

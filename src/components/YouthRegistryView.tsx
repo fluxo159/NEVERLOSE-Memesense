@@ -135,14 +135,14 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           
           {/* Search bar */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-lg focus-within:border-indigo-500 transition-colors">
             <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, навыкам...' : 'Ф.И.Ш., мутахассислик бўйича излаш...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface-2 border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
             />
           </div>
 
@@ -210,52 +210,60 @@ export const YouthRegistryView: React.FC<YouthRegistryViewProps> = ({
             <span className="font-semibold">{lang === 'ru' ? 'Фильтры:' : 'Филтрлар:'}</span>
           </div>
 
-          <select
-            value={makhallaFilter}
-            onChange={(e) => setMakhallaFilter(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
-            {MAKHALLAS_LIST.map(m => (
-              <option key={m.id} value={m.name} className="bg-surface-1">{m.name}</option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
+            <select
+              value={makhallaFilter}
+              onChange={(e) => setMakhallaFilter(e.target.value)}
+              className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-0.5 pr-4"
+            >
+              <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
+              {MAKHALLAS_LIST.map(m => (
+                <option key={m.id} value={m.name} className="bg-surface-1">{m.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все статусы занятости' : 'Барча ҳолатлар'}</option>
-            <option value="занят" className="bg-surface-1">{lang === 'ru' ? 'Работают (найм)' : 'Ишлайди'}</option>
-            <option value="предприниматель" className="bg-surface-1">{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</option>
-            <option value="обучается" className="bg-surface-1">{lang === 'ru' ? 'Учатся (ВУЗ)' : 'Ўқимоқда'}</option>
-            <option value="направлен на обучение" className="bg-surface-1">{lang === 'ru' ? 'На курсах Моноцентра' : 'Ўқишга юборилган'}</option>
-            <option value="безработный" className="bg-surface-1">{lang === 'ru' ? 'Ищут работу' : 'Ишсиз'}</option>
-            <option value="neet_pending" className="bg-surface-1">{lang === 'ru' ? '⚠️ Без работы/учёбы (нужен визит)' : '⚠️ Текширувда'}</option>
-            <option value="supported" className="bg-surface-1">{lang === 'ru' ? '✓ Получили помощь' : '✓ Ёрдам олган'}</option>
-          </select>
+          <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-0.5 pr-4"
+            >
+              <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Все статусы занятости' : 'Барча ҳолатлар'}</option>
+              <option value="занят" className="bg-surface-1">{lang === 'ru' ? 'Работают (найм)' : 'Ишлайди'}</option>
+              <option value="предприниматель" className="bg-surface-1">{lang === 'ru' ? 'Свой бизнес / ИП' : 'Тадбиркор'}</option>
+              <option value="обучается" className="bg-surface-1">{lang === 'ru' ? 'Учатся (ВУЗ)' : 'Ўқимоқда'}</option>
+              <option value="направлен на обучение" className="bg-surface-1">{lang === 'ru' ? 'На курсах Моноцентра' : 'Ўқишга юборилган'}</option>
+              <option value="безработный" className="bg-surface-1">{lang === 'ru' ? 'Ищут работу' : 'Ишсиз'}</option>
+              <option value="neet_pending" className="bg-surface-1">{lang === 'ru' ? '⚠️ Без работы/учёбы (нужен визит)' : '⚠️ Текширувда'}</option>
+              <option value="supported" className="bg-surface-1">{lang === 'ru' ? '✓ Получили помощь' : '✓ Ёрдам олган'}</option>
+            </select>
+          </div>
 
-          <select
-            value={ageFilter}
-            onChange={(e) => setAgeFilter(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Любой возраст (18-30)' : 'Барча ёшлар'}</option>
-            <option value="18-21" className="bg-surface-1">18–21 {lang === 'ru' ? 'лет' : 'ёш'}</option>
-            <option value="22-25" className="bg-surface-1">22–25 {lang === 'ru' ? 'лет' : 'ёш'}</option>
-            <option value="26-30" className="bg-surface-1">26–30 {lang === 'ru' ? 'лет' : 'ёш'}</option>
-          </select>
+          <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
+            <select
+              value={ageFilter}
+              onChange={(e) => setAgeFilter(e.target.value)}
+              className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-0.5 pr-4"
+            >
+              <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Любой возраст (18-30)' : 'Барча ёшлар'}</option>
+              <option value="18-21" className="bg-surface-1">18–21 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+              <option value="22-25" className="bg-surface-1">22–25 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+              <option value="26-30" className="bg-surface-1">26–30 {lang === 'ru' ? 'лет' : 'ёш'}</option>
+            </select>
+          </div>
 
-          <select
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Пол: Любой' : 'Жинси: Барчаси'}</option>
-            <option value="Мужской" className="bg-surface-1">{lang === 'ru' ? 'Мужской' : 'Эркак'}</option>
-            <option value="Женский" className="bg-surface-1">{lang === 'ru' ? 'Женский' : 'Аёл'}</option>
-          </select>
+          <div className="flex items-center gap-2 bg-surface-2 border border-white/[0.08] rounded-lg px-2.5 py-1">
+            <select
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer w-full py-0.5 pr-4"
+            >
+              <option value="all" className="bg-surface-1">{lang === 'ru' ? 'Пол: Любой' : 'Жинси: Барчаси'}</option>
+              <option value="Мужской" className="bg-surface-1">{lang === 'ru' ? 'Мужской' : 'Эркак'}</option>
+              <option value="Женский" className="bg-surface-1">{lang === 'ru' ? 'Женский' : 'Аёл'}</option>
+            </select>
+          </div>
 
           <label className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-950/20 border border-rose-500/30 text-rose-300 cursor-pointer select-none">
             <input

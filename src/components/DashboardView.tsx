@@ -62,7 +62,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* 1. Status Breakdown (Apple Clarity Donut) */}
-        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-base font-bold text-white">
@@ -93,13 +93,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     itemStyle={{ color: '#ffffff', fontWeight: 600 }}
                     labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
                     contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: 'rgba(56, 189, 248, 0.4)', 
+                      backgroundColor: '#151922', 
+                      borderColor: 'rgba(255, 255, 255, 0.08)', 
                       borderRadius: '12px', 
                       color: '#ffffff', 
                       fontSize: '12px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
-                      padding: '8px 12px'
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)'
                     }}
                   />
                 </PieChart>
@@ -114,7 +113,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Clean Human Legend with Icons */}
-          <div className="space-y-2 pt-4 border-t border-slate-800 text-xs">
+          <div className="space-y-2 pt-4 border-t border-white/[0.06] text-xs">
             {donutData.map((entry, idx) => (
               <div key={entry.name} className="flex items-center justify-between text-slate-300">
                 <div className="flex items-center gap-2 truncate">
@@ -128,7 +127,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 2. Mahalla Comparative Bar Chart */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl px-6 pt-6 pb-8 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl px-6 pt-6 pb-8 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div className="flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -209,7 +208,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* 1. Priority Visits */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-rose-500/20 bg-slate-900/80 shadow-lg">
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
@@ -231,10 +230,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div
                 key={youth.id}
                 onClick={() => onOpenProfile(youth)}
-                className="glass-card p-4 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between gap-3 transition-all"
+                className="bg-surface-2 p-4 rounded-xl border border-white/[0.08] hover:border-rose-500/30 cursor-pointer flex items-center justify-between gap-3 transition-all shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm text-cyan-400 flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-surface-3 border border-white/[0.04] flex items-center justify-center font-bold text-sm text-cyan-400 flex-shrink-0">
                     {youth.age}
                   </div>
                   <div>
@@ -250,10 +249,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold whitespace-nowrap">
+                  <span className="text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold whitespace-nowrap">
                     {lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                  <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
               </div>
             ))}
@@ -261,7 +260,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 2. Where to route */}
-        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-white mb-1">
               {lang === 'ru' ? 'Куда можно направить человека' : 'Қайси дастурларга йўналтириш мумкин'}
@@ -273,7 +272,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="space-y-3">
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-cyan-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
                   <div className="text-sm font-bold text-white">Моноцентр «Ишга Мархамат»</div>
@@ -286,7 +285,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-emerald-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-emerald-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
                   <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
@@ -299,7 +298,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-purple-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-purple-500/40 cursor-pointer flex items-center justify-between transition-all shadow-sm"
               >
                 <div>
                   <div className="text-sm font-bold text-white">Фонд «Ёшлар Дафтари»</div>

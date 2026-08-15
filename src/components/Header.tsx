@@ -1,5 +1,5 @@
-import React from 'react';
-import { Shield, UserCheck, Sparkles, MapPin, Globe } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Shield, UserCheck, Sparkles, MapPin, Globe, ChevronDown, Check } from 'lucide-react';
 import { UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 
@@ -22,18 +22,29 @@ export const Header: React.FC<HeaderProps> = ({
   lang,
   onToggleLang
 }) => {
+  const [isMakhallaOpen, setIsMakhallaOpen] = useState(false);
+  const makhallaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (makhallaRef.current && !makhallaRef.current.contains(event.target as Node)) {
+        setIsMakhallaOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <header className="bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl">
+    <header className="bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl relative z-50">
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-brand-linear to-cyan-500 p-[1px] shadow-glow-brand flex-shrink-0">
-              <div className="w-full h-full bg-surface-1 rounded-[11px] flex items-center justify-center">
-                <Shield className="w-4 h-4 text-indigo-400" />
-              </div>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-brand-linear to-cyan-500 shadow-glow-brand flex-shrink-0 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white drop-shadow-md" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -55,24 +66,57 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Selectors & Actions */}
           <div className="flex items-center gap-2 flex-wrap">
             
-            {/* Makhalla Selector */}
-            <div className="flex items-center bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 transition-colors">
-              <MapPin className="w-3.5 h-3.5 text-indigo-400 mr-1.5 flex-shrink-0" />
-              <select
-                aria-label="Фильтр по махалле"
-                value={selectedMakhalla}
-                onChange={(e) => onSelectMakhalla(e.target.value)}
-                className="bg-transparent text-slate-100 font-medium focus:outline-none cursor-pointer pr-1 text-xs"
+            {/* Custom Makhalla Dropdown */}
+            <div className="relative" ref={makhallaRef}>
+              <button
+                onClick={() => setIsMakhallaOpen(!isMakhallaOpen)}
+                className="flex items-center justify-between w-[200px] bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 transition-colors focus:outline-none"
               >
-                <option value="all" className="bg-surface-2 text-white">
-                  {lang === 'ru' ? 'Весь район (8 махаллей)' : 'Барча маҳаллалар'}
-                </option>
-                {MAKHALLAS_LIST.map((m) => (
-                  <option key={m.id} value={m.name} className="bg-surface-2 text-white">
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+                <div className="flex items-center gap-1.5 truncate">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                  <span className="font-medium truncate text-slate-100">
+                    {selectedMakhalla === 'all' 
+                      ? (lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар') 
+                      : selectedMakhalla}
+                  </span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 flex-shrink-0 ml-1 transition-transform ${isMakhallaOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isMakhallaOpen && (
+                <div className="absolute z-50 w-full min-w-[220px] mt-1.5 bg-[#151922] border border-white/[0.14] rounded-xl shadow-2xl shadow-black/80 overflow-hidden py-1.5 right-0">
+                  <button
+                    onClick={() => { onSelectMakhalla('all'); setIsMakhallaOpen(false); }}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/[0.08] transition-colors ${
+                      selectedMakhalla === 'all' 
+                        ? 'text-indigo-300 bg-indigo-500/20 font-semibold' 
+                        : 'text-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="truncate">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</span>
+                    </div>
+                    {selectedMakhalla === 'all' && <Check className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 ml-2" />}
+                  </button>
+                  
+                  {MAKHALLAS_LIST.map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => { onSelectMakhalla(m.name); setIsMakhallaOpen(false); }}
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/[0.08] transition-colors ${
+                        selectedMakhalla === m.name 
+                          ? 'text-indigo-300 bg-indigo-500/20 font-semibold' 
+                          : 'text-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="truncate">{m.name}</span>
+                      </div>
+                      {selectedMakhalla === m.name && <Check className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 ml-2" />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Role Switcher */}
@@ -82,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label="Выбор роли пользователя"
                 value={selectedRole}
                 onChange={(e) => onSelectRole(e.target.value as UserRole)}
-                className="bg-surface-3 text-slate-200 font-medium px-2 py-1 rounded-lg border border-white/[0.08] focus:outline-none cursor-pointer text-xs"
+                className="bg-transparent text-slate-200 font-medium px-1 focus:outline-none cursor-pointer text-xs"
               >
                 <option value="district_officer" className="bg-surface-2 text-white">
                   🏛️ {lang === 'ru' ? 'Хокимият' : 'Ҳокимлик'}

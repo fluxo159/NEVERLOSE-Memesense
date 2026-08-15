@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, MapPin, Phone, GraduationCap, Calendar, 
   Sparkles, CheckCircle2, History, ArrowRight, ShieldCheck, 
-  Printer, Wrench, Code, Gift, TrendingUp, Briefcase
+  Printer, Wrench, Code, Gift, TrendingUp, Briefcase, FileText
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
 import { SUPPORT_PROGRAMS } from '../data/supportPrograms';
@@ -39,18 +39,24 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
   const getProgramIcon = (name: string) => {
     switch (name) {
-      case 'Wrench': return <Wrench className="w-4 h-4 text-amber-400" />;
-      case 'Code': return <Code className="w-4 h-4 text-cyan-400" />;
-      case 'Gift': return <Gift className="w-4 h-4 text-purple-400" />;
-      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-emerald-400" />;
-      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-indigo-400" />;
-      default: return <Briefcase className="w-4 h-4 text-indigo-400" />;
+      case 'Wrench': return <Wrench className="w-4 h-4 text-slate-400" />;
+      case 'Code': return <Code className="w-4 h-4 text-slate-400" />;
+      case 'Gift': return <Gift className="w-4 h-4 text-slate-400" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-slate-400" />;
+      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-slate-400" />;
+      default: return <Briefcase className="w-4 h-4 text-slate-400" />;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.14] shadow-surface-modal overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.14] shadow-surface-modal overflow-hidden my-auto max-h-[92vh] flex flex-col cursor-default"
+      >
         
         {/* Modal Header */}
         <div className="p-5 border-b border-white/[0.08] bg-surface-2/80 flex items-start justify-between">
@@ -69,14 +75,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               </div>
               <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
                 <span className="flex items-center gap-1 text-slate-300 font-medium">
-                  <MapPin className="w-3 h-3 text-indigo-400" />
+                  <MapPin className="w-3 h-3 text-slate-400" />
                   {youth.makhalla}
                 </span>
                 <span>•</span>
                 <span className="text-slate-400">{youth.age} лет ({youth.gender})</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-400 font-mono">
-                  <Phone className="w-3 h-3 text-emerald-400" />
+                  <Phone className="w-3 h-3 text-slate-400" />
                   {youth.phone_demo}
                 </span>
               </div>
@@ -104,11 +110,12 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
         <div className="flex border-b border-white/[0.08] bg-surface-2/40 px-5 text-xs font-semibold text-slate-400 gap-5">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-2.5 border-b-2 transition-all ${
+            className={`py-2.5 border-b-2 transition-all flex items-center gap-1.5 ${
               activeTab === 'overview' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            📋 Общие сведения
+            <FileText className="w-3.5 h-3.5" />
+            <span>Общие сведения</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -122,10 +129,10 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           <button
             onClick={() => setActiveTab('recommendations')}
             className={`py-2.5 border-b-2 transition-all flex items-center gap-1.5 ${
-              activeTab === 'recommendations' ? 'border-emerald-400 text-emerald-300' : 'border-transparent hover:text-slate-200'
+              activeTab === 'recommendations' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+            <Sparkles className="w-3.5 h-3.5" />
             <span>Маршрутизация & Программы</span>
           </button>
         </div>
@@ -144,7 +151,11 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className="text-base font-bold text-white capitalize">{youth.employment_status}</span>
                     {youth.is_neet && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold whitespace-nowrap">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold whitespace-nowrap ${
+                        youth.neet_verification === 'verified'
+                          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                      }`}>
                         ⚠️ NEET ({youth.neet_verification === 'verified' ? 'Подтверждён' : 'На проверке'})
                       </span>
                     )}
@@ -164,18 +175,20 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                     </button>
                   ) : (
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <select
-                        value={newStatus}
-                        onChange={(e) => setNewStatus(e.target.value as EmploymentStatus)}
-                        className="bg-surface-1 border border-indigo-500 rounded-lg text-xs text-white px-2.5 py-1 focus:outline-none"
-                      >
-                        <option value="занят">Занят (найм)</option>
-                        <option value="предприниматель">Бизнес / ИП</option>
-                        <option value="обучается">Обучается (ВУЗ)</option>
-                        <option value="направлен на обучение">Направлен на обучение</option>
-                        <option value="безработный">Безработный</option>
-                        <option value="не уточнено">Не уточнено</option>
-                      </select>
+                      <div className="bg-surface-1 border border-indigo-500/50 rounded-lg pr-2">
+                        <select
+                          value={newStatus}
+                          onChange={(e) => setNewStatus(e.target.value as EmploymentStatus)}
+                          className="bg-transparent text-xs text-white px-2.5 py-1 focus:outline-none cursor-pointer"
+                        >
+                          <option value="занят" className="bg-surface-1">Работают (найм)</option>
+                          <option value="предприниматель" className="bg-surface-1">Свой бизнес / ИП</option>
+                          <option value="обучается" className="bg-surface-1">Учатся (ВУЗ)</option>
+                          <option value="направлен на обучение" className="bg-surface-1">На курсах Моноцентра</option>
+                          <option value="безработный" className="bg-surface-1">Ищут работу</option>
+                          <option value="не уточнено" className="bg-surface-1">Не уточнено</option>
+                        </select>
+                      </div>
                       <button
                         onClick={handleSaveStatus}
                         className="px-3 py-1 bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 border border-emerald-500/40 rounded-lg text-xs font-bold"
@@ -197,7 +210,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+                    <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
                     <span>Образование & Специальность</span>
                   </div>
                   <div className="text-xs space-y-0.5 text-slate-300">
@@ -208,7 +221,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
                 <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <Wrench className="w-3.5 h-3.5 text-emerald-400" />
+                    <Wrench className="w-3.5 h-3.5 text-slate-400" />
                     <span>Навыки и компетенции</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
@@ -224,7 +237,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               {/* Leader Notes */}
               <div className="p-3.5 rounded-xl bg-surface-2/60 border border-white/[0.06] space-y-1">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
                   <span>Заметки выездного опроса («Ёшлар етакчиси»)</span>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed bg-surface-1/80 p-2.5 rounded-lg border border-white/[0.04]">
@@ -245,15 +258,15 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="relative pl-5 space-y-4 before:content-[''] before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-3">
                 {youth.status_history.map((hist, idx) => (
                   <div key={idx} className="relative">
-                    <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-indigo-400 flex items-center justify-center">
-                      <div className="w-1 h-1 rounded-full bg-indigo-400"></div>
+                    <div className="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-surface-1 border-2 border-slate-500 flex items-center justify-center">
+                      <div className="w-1 h-1 rounded-full bg-slate-400"></div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.06] space-y-0.5">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-white capitalize">{hist.status}</span>
                         <span className="text-slate-500 font-mono text-[11px] flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-indigo-400" />
+                          <Calendar className="w-3 h-3 text-slate-400" />
                           {hist.date}
                         </span>
                       </div>
@@ -331,18 +344,6 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
           )}
 
         </div>
-
-        {/* Modal Footer */}
-        <div className="p-3.5 border-t border-white/[0.08] bg-surface-2 flex items-center justify-between text-[11px] text-slate-500">
-          <span>Синтетический демо-профиль NEXUS30 | Персональные данные защищены</span>
-          <button
-            onClick={onClose}
-            className="px-3.5 py-1.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-lg font-semibold transition-colors"
-          >
-            Закрыть
-          </button>
-        </div>
-
       </div>
     </div>
   );
