@@ -211,7 +211,6 @@ export const App: React.FC = () => {
           onSelectTab={setActiveTab}
           neetPendingCount={neetPendingCount}
           totalYouthCount={currentScopedList.length}
-          onOpenNewYouth={() => setShowNewYouthModal(true)}
           lang={lang}
         />
       </div>

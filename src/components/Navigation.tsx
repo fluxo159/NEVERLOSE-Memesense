@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, AlertCircle, Users, Map, BookOpen, UserPlus } from 'lucide-react';
+import { LayoutDashboard, AlertCircle, Users, Map, BookOpen } from 'lucide-react';
 
 export type ActiveTab = 'dashboard' | 'triage' | 'registry' | 'map' | 'programs';
 
@@ -8,7 +8,6 @@ interface NavigationProps {
   onSelectTab: (tab: ActiveTab) => void;
   neetPendingCount: number;
   totalYouthCount: number;
-  onOpenNewYouth: () => void;
   lang: 'ru' | 'uz';
 }
 
@@ -17,7 +16,6 @@ export const Navigation: React.FC<NavigationProps> = ({
   onSelectTab,
   neetPendingCount,
   totalYouthCount,
-  onOpenNewYouth,
   lang
 }) => {
   const tabs = [
@@ -57,10 +55,9 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav className="relative z-40 bg-surface-1/90 backdrop-blur-xl border-b border-white/[0.08]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-3 gap-4 overflow-hidden w-full">
-          
+        <div className="py-2.5">
           {/* Main Tabs Container (Segmented Control Style) */}
-          <div className="flex-1 flex items-center p-1.5 bg-slate-900/80 border border-slate-700/60 rounded-2xl min-w-0 shadow-inner">
+          <div className="flex items-center p-1.5 bg-slate-900/80 border border-slate-700/60 rounded-2xl w-full shadow-inner gap-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -69,14 +66,14 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => onSelectTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap overflow-hidden ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
                     isActive
                       ? 'bg-cyan-600 text-white shadow-md shadow-cyan-900/40 border border-cyan-500/30'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                  <span className="truncate">{tab.label}</span>
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                  <span>{tab.label}</span>
                   {tab.badge && (
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full font-black flex-shrink-0 ${
@@ -94,16 +91,6 @@ export const Navigation: React.FC<NavigationProps> = ({
               );
             })}
           </div>
-          {/* Add Profile Button */}
-          <button
-            onClick={onOpenNewYouth}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 text-xs font-semibold rounded-lg transition-all shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/30 active:scale-[0.98] flex-shrink-0"
-          >
-            <UserPlus className="w-3.5 h-3.5 text-indigo-200" />
-            <span className="hidden sm:inline">
-              {lang === 'ru' ? '+ Добавить человека' : '+ Янги ёш киритиш'}
-            </span>
-          </button>
         </div>
       </div>
     </nav>
