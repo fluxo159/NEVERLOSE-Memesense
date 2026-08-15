@@ -67,13 +67,13 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
         </div>
       )}
 
-      {/* SVG Donut Circle with Sharp Clean Cuts */}
+      {/* SVG Donut Circle with Counter-Clockwise Sharp Cuts */}
       <div className="relative flex items-center justify-center my-auto py-2">
         <svg
           width={size}
           height={size}
           viewBox={`0 0 ${size} ${size}`}
-          className="transform -rotate-90 select-none"
+          className="transform -rotate-90 scale-x-[-1] select-none"
         >
           {/* Subtle Background Track */}
           <circle
