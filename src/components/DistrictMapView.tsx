@@ -4,6 +4,8 @@ import {
   Users, 
   Briefcase, 
   AlertOctagon, 
+  AlertTriangle,
+  AlertCircle,
   Phone, 
   UserCheck, 
   Eye, 
@@ -16,7 +18,8 @@ import {
   Award, 
   ZoomIn, 
   RotateCcw,
-  CheckCircle2
+  CheckCircle2,
+  Info
 } from 'lucide-react';
 import L from 'leaflet';
 import { MAKHALLAS_LIST, DISTRICT_POI_LIST } from '../data/mahallasData';
@@ -334,11 +337,11 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     <div className="space-y-6 max-w-7xl mx-auto">
       
       {/* Top Header Controls Panel */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-700/60 bg-gradient-to-r from-slate-900/90 via-[#0e1c31] to-slate-900/90 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08]">
               <MapIcon className="w-5 h-5" />
             </div>
             <div>
@@ -346,13 +349,13 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 {lang === 'ru' 
                   ? 'Интерактивная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
                   : 'Mirzo Ulug‘bek tumani interaktiv GIS xaritasi'}
-                <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono">
                   GIS v2.0
                 </span>
               </h2>
             </div>
           </div>
-          <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
             {lang === 'ru'
               ? 'Геоинформационный мониторинг распределения молодёжи, тепловых зон риска NEET и центров государственной поддержки.'
               : 'Yoshlar taqsimoti, NEET xavf zonalari va davlat qo‘llab-quvvatlash markazlarining geoaaxborot monitoringi.'}
@@ -363,12 +366,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           
           {/* GIS vs Scheme Tab Toggle */}
-          <div className="bg-slate-800/90 p-1 rounded-xl border border-slate-700 flex items-center shadow-inner">
+          <div className="bg-surface-2 p-1 rounded-xl border border-white/[0.08] flex items-center shadow-inner">
             <button
               onClick={() => setMapMode('leaflet_gis')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 mapMode === 'leaflet_gis'
-                  ? 'bg-gradient-to-r from-gov-600 to-cyan-600 text-white shadow-md'
+                  ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -377,9 +380,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </button>
             <button
               onClick={() => setMapMode('raster_scheme')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 mapMode === 'raster_scheme'
-                  ? 'bg-gradient-to-r from-gov-600 to-cyan-600 text-white shadow-md'
+                  ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -389,8 +392,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
 
           {mapMode === 'raster_scheme' && (
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold cursor-pointer transition-all">
-              <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs font-semibold cursor-pointer transition-all">
+              <Upload className="w-3.5 h-3.5 text-slate-400" />
               <span>{lang === 'ru' ? 'Загрузить схему' : 'Yuklash'}</span>
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
@@ -399,10 +402,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           {mapMode === 'leaflet_gis' && (
             <button
               onClick={handleResetMapPosition}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition-all"
+              className="p-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] text-xs transition-all"
               title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
             >
-              <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
+              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
             </button>
           )}
 
@@ -414,48 +417,50 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left: Map Container View */}
-        <div className="lg:col-span-7 glass-panel rounded-3xl p-4 border border-slate-700/60 bg-[#07111f] relative overflow-hidden flex flex-col justify-between shadow-xl min-h-[560px]">
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-4 border border-white/[0.08] relative overflow-hidden flex flex-col justify-between shadow-surface-card min-h-[560px]">
           
           {/* Layer Filter Toolbar (Only in GIS mode) */}
           {mapMode === 'leaflet_gis' && (
             <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
               
-              <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-700 text-xs">
+              <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
                 <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider">{lang === 'ru' ? 'Слой:' : 'Qatlam:'}</span>
                 
                 <button
                   onClick={() => setActiveLayer('neet')}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                     activeLayer === 'neet'
-                      ? 'bg-rose-500/30 text-rose-300 border border-rose-500/50 shadow'
+                      ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  🔴 {lang === 'ru' ? 'Риск NEET' : 'NEET xavfi'}
+                  <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'neet' ? 'bg-rose-400' : 'bg-rose-400/50'}`}></span>
+                  <span>{lang === 'ru' ? 'Риск NEET' : 'NEET xavfi'}</span>
                 </button>
 
                 <button
                   onClick={() => setActiveLayer('employment')}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                     activeLayer === 'employment'
-                      ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 shadow'
+                      ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  🟢 {lang === 'ru' ? 'Занятость (%)' : 'Bandlik (%)'}
+                  <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'employment' ? 'bg-emerald-400' : 'bg-emerald-400/50'}`}></span>
+                  <span>{lang === 'ru' ? 'Занятость (%)' : 'Bandlik (%)'}</span>
                 </button>
               </div>
 
               {/* Toggle POI Centers */}
               <button
                 onClick={() => setShowPoi(prev => !prev)}
-                className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
                   showPoi
-                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
-                    : 'bg-slate-900/80 text-slate-400 border-slate-700'
+                    ? 'bg-surface-2 hover:bg-surface-3 text-slate-200 border-white/[0.12] shadow-sm'
+                    : 'bg-surface-2/60 text-slate-400 border-white/[0.06]'
                 }`}
               >
-                <Building2 className="w-3.5 h-3.5 text-purple-400" />
+                <Building2 className="w-3.5 h-3.5 text-indigo-400" />
                 <span>{lang === 'ru' ? 'Гос. центры (POI)' : 'Davlat markazlari (POI)'}</span>
               </button>
 
@@ -522,7 +527,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                           isSelected
-                            ? 'border-4 border-cyan-400 bg-cyan-400/30 scale-125 shadow-lg shadow-cyan-400/80 ring-4 ring-cyan-500/50'
+                            ? 'border-4 border-indigo-400 bg-indigo-400/30 scale-125 shadow-lg ring-4 ring-indigo-500/40'
                             : 'border-2 border-transparent hover:border-white/80 hover:scale-120'
                         }`}
                       >
@@ -541,11 +546,14 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           {/* Bottom Hint Banner */}
           <div className="flex items-center justify-between text-xs text-slate-400 z-10 font-medium pt-3 px-1">
             <span className="flex items-center gap-1.5">
-              💡 {mapMode === 'leaflet_gis' 
-                ? (lang === 'ru' ? 'Кликните по полигону махалли для зума и паспорта территории' : 'Mahalla pasportini ochish uchun xaritadagi hududini bosing') 
-                : (lang === 'ru' ? 'Кликните по кружку махалли для открытия паспорта' : 'Pasportni ochish uchun mahalla doirachasini bosing')}
+              <Info className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+              <span>
+                {mapMode === 'leaflet_gis' 
+                  ? (lang === 'ru' ? 'Кликните по полигону махалли для зума и паспорта территории' : 'Mahalla pasportini ochish uchun xaritadagi hududini bosing') 
+                  : (lang === 'ru' ? 'Кликните по кружку махалли для открытия паспорта' : 'Pasportni ochish uchun mahalla doirachasini bosing')}
+              </span>
             </span>
-            <span className="text-[11px] text-cyan-400/80">
+            <span className="text-[11px] text-slate-500 font-mono">
               Toshkent • Mirzo Ulug‘bek
             </span>
           </div>
@@ -553,22 +561,22 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         </div>
 
         {/* Right: Territory Passport / POI Detail Inspector */}
-        <div key={selectedMahallaId || selectedPoi?.id || 'default'} className="lg:col-span-5 glass-panel rounded-3xl p-6 border border-slate-700/60 bg-slate-900/90 shadow-xl flex flex-col justify-between space-y-4 view-transition">
+        <div key={selectedMahallaId || selectedPoi?.id || 'default'} className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between space-y-4 view-transition">
           
           {selectedPoi ? (
             /* Selected POI Center Card */
             <div className="space-y-4">
-              <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-purple-400 font-bold uppercase tracking-wider">
+                    <span className="text-xs text-indigo-400 font-bold uppercase tracking-wider">
                       {lang === 'ru' ? 'Объект господдержки:' : 'Davlat ko‘mak obyekti:'}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] font-mono">
                       POI
                     </span>
                   </div>
-                  <h3 className="text-xl font-extrabold text-white mt-1">
+                  <h3 className="text-lg font-bold text-white mt-1">
                     {lang === 'ru' ? selectedPoi.name : selectedPoi.nameUz}
                   </h3>
                   <div className="text-xs text-slate-400 mt-1">
@@ -578,91 +586,94 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
                 <button
                   onClick={() => setSelectedPoi(null)}
-                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all"
+                  className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] transition-all"
                 >
                   {lang === 'ru' ? 'К махаллям' : 'Mahallalarga'}
                 </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-2">
-                <div className="text-xs text-purple-300 font-semibold">{lang === 'ru' ? 'Описание и возможности:' : 'Tavsif va imkoniyatlar:'}</div>
-                <p className="text-xs text-slate-200 leading-relaxed">
+              <div className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] space-y-2">
+                <div className="text-xs text-indigo-300 font-semibold">{lang === 'ru' ? 'Описание и возможности:' : 'Tavsif va imkoniyatlar:'}</div>
+                <p className="text-xs text-slate-300 leading-relaxed">
                   {lang === 'ru' ? selectedPoi.descriptionRu : selectedPoi.descriptionUz}
                 </p>
-                <div className="flex items-center gap-2 pt-2 text-xs font-mono text-cyan-400">
+                <div className="flex items-center gap-2 pt-1 text-xs font-mono text-indigo-400">
                   <Phone className="w-3.5 h-3.5" />
                   <span>{selectedPoi.phone}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70 flex items-center justify-between">
+              <div className="bg-surface-2 p-3.5 rounded-xl border border-white/[0.08] flex items-center justify-between">
                 <div className="text-xs text-slate-300 font-medium">{lang === 'ru' ? 'Доступно направлений обучения:' : 'Mavjud o‘qitish yo‘nalishlari:'}</div>
-                <div className="text-xl font-black text-cyan-400">{selectedPoi.servicesCount}</div>
+                <div className="text-xl font-bold text-white font-mono">{selectedPoi.servicesCount}</div>
               </div>
             </div>
           ) : (
             /* Selected Makhalla Passport */
             <div className="space-y-4">
-              <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
-                  <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider">{lang === 'ru' ? 'Паспорт территории:' : 'Hudud pasporti:'}</span>
-                  <h3 className="text-2xl font-extrabold text-white mt-1">{lang === 'ru' ? `Махалля «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi`}</h3>
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{lang === 'ru' ? 'Паспорт территории:' : 'Hudud pasporti:'}</span>
+                  <h3 className="text-lg font-bold text-white tracking-tight mt-0.5">{lang === 'ru' ? `Махалля «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi`}</h3>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${
-                      currentMahalla.riskLevel === 'high' 
-                        ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' 
-                        : currentMahalla.riskLevel === 'medium'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                    }`}>
-                      {currentMahalla.riskLevel === 'high' 
-                        ? (lang === 'ru' ? '⚠️ Высокий риск NEET' : '⚠️ Yuqori NEET xavfi') 
-                        : currentMahalla.riskLevel === 'medium' 
-                        ? (lang === 'ru' ? '⚡ Умеренный риск' : '⚡ O‘rtacha xavf') 
-                        : (lang === 'ru' ? '✓ Стабильная зона' : '✓ Barqaror hudud')}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 text-slate-300 border border-white/[0.08] text-xs font-medium">
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        currentMahalla.riskLevel === 'high' 
+                          ? 'bg-rose-400' 
+                          : currentMahalla.riskLevel === 'medium'
+                          ? 'bg-amber-400'
+                          : 'bg-emerald-400'
+                      }`}></span>
+                      <span>
+                        {currentMahalla.riskLevel === 'high' 
+                          ? (lang === 'ru' ? 'Высокий риск NEET' : 'Yuqori NEET xavfi') 
+                          : currentMahalla.riskLevel === 'medium' 
+                          ? (lang === 'ru' ? 'Умеренный риск' : 'O‘rtacha xavf') 
+                          : (lang === 'ru' ? 'Стабильная зона' : 'Barqaror hudud')}
+                      </span>
                     </span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => onSelectMakhalla(currentMahalla.name)}
-                  className="px-4 py-2 bg-gov-600 hover:bg-gov-500 text-white text-xs font-bold rounded-xl transition-all shadow"
+                  className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-sm"
                 >
                   {lang === 'ru' ? 'Выбрать' : 'Tanlash'}
                 </button>
               </div>
 
               {/* Dynamic Real Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2.5">
                 
                 {/* 1. Молодёжь в базе */}
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
-                  <div className="text-xs text-slate-400 font-medium">{lang === 'ru' ? 'Молодёжь (в реестре)' : 'Yoshlar (reyestrda)'}</div>
-                  <div className="text-2xl font-black text-white mt-1">
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Молодёжь (в реестре)' : 'Yoshlar (reyestrda)'}</div>
+                  <div className="text-xl font-bold text-white mt-0.5">
                     {totalInCurrent} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
 
                 {/* 2. Занятость */}
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
-                  <div className="text-xs text-slate-400 font-medium">{lang === 'ru' ? 'Уровень занятости' : 'Bandlik darajasi'}</div>
-                  <div className="text-2xl font-black text-emerald-400 mt-1">
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Уровень занятости' : 'Bandlik darajasi'}</div>
+                  <div className="text-xl font-bold text-emerald-400 mt-0.5">
                     {dynamicEmploymentRate}%
                   </div>
                 </div>
 
                 {/* 3. Кандидаты NEET */}
-                <div className="bg-rose-950/30 p-3.5 rounded-2xl border border-rose-500/30">
-                  <div className="text-xs text-rose-300 font-medium">{lang === 'ru' ? 'Кандидаты NEET (проверка)' : 'NEET nomzodlari (ko‘rik)'}</div>
-                  <div className="text-2xl font-black text-rose-400 mt-1">
-                    {neetPendingInCurrent} <span className="text-xs text-rose-300 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Кандидаты NEET (проверка)' : 'NEET nomzodlari (ko‘rik)'}</div>
+                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                    {neetPendingInCurrent} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
 
                 {/* 4. Господдержка */}
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/70">
-                  <div className="text-xs text-slate-400 font-medium">{lang === 'ru' ? 'Охвачено программами' : 'Dasturlarga qamrab olingan'}</div>
-                  <div className="text-2xl font-black text-cyan-400 mt-1">
+                <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
+                  <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Охвачено программами' : 'Dasturlarga qamrab olingan'}</div>
+                  <div className="text-xl font-bold text-slate-100 mt-0.5">
                     {supportedInCurrent} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
@@ -670,34 +681,37 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               </div>
 
               {/* Responsible Youth Leader */}
-              <div className="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-1.5">
-                <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-emerald-400" />
-                  <span>{lang === 'ru' ? 'Ответственный «Ёшлар етакчиси» (Лидер молодёжи):' : 'Mas’ul «Yoshlar yetakchisi»:'}</span>
+              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-1">
+                <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{lang === 'ru' ? 'Ответственный «Ёшлар етакчиси»:' : 'Mas’ul «Yoshlar yetakchisi»:'}</span>
                 </div>
-                <div className="text-sm text-white font-bold">{currentMahalla.leaderName}</div>
+                <div className="text-xs text-white font-bold">{currentMahalla.leaderName}</div>
                 <a 
                   href={`tel:${currentMahalla.leaderPhone}`}
-                  className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono transition-colors"
+                  className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
                 >
-                  <Phone className="w-3.5 h-3.5" />
+                  <Phone className="w-3 h-3 text-slate-400" />
                   <span>{currentMahalla.leaderPhone}</span>
                 </a>
               </div>
 
               {/* Youth list in this mahalla */}
               <div>
-                <div className="text-xs font-bold text-slate-300 mb-2">
+                <div className="text-xs font-semibold text-slate-300 mb-1.5">
                   {lang === 'ru' ? `Профили молодёжи в махалле (${totalInCurrent} чел.):` : `Mahalladagi yoshlar profillari (${totalInCurrent} nafar):`}
                 </div>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                   {youthInCurrent.slice(0, 4).map(y => (
-                    <div key={y.id} className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-between text-xs">
-                      <span className="text-white font-semibold truncate max-w-[180px]">{y.full_name_demo}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
-                        y.is_neet ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'
-                      }`}>
-                        {y.is_neet ? (lang === 'ru' ? 'NEET риск' : 'NEET xavfi') : y.employment_status}
+                    <div key={y.id} className="p-2 rounded-lg bg-surface-2 border border-white/[0.06] flex items-center justify-between text-xs">
+                      <span className="text-white font-medium truncate max-w-[180px] text-xs">{y.full_name_demo}</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          y.is_neet 
+                            ? 'bg-amber-400/90' 
+                            : 'bg-emerald-400/90'
+                        }`}></span>
+                        <span>{y.is_neet ? (lang === 'ru' ? 'NEET риск' : 'NEET xavfi') : y.employment_status}</span>
                       </span>
                     </div>
                   ))}
@@ -713,9 +727,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               onSelectMakhalla(currentMahalla.name);
               onNavigateRegistry();
             }}
-            className="w-full py-3 bg-gradient-to-r from-gov-600 to-cyan-600 hover:from-gov-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-900/30 flex items-center justify-center gap-2 transition-all"
+            className="w-full py-2.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm flex items-center justify-center gap-2 transition-all group"
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300" />
             <span>{lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi yoshlar ro‘yxatini ochish`}</span>
           </button>
 
