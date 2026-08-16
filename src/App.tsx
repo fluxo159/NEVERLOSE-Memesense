@@ -327,6 +327,7 @@ export const App: React.FC = () => {
               onSelectMakhalla={setSelectedMakhalla}
               lang={lang}
               onNavigateRegistry={() => setActiveTab('registry')}
+              onOpenProfile={(youth) => setSelectedYouthForModal(youth)}
             />
           )}
 

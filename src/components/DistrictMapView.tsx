@@ -1,17 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Map as MapIcon, 
   Phone, 
   UserCheck, 
   Eye, 
   Building2, 
-  RotateCcw,
-  Info,
-  CheckCircle2
+  RotateCcw, 
+  Info, 
+  CheckCircle2, 
+  Search, 
+  ExternalLink, 
+  Send, 
+  Copy, 
+  Check, 
+  Layers, 
+  Navigation, 
+  GraduationCap, 
+  Briefcase, 
+  Code, 
+  Compass,
+  TrendingUp,
+  AlertTriangle,
+  MapPin,
+  Clock,
+  Globe
 } from 'lucide-react';
 import L from 'leaflet';
 import { MAKHALLAS_LIST, DISTRICT_POI_LIST } from '../data/mahallasData';
-import { YouthProfile, InfrastructurePOI } from '../types';
+import { YouthProfile, InfrastructurePOI, MakhallaStats } from '../types';
 import { getMahallaName } from '../data/translations';
 
 interface DistrictMapViewProps {
@@ -20,22 +36,46 @@ interface DistrictMapViewProps {
   onSelectMakhalla: (makhalla: string) => void;
   lang: 'ru' | 'uz';
   onNavigateRegistry: () => void;
+  onOpenProfile?: (youth: YouthProfile) => void;
 }
 
-type ActiveLayer = 'neet' | 'employment';
+type ActiveLayer = 'neet' | 'employment' | 'support' | 'density';
+type BaseMapTheme = 'dark' | 'satellite' | 'streets';
+type PoiCategoryFilter = 'all' | 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'employer' | 'university';
 
 const DISTRICT_CENTER: [number, number] = [41.3385, 69.3450];
+
+// Calculate Haversine distance in kilometers between two GPS coordinates
+function calculateDistanceKm(coord1: [number, number], coord2: [number, number]): number {
+  const R = 6371; // Earth radius in km
+  const dLat = (coord2[0] - coord1[0]) * (Math.PI / 180);
+  const dLon = (coord2[1] - coord1[1]) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(coord1[0] * (Math.PI / 180)) *
+      Math.cos(coord2[0] * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Number((R * c).toFixed(1));
+}
 
 export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   youthList,
   selectedMakhalla,
   onSelectMakhalla,
   lang,
-  onNavigateRegistry
+  onNavigateRegistry,
+  onOpenProfile
 }) => {
   const [activeLayer, setActiveLayer] = useState<ActiveLayer>('neet');
+  const [baseMapTheme, setBaseMapTheme] = useState<BaseMapTheme>('dark');
   const [showPoi, setShowPoi] = useState<boolean>(true);
-  
+  const [poiCategoryFilter, setPoiCategoryFilter] = useState<PoiCategoryFilter>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [copiedLeaderPhone, setCopiedLeaderPhone] = useState<boolean>(false);
+  const [youthListFilter, setYouthListFilter] = useState<'all' | 'neet' | 'supported'>('all');
+
   // Resolve initial selected ID from global selectedMakhalla
   const initialMahalla = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla) || MAKHALLAS_LIST[0];
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>(initialMahalla.id);
@@ -43,10 +83,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const polygonsGroupRef = useRef<L.FeatureGroup | null>(null);
   const poiGroupRef = useRef<L.FeatureGroup | null>(null);
+  const routeLineGroupRef = useRef<L.FeatureGroup | null>(null);
 
-  // Synchronize when global selectedMakhalla prop changes from Header dropdown
+  // Synchronize when global selectedMakhalla prop changes
   useEffect(() => {
     if (selectedMakhalla && selectedMakhalla !== 'all') {
       const match = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla);
@@ -54,17 +96,17 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         setSelectedMahallaId(match.id);
         setSelectedPoi(null);
         if (mapInstanceRef.current) {
-          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 1.2, easeLinearity: 0.25 });
+          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 1.0, easeLinearity: 0.25 });
         }
       }
     } else if (selectedMakhalla === 'all') {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 1.2, easeLinearity: 0.25 });
+        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 1.0, easeLinearity: 0.25 });
       }
     }
   }, [selectedMakhalla]);
 
-  const currentMahalla = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
+  const currentMahalla: MakhallaStats = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
 
   // Dynamic statistics from youthList scoped to current mahalla
   const youthInCurrent = youthList.filter(y => y.makhalla === currentMahalla.name);
@@ -72,24 +114,57 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   const employedInCurrent = youthInCurrent.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length;
   const studyingInCurrent = youthInCurrent.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length;
   const neetPendingInCurrent = youthInCurrent.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const neetTotalInCurrent = youthInCurrent.filter(y => y.is_neet).length;
   const supportedInCurrent = youthInCurrent.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
 
   const dynamicEmploymentRate = totalInCurrent > 0 
     ? Math.round(((employedInCurrent + studyingInCurrent) / totalInCurrent) * 100) 
     : 0;
 
+  const dynamicSupportRate = totalInCurrent > 0 
+    ? Math.round((supportedInCurrent / totalInCurrent) * 100) 
+    : 0;
+
+  // NEET Risk Index (0 - 100)
+  const neetRiskScore = totalInCurrent > 0
+    ? Math.min(100, Math.round((neetTotalInCurrent / totalInCurrent) * 100 * 2.5))
+    : 15;
+
   // District-wide aggregate statistics
   const totalDistrict = youthList.length;
   const employedDistrict = youthList.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length;
   const studyingDistrict = youthList.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length;
   const neetPendingDistrict = youthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const neetTotalDistrict = youthList.filter(y => y.is_neet).length;
   const supportedDistrict = youthList.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
 
   const districtEmploymentRate = totalDistrict > 0 
     ? Math.round(((employedDistrict + studyingDistrict) / totalDistrict) * 100) 
     : 0;
 
-  // Initialize and manage Leaflet map
+  // Filtered Youth inside current mahalla passport
+  const displayedYouth = useMemo(() => {
+    return youthInCurrent.filter(y => {
+      if (youthListFilter === 'neet') return y.is_neet;
+      if (youthListFilter === 'supported') return y.assigned_program || y.employment_status === 'направлен на обучение';
+      return true;
+    });
+  }, [youthInCurrent, youthListFilter]);
+
+  // Nearest infrastructure distances from current selected mahalla
+  const nearestPOIs = useMemo(() => {
+    return DISTRICT_POI_LIST.map(poi => {
+      const dist = calculateDistanceKm(currentMahalla.geoCenter, poi.coordinates);
+      const walkTimeMin = Math.round(dist * 13); // avg 13 min per km walking
+      return {
+        ...poi,
+        distanceKm: dist,
+        walkTimeMin
+      };
+    }).sort((a, b) => a.distanceKm - b.distanceKm);
+  }, [currentMahalla]);
+
+  // Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -98,7 +173,6 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       mapInstanceRef.current = null;
     }
 
-    // Initialize Map with dark theme settings
     const map = L.map(mapContainerRef.current, {
       center: DISTRICT_CENTER,
       zoom: 13,
@@ -108,20 +182,31 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
     mapInstanceRef.current = map;
 
-    // Add CartoDB Dark Matter tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Tile Layer based on theme
+    const tileUrl = baseMapTheme === 'satellite'
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+      : baseMapTheme === 'streets'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
+    const tileLayer = L.tileLayer(tileUrl, {
       maxZoom: 19,
       subdomains: 'abcd'
     }).addTo(map);
 
+    tileLayerRef.current = tileLayer;
+
     // Zoom control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Feature groups for polygons and POIs
+    // Feature groups
     const polyGroup = L.featureGroup().addTo(map);
     const poiGroup = L.featureGroup().addTo(map);
+    const routeGroup = L.featureGroup().addTo(map);
+
     polygonsGroupRef.current = polyGroup;
     poiGroupRef.current = poiGroup;
+    routeLineGroupRef.current = routeGroup;
 
     return () => {
       if (mapInstanceRef.current) {
@@ -131,7 +216,21 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     };
   }, []);
 
-  // Update Polygons & Layers when dependencies change
+  // Update Tile Layer Theme
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    const tileUrl = baseMapTheme === 'satellite'
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+      : baseMapTheme === 'streets'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
+    if (tileLayerRef.current) {
+      tileLayerRef.current.setUrl(tileUrl);
+    }
+  }, [baseMapTheme]);
+
+  // Update Mahalla Polygons & Layer Colors
   useEffect(() => {
     if (!mapInstanceRef.current || !polygonsGroupRef.current) return;
 
@@ -143,57 +242,83 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       const isSelected = mahalla.id === selectedMahallaId;
       const mahallaYouth = youthList.filter(y => y.makhalla === mahalla.name);
       const neetCount = mahallaYouth.filter(y => y.is_neet).length;
-      const empRate = mahallaYouth.length > 0
-        ? Math.round(((mahallaYouth.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель' || y.employment_status === 'обучается').length) / mahallaYouth.length) * 100)
-        : 85;
+      const totalYouthInM = mahallaYouth.length;
+      const empCount = mahallaYouth.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель' || y.employment_status === 'обучается').length;
+      const empRate = totalYouthInM > 0 ? Math.round((empCount / totalYouthInM) * 100) : 85;
+      const supCount = mahallaYouth.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
+      const supRate = totalYouthInM > 0 ? Math.round((supCount / totalYouthInM) * 100) : 0;
 
       // Color computation based on active layer
       let fillColor = '#10b981';
       let strokeColor = '#34d399';
+      let badgeText = '';
 
       if (activeLayer === 'neet') {
         if (mahalla.riskLevel === 'high' || neetCount >= 4) {
           fillColor = '#f43f5e';
           strokeColor = '#fb7185';
+          badgeText = `NEET: ${neetCount}`;
         } else if (mahalla.riskLevel === 'medium' || neetCount >= 2) {
           fillColor = '#f59e0b';
           strokeColor = '#fbbf24';
+          badgeText = `NEET: ${neetCount}`;
         } else {
           fillColor = '#10b981';
           strokeColor = '#34d399';
+          badgeText = `NEET: ${neetCount}`;
         }
       } else if (activeLayer === 'employment') {
         if (empRate >= 90) {
           fillColor = '#06b6d4';
           strokeColor = '#38bdf8';
+          badgeText = `${empRate}%`;
         } else if (empRate >= 80) {
           fillColor = '#10b981';
           strokeColor = '#4ade80';
+          badgeText = `${empRate}%`;
         } else {
           fillColor = '#f97316';
           strokeColor = '#fb923c';
+          badgeText = `${empRate}%`;
         }
+      } else if (activeLayer === 'support') {
+        fillColor = supRate >= 20 ? '#8b5cf6' : supRate >= 10 ? '#6366f1' : '#64748b';
+        strokeColor = supRate >= 20 ? '#a78bfa' : supRate >= 10 ? '#818cf8' : '#94a3b8';
+        badgeText = `Помощь: ${supCount}`;
+      } else if (activeLayer === 'density') {
+        fillColor = totalYouthInM >= 16 ? '#3b82f6' : totalYouthInM >= 12 ? '#0284c7' : '#0ea5e9';
+        strokeColor = '#60a5fa';
+        badgeText = `${totalYouthInM} чел.`;
       }
 
       const polygon = L.polygon(mahalla.geoPolygon, {
         color: isSelected ? '#38bdf8' : strokeColor,
         weight: isSelected ? 3.5 : 1.5,
         fillColor: fillColor,
-        fillOpacity: isSelected ? 0.65 : 0.35,
-        dashArray: isSelected ? undefined : '4, 4'
+        fillOpacity: isSelected ? 0.65 : 0.32,
+        dashArray: isSelected ? undefined : '3, 4'
       });
 
       // Interactive Tooltip
       const mahallaDisplayName = getMahallaName(mahalla.name, lang);
       const tooltipContent = `
-        <div style="font-family: inherit; padding: 2px 4px;">
-          <div style="font-weight: 800; font-size: 13px; color: #38bdf8; margin-bottom: 2px;">
+        <div style="font-family: inherit; padding: 3px 5px;">
+          <div style="font-weight: 800; font-size: 13px; color: #38bdf8; margin-bottom: 3px;">
             ${lang === 'ru' ? `Махалля «${mahalla.name}»` : `«${mahallaDisplayName}» mahallasi`}
           </div>
-          <div style="font-size: 11px; color: #cbd5e1; display: flex; gap: 8px;">
-            <span>${lang === 'ru' ? 'Молодёжь' : 'Yoshlar'}: <b style="color: #ffffff;">${mahallaYouth.length}</b></span>
-            <span>NEET: <b style="color: ${neetCount > 0 ? '#f43f5e' : '#10b981'};">${neetCount}</b></span>
-            <span>${lang === 'ru' ? 'Занятость' : 'Bandlik'}: <b style="color: #38bdf8;">${empRate}%</b></span>
+          <div style="font-size: 11px; color: #cbd5e1; display: flex; flex-direction: column; gap: 2px;">
+            <div style="display: flex; justify-content: space-between; gap: 12px;">
+              <span>${lang === 'ru' ? 'В реестре' : 'Reyestrda'}:</span>
+              <b style="color: #ffffff;">${totalYouthInM} ${lang === 'ru' ? 'чел.' : 'nafar'}</b>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px;">
+              <span>NEET статус:</span>
+              <b style="color: ${neetCount > 0 ? '#f43f5e' : '#10b981'};">${neetCount} ${lang === 'ru' ? 'чел.' : 'nafar'}</b>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px;">
+              <span>${lang === 'ru' ? 'Занятость' : 'Bandlik'}:</span>
+              <b style="color: #38bdf8;">${empRate}%</b>
+            </div>
           </div>
         </div>
       `;
@@ -215,7 +340,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       // Hover glow effects
       polygon.on('mouseover', function (this: L.Polygon) {
         this.setStyle({
-          fillOpacity: 0.75,
+          fillOpacity: 0.78,
           weight: 3.5,
           color: '#ffffff'
         });
@@ -223,7 +348,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       polygon.on('mouseout', function (this: L.Polygon) {
         this.setStyle({
-          fillOpacity: isSelected ? 0.65 : 0.35,
+          fillOpacity: isSelected ? 0.65 : 0.32,
           weight: isSelected ? 3.5 : 1.5,
           color: isSelected ? '#38bdf8' : strokeColor
         });
@@ -231,13 +356,15 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       polygon.addTo(polyGroup);
 
-      // Add center label marker
+      // Center label marker with badge
+      const isHighNeetHotspot = mahalla.riskLevel === 'high' && activeLayer === 'neet';
+
       const centerIcon = L.divIcon({
         className: 'custom-mahalla-label',
         html: `
           <div style="
             transform: translate(-50%, -50%);
-            background: ${isSelected ? 'rgba(14, 165, 233, 0.9)' : 'rgba(15, 23, 42, 0.85)'};
+            background: ${isSelected ? 'rgba(14, 165, 233, 0.95)' : 'rgba(15, 23, 42, 0.9)'};
             border: 1px solid ${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.2)'};
             padding: 3px 8px;
             border-radius: 9999px;
@@ -245,14 +372,31 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             font-weight: 700;
             color: #ffffff;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.6);
             pointer-events: none;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            position: relative;
           ">
+            ${isHighNeetHotspot ? `
+              <span style="
+                position: absolute;
+                inset: -3px;
+                border-radius: 9999px;
+                border: 2px solid #f43f5e;
+                animation: markerPulseRing 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+              "></span>
+            ` : ''}
             <span style="width: 6px; height: 6px; border-radius: 9999px; background: ${fillColor};"></span>
-            ${mahallaDisplayName}
+            <span>${mahallaDisplayName}</span>
+            <span style="
+              font-size: 9px;
+              padding: 1px 4px;
+              border-radius: 4px;
+              background: rgba(255,255,255,0.15);
+              font-family: monospace;
+            ">${badgeText}</span>
           </div>
         `,
         iconSize: [0, 0]
@@ -263,7 +407,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   }, [activeLayer, selectedMahallaId, youthList, lang]);
 
-  // Update POI Infrastructure Markers
+  // Update POI Infrastructure Markers & Category Filtering
   useEffect(() => {
     if (!mapInstanceRef.current || !poiGroupRef.current) return;
 
@@ -272,7 +416,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
     if (!showPoi) return;
 
-    DISTRICT_POI_LIST.forEach(poi => {
+    const filteredPOIs = DISTRICT_POI_LIST.filter(poi => {
+      if (poiCategoryFilter === 'all') return true;
+      return poi.category === poiCategoryFilter;
+    });
+
+    filteredPOIs.forEach(poi => {
       let iconColor = '#06b6d4';
       let badge = '🏛️';
 
@@ -288,26 +437,35 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       } else if (poi.category === 'youth_center') {
         iconColor = '#ec4899';
         badge = '🚀';
+      } else if (poi.category === 'university') {
+        iconColor = '#3b82f6';
+        badge = '🏛️';
+      } else if (poi.category === 'employer') {
+        iconColor = '#eab308';
+        badge = '🏢';
       }
+
+      const isPoiSelected = selectedPoi?.id === poi.id;
 
       const customPoiIcon = L.divIcon({
         className: 'custom-poi-marker',
         html: `
           <div style="
             transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
+            width: ${isPoiSelected ? '38px' : '32px'};
+            height: ${isPoiSelected ? '38px' : '32px'};
             border-radius: 50%;
             background: ${iconColor};
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 16px ${iconColor};
+            border: 2px solid ${isPoiSelected ? '#ffffff' : 'rgba(255,255,255,0.9)'};
+            box-shadow: 0 0 ${isPoiSelected ? '20px' : '12px'} ${iconColor};
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: ${isPoiSelected ? '16px' : '14px'};
             cursor: pointer;
-            transition: transform 0.2s;
-          " class="hover:scale-125">
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+          ">
             ${badge}
           </div>
         `,
@@ -316,189 +474,564 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       const marker = L.marker(poi.coordinates, { icon: customPoiIcon });
 
+      const poiTitle = lang === 'uz' ? poi.nameUz : poi.name;
+      marker.bindTooltip(`
+        <div style="font-family: inherit; padding: 2px 4px;">
+          <div style="font-weight: 700; color: #ffffff;">${poiTitle}</div>
+          <div style="font-size: 10px; color: #94a3b8;">${poi.address}</div>
+        </div>
+      `, {
+        className: 'leaflet-tooltip-dark',
+        direction: 'top'
+      });
+
       marker.on('click', () => {
         setSelectedPoi(poi);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.8 });
+        }
       });
 
       marker.addTo(poiGroup);
     });
-  }, [showPoi]);
+  }, [showPoi, poiCategoryFilter, selectedPoi, lang]);
+
+  // Draw Dynamic Distance Route Line from Selected Mahalla to Selected POI
+  useEffect(() => {
+    if (!mapInstanceRef.current || !routeLineGroupRef.current) return;
+    const routeGroup = routeLineGroupRef.current;
+    routeGroup.clearLayers();
+
+    if (selectedPoi && currentMahalla) {
+      const latlngs: [number, number][] = [
+        currentMahalla.geoCenter,
+        selectedPoi.coordinates
+      ];
+
+      const line = L.polyline(latlngs, {
+        color: '#38bdf8',
+        weight: 2.5,
+        dashArray: '6, 6',
+        opacity: 0.85
+      });
+
+      line.addTo(routeGroup);
+
+      const distance = calculateDistanceKm(currentMahalla.geoCenter, selectedPoi.coordinates);
+      const midpoint: [number, number] = [
+        (currentMahalla.geoCenter[0] + selectedPoi.coordinates[0]) / 2,
+        (currentMahalla.geoCenter[1] + selectedPoi.coordinates[1]) / 2
+      ];
+
+      const distLabelIcon = L.divIcon({
+        className: 'route-dist-label',
+        html: `
+          <div style="
+            transform: translate(-50%, -50%);
+            background: rgba(14, 165, 233, 0.95);
+            color: #ffffff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-family: monospace;
+          ">
+            📍 ${distance} км
+          </div>
+        `,
+        iconSize: [0, 0]
+      });
+
+      L.marker(midpoint, { icon: distLabelIcon, interactive: false }).addTo(routeGroup);
+    }
+  }, [selectedPoi, currentMahalla]);
 
   const handleResetMapPosition = () => {
+    setSelectedPoi(null);
     if (mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.8 });
     }
     onSelectMakhalla('all');
   };
 
+  const handleSelectMahallaQuick = (mahalla: MakhallaStats) => {
+    setSelectedMahallaId(mahalla.id);
+    setSelectedPoi(null);
+    onSelectMakhalla(mahalla.name);
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.flyTo(mahalla.geoCenter, 14, { duration: 0.8 });
+    }
+  };
+
+  const handleCopyLeaderPhone = (phoneStr: string) => {
+    navigator.clipboard.writeText(phoneStr);
+    setCopiedLeaderPhone(true);
+    setTimeout(() => setCopiedLeaderPhone(false), 2000);
+  };
+
+  // Search Results for Mahallas and POIs
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const q = searchQuery.toLowerCase();
+    const mahallas = MAKHALLAS_LIST.filter(m => 
+      m.name.toLowerCase().includes(q) || 
+      (m.nameUz && m.nameUz.toLowerCase().includes(q)) ||
+      m.leaderName.toLowerCase().includes(q)
+    );
+    const pois = DISTRICT_POI_LIST.filter(p => 
+      p.name.toLowerCase().includes(q) || 
+      p.nameUz.toLowerCase().includes(q) || 
+      p.address.toLowerCase().includes(q)
+    );
+    return { mahallas, pois };
+  }, [searchQuery]);
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto">
       
-      {/* Top Header Controls Panel */}
-      <div className="bg-surface-1 p-5 rounded-2xl border border-white/[0.08] shadow-surface-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
+      {/* 1. TOP HEADER & QUICK JUMP MAHALLA STRIP */}
+      <div className="bg-surface-1 p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-4">
         
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08] flex-shrink-0">
-              <MapIcon className="w-5 h-5" />
+        {/* Title + Global Controls */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08] flex-shrink-0">
+                <MapIcon className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+                <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  {lang === 'ru' 
+                    ? 'Интерактивная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
+                    : 'Mirzo Ulug‘bek tumani interaktiv GIS xaritasi'}
+                </h2>
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 rounded-md tracking-wider font-mono whitespace-nowrap">
+                  GIS v2.0
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Live GPS
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' 
-                  ? 'Интерактивная ГИС-карта махаллей (Мирзо-Улугбекский район)' 
-                  : 'Mirzo Ulug‘bek tumani interaktiv GIS xaritasi'}
-              </h2>
-              <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono whitespace-nowrap flex-shrink-0">
-                GIS v2.0
-              </span>
-            </div>
+            <p className="text-xs text-slate-400 max-w-3xl leading-relaxed">
+              {lang === 'ru'
+                ? 'Геоинформационный мониторинг распределения молодёжи, тепловых зон риска NEET, центров занятости и точек карьерного роста.'
+                : 'Yoshlar taqsimoti, NEET xavf zonalari, bandlik markazlari va kasbiy o‘sish obyektlarining geoaaxborot monitoringi.'}
+            </p>
           </div>
-          <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-            {lang === 'ru'
-              ? 'Геоинформационный мониторинг распределения молодёжи, тепловых зон риска NEET и центров государственной поддержки.'
-              : 'Yoshlar taqsimoti, NEET xavf zonalari va davlat qo‘llab-quvvatlash markazlarining geoaaxborot monitoringi.'}
-          </p>
+
+          {/* Search + Center Action */}
+          <div className="flex items-center gap-2 w-full md:w-auto flex-shrink-0">
+            <div className="relative flex-1 md:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={lang === 'ru' ? 'Поиск махалли или центра...' : 'Mahalla yoki markaz qidiruvi...'}
+                className="w-full bg-surface-2 border border-white/[0.08] focus:border-indigo-500/50 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={handleResetMapPosition}
+              className="px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.16] text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm flex-shrink-0"
+              title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+              <span>{lang === 'ru' ? 'Центр' : 'Markaz'}</span>
+            </button>
+          </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Quick Mahalla Selector Strip (8 Mahallas) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 scrollbar-none">
           <button
             onClick={handleResetMapPosition}
-            className="px-3 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white border border-white/[0.08] hover:border-white/[0.16] text-xs font-semibold flex items-center gap-2 transition-all shadow-sm"
-            title={lang === 'ru' ? 'Сбросить масштаб к центру района' : 'Tuman markaziga qaytarish'}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-1.5 flex-shrink-0 ${
+              selectedMakhalla === 'all'
+                ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm shadow-indigo-500/25'
+                : 'bg-surface-2 text-slate-300 border-white/[0.06] hover:bg-surface-3 hover:text-white'
+            }`}
           >
-            <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-            <span>{lang === 'ru' ? 'Центрировать' : 'Markazlashtirish'}</span>
+            <Compass className="w-3.5 h-3.5" />
+            <span>{lang === 'ru' ? 'Все 8 махаллей' : 'Barcha 8 ta mahalla'}</span>
+            <span className="px-1.5 py-0.2 rounded bg-black/30 text-[10px] font-mono">100</span>
           </button>
+
+          {MAKHALLAS_LIST.map(m => {
+            const isSelected = selectedMakhalla === m.name || (selectedMakhalla !== 'all' && currentMahalla.id === m.id);
+            const mCount = youthList.filter(y => y.makhalla === m.name).length;
+            const mNeetCount = youthList.filter(y => y.makhalla === m.name && y.is_neet).length;
+
+            return (
+              <button
+                key={m.id}
+                onClick={() => handleSelectMahallaQuick(m)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-2 flex-shrink-0 ${
+                  isSelected
+                    ? 'bg-surface-3 text-white border-sky-500/50 shadow-sm'
+                    : 'bg-surface-2/80 text-slate-300 border-white/[0.06] hover:bg-surface-3 hover:text-white'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${
+                  m.riskLevel === 'high' 
+                    ? 'bg-rose-400' 
+                    : m.riskLevel === 'medium' 
+                    ? 'bg-amber-400' 
+                    : 'bg-emerald-400'
+                }`}></span>
+                <span>{lang === 'ru' ? m.name : m.nameUz}</span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {mCount} {mNeetCount > 0 && <span className="text-rose-400 font-bold">({mNeetCount})</span>}
+                </span>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Search Results Dropdown overlay if search has matches */}
+        {searchResults && (
+          <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.12] space-y-2 animate-in fade-in duration-150">
+            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              {lang === 'ru' ? 'Результаты поиска:' : 'Qidiruv natijalari:'}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {searchResults.mahallas.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    handleSelectMahallaQuick(m);
+                    setSearchQuery('');
+                  }}
+                  className="p-2 bg-surface-1 hover:bg-surface-3 border border-white/[0.06] rounded-lg text-left text-xs transition-colors flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-white font-bold">{m.name}</div>
+                    <div className="text-[10px] text-slate-400">Лидер: {m.leaderName}</div>
+                  </div>
+                  <Navigation className="w-3.5 h-3.5 text-indigo-400" />
+                </button>
+              ))}
+
+              {searchResults.pois.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    setSelectedPoi(p);
+                    if (mapInstanceRef.current) {
+                      mapInstanceRef.current.flyTo(p.coordinates, 15, { duration: 0.8 });
+                    }
+                    setSearchQuery('');
+                  }}
+                  className="p-2 bg-surface-1 hover:bg-surface-3 border border-indigo-500/20 rounded-lg text-left text-xs transition-colors flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-indigo-300 font-bold">{p.name}</div>
+                    <div className="text-[10px] text-slate-400 truncate max-w-[180px]">{p.address}</div>
+                  </div>
+                  <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
 
-      {/* Main Map + Sidebar Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* 2. MAIN MAP & ANALYTICAL PASSPORT GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        {/* Left: Map Container View */}
-        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-4 border border-white/[0.08] relative overflow-hidden flex flex-col justify-between shadow-surface-card min-h-[560px]">
+        {/* LEFT COLUMN: Map View Container */}
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-4 border border-white/[0.08] relative overflow-hidden flex flex-col justify-between shadow-surface-card min-h-[620px] space-y-3">
           
-          {/* Layer Filter Toolbar */}
-          <div className="flex items-center justify-between z-10 flex-wrap gap-2 mb-3">
+          {/* Map Toolbar (Layers, Basemap Theme, POI Toggles) */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 z-10">
             
-            <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
-              <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider">{lang === 'ru' ? 'Слой:' : 'Qatlam:'}</span>
+            {/* Layer Mode Selector */}
+            <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
+              <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider hidden sm:inline">
+                {lang === 'ru' ? 'Слой:' : 'Qatlam:'}
+              </span>
               
               <button
                 onClick={() => setActiveLayer('neet')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   activeLayer === 'neet'
-                    ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
+                    ? 'bg-surface-3 text-rose-300 border border-rose-500/30 shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'neet' ? 'bg-rose-400' : 'bg-rose-400/50'}`}></span>
-                <span>{lang === 'ru' ? 'Риск NEET' : 'NEET xavfi'}</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'neet' ? 'bg-rose-400 animate-pulse' : 'bg-rose-400/50'}`}></span>
+                <span>{lang === 'ru' ? 'NEET Риск' : 'NEET xavfi'}</span>
               </button>
 
               <button
                 onClick={() => setActiveLayer('employment')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   activeLayer === 'employment'
-                    ? 'bg-surface-3 text-white border border-white/[0.12] shadow-sm'
+                    ? 'bg-surface-3 text-emerald-300 border border-emerald-500/30 shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'employment' ? 'bg-emerald-400' : 'bg-emerald-400/50'}`}></span>
-                <span>{lang === 'ru' ? 'Занятость (%)' : 'Bandlik (%)'}</span>
+                <span>{lang === 'ru' ? 'Занятость %' : 'Bandlik %'}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveLayer('support')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  activeLayer === 'support'
+                    ? 'bg-surface-3 text-indigo-300 border border-indigo-500/30 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${activeLayer === 'support' ? 'bg-indigo-400' : 'bg-indigo-400/50'}`}></span>
+                <span>{lang === 'ru' ? 'Поддержка %' : 'Qo‘llab-quvvatlash'}</span>
               </button>
             </div>
 
-            {/* Toggle POI Centers */}
-            <button
-              onClick={() => setShowPoi(prev => !prev)}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                showPoi
-                  ? 'bg-surface-2 hover:bg-surface-3 text-slate-200 border-white/[0.12] shadow-sm'
-                  : 'bg-surface-2/60 text-slate-400 border-white/[0.06]'
-              }`}
-            >
-              <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{lang === 'ru' ? 'Гос. центры (POI)' : 'Davlat markazlari (POI)'}</span>
-            </button>
+            {/* Basemap Switcher & POI Toggle */}
+            <div className="flex items-center gap-1.5">
+              
+              {/* Basemap Theme Toggle */}
+              <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-xl border border-white/[0.08]">
+                <button
+                  onClick={() => setBaseMapTheme('dark')}
+                  className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
+                    baseMapTheme === 'dark'
+                      ? 'bg-surface-3 text-white border border-white/[0.12]'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="Dark Matter Theme"
+                >
+                  🌙 {lang === 'ru' ? 'Темная' : 'Qorong‘i'}
+                </button>
+                <button
+                  onClick={() => setBaseMapTheme('satellite')}
+                  className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
+                    baseMapTheme === 'satellite'
+                      ? 'bg-surface-3 text-white border border-white/[0.12]'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="Esri Satellite Hybrid"
+                >
+                  🛰️ {lang === 'ru' ? 'Спутник' : 'Sun’iy yo‘ldosh'}
+                </button>
+              </div>
+
+              {/* POI Toggle Button */}
+              <button
+                onClick={() => setShowPoi(prev => !prev)}
+                className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                  showPoi
+                    ? 'bg-surface-2 text-indigo-300 border-indigo-500/40 shadow-sm'
+                    : 'bg-surface-2/60 text-slate-400 border-white/[0.06]'
+                }`}
+                title={lang === 'ru' ? 'Переключить объекты инфраструктуры' : 'Infratuzilma obyektlarini ko‘rsatish'}
+              >
+                <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                <span>POI</span>
+              </button>
+
+            </div>
 
           </div>
 
-          {/* Map Display Box */}
+          {/* POI Sub-category Chips (when showPoi is enabled) */}
+          {showPoi && (
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+              <button
+                onClick={() => setPoiCategoryFilter('all')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all border whitespace-nowrap ${
+                  poiCategoryFilter === 'all'
+                    ? 'bg-surface-3 text-white border-white/[0.14]'
+                    : 'bg-surface-2 text-slate-400 border-white/[0.04] hover:text-slate-200'
+                }`}
+              >
+                {lang === 'ru' ? 'Все объекты (6)' : 'Barcha obyektlar (6)'}
+              </button>
+              <button
+                onClick={() => setPoiCategoryFilter('monocenter')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all border whitespace-nowrap ${
+                  poiCategoryFilter === 'monocenter'
+                    ? 'bg-surface-3 text-emerald-300 border-emerald-500/30'
+                    : 'bg-surface-2 text-slate-400 border-white/[0.04] hover:text-slate-200'
+                }`}
+              >
+                🎓 {lang === 'ru' ? 'Моноцентр «Ишга мархамат»' : 'Monomarkaz'}
+              </button>
+              <button
+                onClick={() => setPoiCategoryFilter('it_park')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all border whitespace-nowrap ${
+                  poiCategoryFilter === 'it_park'
+                    ? 'bg-surface-3 text-purple-300 border-purple-500/30'
+                    : 'bg-surface-2 text-slate-400 border-white/[0.04] hover:text-slate-200'
+                }`}
+              >
+                💻 {lang === 'ru' ? 'IT-Park Hub' : 'IT-Park'}
+              </button>
+              <button
+                onClick={() => setPoiCategoryFilter('employment_center')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all border whitespace-nowrap ${
+                  poiCategoryFilter === 'employment_center'
+                    ? 'bg-surface-3 text-amber-300 border-amber-500/30'
+                    : 'bg-surface-2 text-slate-400 border-white/[0.04] hover:text-slate-200'
+                }`}
+              >
+                💼 {lang === 'ru' ? 'Центр занятости (ЦЗН)' : 'ABKM'}
+              </button>
+              <button
+                onClick={() => setPoiCategoryFilter('employer')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all border whitespace-nowrap ${
+                  poiCategoryFilter === 'employer'
+                    ? 'bg-surface-3 text-yellow-300 border-yellow-500/30'
+                    : 'bg-surface-2 text-slate-400 border-white/[0.04] hover:text-slate-200'
+                }`}
+              >
+                🏢 {lang === 'ru' ? 'Работодатели' : 'Ish beruvchilar'}
+              </button>
+            </div>
+          )}
+
+          {/* Leaflet Map Box */}
           <div className="relative w-full h-[470px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-slate-950">
             <div ref={mapContainerRef} className="w-full h-full z-0" />
           </div>
 
-          {/* Bottom Hint Banner */}
-          <div className="flex items-center justify-between text-xs text-slate-400 z-10 font-medium pt-3 px-1">
-            <span className="flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-              <span>
-                {lang === 'ru' 
-                  ? 'Кликните по полигону махалли для зума и паспорта территории' 
-                  : 'Mahalla pasportini ochish uchun xaritadagi hududini bosing'}
+          {/* Map Status Bar & Legend */}
+          <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 z-10 font-medium pt-1 px-1 gap-2">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5 text-xs text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>Высокий NEET</span>
               </span>
-            </span>
+              <span className="flex items-center gap-1.5 text-xs text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Средний</span>
+              </span>
+              <span className="flex items-center gap-1.5 text-xs text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Стабильная зона</span>
+              </span>
+            </div>
+
             <span className="text-[11px] text-slate-500 font-mono">
-              Toshkent • Mirzo Ulug‘bek
+              Mirzo Ulug‘bek • 8 СГМ • 100 профилей
             </span>
           </div>
 
         </div>
 
-        {/* Right: Territory Passport / POI Detail Inspector */}
+        {/* RIGHT COLUMN: Territory Passport / POI Detail Inspector */}
         <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between space-y-4">
           
           {selectedPoi ? (
-            /* Selected POI Center Card */
-            <div className="space-y-4">
+            /* SELECTED POI DETAIL CARD */
+            <div className="space-y-4 animate-in fade-in duration-200">
               <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-indigo-400 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider">
                       {lang === 'ru' ? 'Объект господдержки:' : 'Davlat ko‘mak obyekti:'}
                     </span>
                     <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] font-mono">
-                      POI
+                      {selectedPoi.category.toUpperCase()}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-white mt-1">
+                  <h3 className="text-lg font-bold text-white mt-1 leading-snug">
                     {lang === 'ru' ? selectedPoi.name : selectedPoi.nameUz}
                   </h3>
-                  <div className="text-xs text-slate-400 mt-1">
-                    📍 {selectedPoi.address}
+                  <div className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                    <span>{selectedPoi.address}</span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setSelectedPoi(null)}
-                  className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] transition-all"
+                  className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] transition-all flex-shrink-0"
                 >
                   {lang === 'ru' ? 'К махаллям' : 'Mahallalarga'}
                 </button>
               </div>
 
+              {/* Description & Perks */}
               <div className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] space-y-2">
                 <div className="text-xs text-indigo-300 font-semibold">{lang === 'ru' ? 'Описание и возможности:' : 'Tavsif va imkoniyatlar:'}</div>
                 <p className="text-xs text-slate-300 leading-relaxed">
                   {lang === 'ru' ? selectedPoi.descriptionRu : selectedPoi.descriptionUz}
                 </p>
-                <div className="flex items-center gap-2 pt-1 text-xs font-mono text-indigo-400">
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>{selectedPoi.phone}</span>
+                
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.06] text-xs">
+                  <div className="flex items-center gap-1.5 text-slate-300 font-mono">
+                    <Phone className="w-3.5 h-3.5 text-indigo-400" />
+                    <a href={`tel:${selectedPoi.phone}`} className="hover:text-indigo-300 transition-colors">
+                      {selectedPoi.phone}
+                    </a>
+                  </div>
+                  {selectedPoi.workHours && (
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{selectedPoi.workHours}</span>
+                    </div>
+                  )}
+                </div>
+
+                {selectedPoi.website && (
+                  <div className="pt-1 flex items-center justify-between text-xs">
+                    <span className="text-slate-400 text-[11px]">Официальный ресурс:</span>
+                    <a 
+                      href={selectedPoi.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium"
+                    >
+                      <Globe className="w-3 h-3" />
+                      <span>{selectedPoi.website.replace('https://', '')}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Distance from current Mahalla */}
+              <div className="bg-surface-2 p-3.5 rounded-xl border border-white/[0.08] flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-slate-400 font-medium">
+                    {lang === 'ru' ? `Расстояние от махалли «${currentMahalla.name}»:` : `«${currentMahalla.nameUz}» mahallasidan masofa:`}
+                  </div>
+                  <div className="text-xs text-slate-300 mt-0.5">
+                    🚶 ~{Math.round(calculateDistanceKm(currentMahalla.geoCenter, selectedPoi.coordinates) * 13)} мин пешком
+                  </div>
+                </div>
+                <div className="text-xl font-bold text-sky-400 font-mono">
+                  {calculateDistanceKm(currentMahalla.geoCenter, selectedPoi.coordinates)} км
                 </div>
               </div>
 
+              {/* Services count */}
               <div className="bg-surface-2 p-3.5 rounded-xl border border-white/[0.08] flex items-center justify-between">
-                <div className="text-xs text-slate-300 font-medium">{lang === 'ru' ? 'Доступно направлений обучения:' : 'Mavjud o‘qitish yo‘nalishlari:'}</div>
+                <div className="text-xs text-slate-300 font-medium">
+                  {lang === 'ru' ? 'Доступно направлений обучения / квот:' : 'Mavjud o‘qitish yo‘nalishlari:'}
+                </div>
                 <div className="text-xl font-bold text-white font-mono">{selectedPoi.servicesCount}</div>
               </div>
             </div>
           ) : selectedMakhalla === 'all' ? (
             /* DISTRICT-WIDE SUMMARY PASSPORT (8 MAKHALLAS) */
-            <div className="space-y-4">
+            <div className="space-y-4 animate-in fade-in duration-200">
               <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -542,7 +1075,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 {/* 3. Кандидаты NEET */}
                 <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
                   <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Кандидаты NEET (район)' : 'NEET nomzodlari (tuman)'}</div>
-                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                  <div className="text-xl font-bold text-rose-400 mt-0.5">
                     {neetPendingDistrict} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
@@ -550,26 +1083,29 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 {/* 4. Господдержка */}
                 <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
                   <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Охвачено программами' : 'Dasturlarga qamrab olingan'}</div>
-                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                  <div className="text-xl font-bold text-indigo-300 mt-0.5">
                     {supportedDistrict} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Responsible District Coordinator */}
-              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-1">
+              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-1.5">
                 <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                   <UserCheck className="w-3.5 h-3.5 text-slate-400" />
                   <span>{lang === 'ru' ? 'Координатор молодёжной политики района:' : 'Tuman yoshlar siyosati koordinatori:'}</span>
                 </div>
                 <div className="text-xs text-white font-bold">Алимов Дониёр Бахтиёрович (Хокимият)</div>
-                <a 
-                  href="tel:+998712680010"
-                  className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
-                >
-                  <Phone className="w-3 h-3 text-slate-400" />
-                  <span>+998 (71) 268-00-10</span>
-                </a>
+                <div className="flex items-center justify-between pt-1">
+                  <a 
+                    href="tel:+998712680010"
+                    className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
+                  >
+                    <Phone className="w-3 h-3 text-slate-400" />
+                    <span>+998 (71) 268-00-10</span>
+                  </a>
+                  <span className="text-[10px] text-slate-400">ул. Мустакиллик, 105</span>
+                </div>
               </div>
 
               {/* 8 Makhallas breakdown */}
@@ -578,22 +1114,31 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   <span>{lang === 'ru' ? 'Махалли района (выберите для зума):' : 'Tuman mahallalari (kattalashtirish):'}</span>
                   <span className="text-[10px] text-slate-500 font-mono">8 / 8</span>
                 </div>
-                <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                   {MAKHALLAS_LIST.map(m => {
                     const mCount = youthList.filter(y => y.makhalla === m.name).length;
+                    const mNeet = youthList.filter(y => y.makhalla === m.name && y.is_neet).length;
+
                     return (
                       <button
                         key={m.id}
-                        onClick={() => onSelectMakhalla(m.name)}
+                        onClick={() => handleSelectMahallaQuick(m)}
                         className="w-full p-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-white/[0.06] hover:border-white/[0.14] flex items-center justify-between text-xs transition-all text-left group"
                       >
                         <span className="text-white font-medium truncate max-w-[160px] text-xs group-hover:text-indigo-300">
                           {lang === 'ru' ? m.name : m.nameUz}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
-                          <span className={`w-1.5 h-1.5 rounded-full ${m.riskLevel === 'high' ? 'bg-rose-400' : m.riskLevel === 'medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
-                          <span>{mCount} {lang === 'ru' ? 'чел.' : 'nafar'}</span>
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {mNeet > 0 && (
+                            <span className="px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
+                              NEET: {mNeet}
+                            </span>
+                          )}
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
+                            <span className={`w-1.5 h-1.5 rounded-full ${m.riskLevel === 'high' ? 'bg-rose-400' : m.riskLevel === 'medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
+                            <span>{mCount} {lang === 'ru' ? 'чел.' : 'nafar'}</span>
+                          </span>
+                        </div>
                       </button>
                     );
                   })}
@@ -601,13 +1146,19 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               </div>
             </div>
           ) : (
-            /* Selected Makhalla Passport */
-            <div className="space-y-4">
+            /* SELECTED MAKHALA PASSPORT */
+            <div className="space-y-4 animate-in fade-in duration-200">
+              
+              {/* Mahalla Header */}
               <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{lang === 'ru' ? 'Паспорт территории:' : 'Hudud pasporti:'}</span>
-                  <h3 className="text-lg font-bold text-white tracking-tight mt-0.5">{lang === 'ru' ? `Махалля «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi`}</h3>
-                  <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    {lang === 'ru' ? 'Паспорт территории:' : 'Hudud pasporti:'}
+                  </span>
+                  <h3 className="text-lg font-bold text-white tracking-tight mt-0.5">
+                    {lang === 'ru' ? `Махалля «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi`}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 text-slate-300 border border-white/[0.08] text-xs font-medium">
                       <span className={`w-1.5 h-1.5 rounded-full ${
                         currentMahalla.riskLevel === 'high' 
@@ -624,27 +1175,23 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                           : (lang === 'ru' ? 'Стабильная зона' : 'Barqaror hudud')}
                       </span>
                     </span>
+
+                    {currentMahalla.committeeAddress && (
+                      <span className="text-[11px] text-slate-400 truncate max-w-[220px]">
+                        📍 {currentMahalla.committeeAddress}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {selectedMakhalla === currentMahalla.name ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Активный фокус' : 'Tanlangan'}</span>
-                  </span>
-                ) : (
-                  <button
-                    onClick={() => onSelectMakhalla(currentMahalla.name)}
-                    className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all shadow-sm"
-                  >
-                    {lang === 'ru' ? 'Выбрать' : 'Tanlash'}
-                  </button>
-                )}
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold flex-shrink-0">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{lang === 'ru' ? 'В фокусе' : 'Fokusda'}</span>
+                </span>
               </div>
 
               {/* Dynamic Real Metrics Grid */}
               <div className="grid grid-cols-2 gap-2.5">
-                
                 {/* 1. Молодёжь в базе */}
                 <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
                   <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Молодёжь (в реестре)' : 'Yoshlar (reyestrda)'}</div>
@@ -664,7 +1211,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 {/* 3. Кандидаты NEET */}
                 <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
                   <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Кандидаты NEET (проверка)' : 'NEET nomzodlari (ko‘rik)'}</div>
-                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                  <div className="text-xl font-bold text-rose-400 mt-0.5">
                     {neetPendingInCurrent} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
@@ -672,48 +1219,168 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 {/* 4. Господдержка */}
                 <div className="bg-surface-2 p-3 rounded-xl border border-white/[0.08]">
                   <div className="text-[11px] text-slate-400 font-medium">{lang === 'ru' ? 'Охвачено программами' : 'Dasturlarga qamrab olingan'}</div>
-                  <div className="text-xl font-bold text-slate-100 mt-0.5">
+                  <div className="text-xl font-bold text-indigo-300 mt-0.5">
                     {supportedInCurrent} <span className="text-xs text-slate-400 font-normal">{lang === 'ru' ? 'чел.' : 'nafar'}</span>
                   </div>
                 </div>
-
               </div>
 
-              {/* Responsible Youth Leader */}
-              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-1">
-                <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{lang === 'ru' ? 'Ответственный «Ёшлар етакчиси»:' : 'Mas’ul «Yoshlar yetakchisi»:'}</span>
+              {/* NEET Risk Index Meter */}
+              <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-300 font-semibold flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{lang === 'ru' ? 'Индекс риска NEET:' : 'NEET xavf indeksi:'}</span>
+                  </span>
+                  <span className={`font-mono font-bold ${neetRiskScore > 50 ? 'text-rose-400' : neetRiskScore > 25 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                    {neetRiskScore} / 100
+                  </span>
                 </div>
-                <div className="text-xs text-white font-bold">{currentMahalla.leaderName}</div>
-                <a 
-                  href={`tel:${currentMahalla.leaderPhone}`}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
-                >
-                  <Phone className="w-3 h-3 text-slate-400" />
-                  <span>{currentMahalla.leaderPhone}</span>
-                </a>
+                <div className="w-full bg-surface-3 rounded-full h-1.5 overflow-hidden relative">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-700 ${
+                      neetRiskScore > 50 ? 'bg-rose-500' : neetRiskScore > 25 ? 'bg-amber-500' : 'bg-emerald-500'
+                    }`}
+                    style={{ width: `${neetRiskScore}%` }}
+                  />
+                </div>
               </div>
 
-              {/* Youth list in this mahalla */}
-              <div>
-                <div className="text-xs font-semibold text-slate-300 mb-1.5">
-                  {lang === 'ru' ? `Профили молодёжи в махалле (${totalInCurrent} чел.):` : `Mahalladagi yoshlar profillari (${totalInCurrent} nafar):`}
+              {/* Responsible Youth Leader Card */}
+              <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08] space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                      <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{lang === 'ru' ? 'Ответственный «Ёшлар етакчиси»:' : 'Mas’ul «Yoshlar yetakchisi»:'}</span>
+                    </div>
+                    <div className="text-xs text-white font-bold mt-0.5">{currentMahalla.leaderName}</div>
+                  </div>
+
+                  <button
+                    onClick={() => handleCopyLeaderPhone(currentMahalla.leaderPhone)}
+                    className="p-1.5 bg-surface-3 hover:bg-surface-1 rounded-lg text-slate-400 hover:text-white border border-white/[0.06] transition-colors"
+                    title={lang === 'ru' ? 'Скопировать номер телефона' : 'Telefon raqamini nusxalash'}
+                  >
+                    {copiedLeaderPhone ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
                 </div>
-                <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
-                  {youthInCurrent.slice(0, 4).map(y => (
-                    <div key={y.id} className="p-2 rounded-lg bg-surface-2 border border-white/[0.06] flex items-center justify-between text-xs">
-                      <span className="text-white font-medium truncate max-w-[180px] text-xs">{y.full_name_demo}</span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                          y.is_neet 
-                            ? 'bg-amber-400/90' 
-                            : 'bg-emerald-400/90'
-                        }`}></span>
-                        <span>{y.is_neet ? (lang === 'ru' ? 'NEET риск' : 'NEET xavfi') : y.employment_status}</span>
+
+                <div className="flex items-center justify-between pt-1 border-t border-white/[0.06] text-xs">
+                  <a 
+                    href={`tel:${currentMahalla.leaderPhone}`}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition-colors"
+                  >
+                    <Phone className="w-3 h-3 text-slate-400" />
+                    <span>{currentMahalla.leaderPhone}</span>
+                  </a>
+
+                  {currentMahalla.leaderTelegram && (
+                    <a
+                      href={`https://t.me/${currentMahalla.leaderTelegram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono transition-colors"
+                    >
+                      <Send className="w-3 h-3 text-sky-400" />
+                      <span>{currentMahalla.leaderTelegram}</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Nearest Support Infrastructure Quick List */}
+              <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] space-y-1.5">
+                <div className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                  <span>{lang === 'ru' ? 'Ближайшие центры господдержки:' : 'Yaqin davlat markazlari:'}</span>
+                  <span className="text-[10px] text-slate-500 font-mono">Top-3</span>
+                </div>
+
+                <div className="space-y-1">
+                  {nearestPOIs.slice(0, 3).map(poi => (
+                    <div 
+                      key={poi.id}
+                      onClick={() => {
+                        setSelectedPoi(poi);
+                        if (mapInstanceRef.current) {
+                          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.8 });
+                        }
+                      }}
+                      className="p-1.5 bg-surface-1 hover:bg-surface-3 rounded-lg border border-white/[0.04] flex items-center justify-between text-xs cursor-pointer transition-colors"
+                    >
+                      <div className="truncate max-w-[200px]">
+                        <span className="text-white font-medium text-xs">{poi.name}</span>
+                      </div>
+                      <span className="text-sky-400 font-mono text-[11px] font-bold">
+                        {poi.distanceKm} км
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Youth Profiles in this Mahalla (Clickable Dossiers) */}
+              <div>
+                <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1.5">
+                  <span>{lang === 'ru' ? `Граждане в махалле (${totalInCurrent} чел.):` : `Mahalla yoshlari (${totalInCurrent}):`}</span>
+                  
+                  {/* Mini Filter Pills */}
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <button
+                      onClick={() => setYouthListFilter('all')}
+                      className={`px-1.5 py-0.5 rounded transition-colors ${youthListFilter === 'all' ? 'bg-surface-3 text-white font-bold' : 'text-slate-400'}`}
+                    >
+                      Все
+                    </button>
+                    <button
+                      onClick={() => setYouthListFilter('neet')}
+                      className={`px-1.5 py-0.5 rounded transition-colors ${youthListFilter === 'neet' ? 'bg-rose-500/20 text-rose-300 font-bold' : 'text-slate-400'}`}
+                    >
+                      NEET
+                    </button>
+                    <button
+                      onClick={() => setYouthListFilter('supported')}
+                      className={`px-1.5 py-0.5 rounded transition-colors ${youthListFilter === 'supported' ? 'bg-indigo-500/20 text-indigo-300 font-bold' : 'text-slate-400'}`}
+                    >
+                      Помощь
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                  {displayedYouth.length === 0 ? (
+                    <div className="py-4 text-center text-xs text-slate-500">
+                      {lang === 'ru' ? 'Нет профилей по данному фильтру' : 'Ushbu filtr bo‘yicha profillar yo‘q'}
+                    </div>
+                  ) : (
+                    displayedYouth.map(y => (
+                      <div 
+                        key={y.id}
+                        onClick={() => onOpenProfile && onOpenProfile(y)}
+                        className="p-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-white/[0.06] hover:border-white/[0.14] flex items-center justify-between text-xs cursor-pointer transition-all group"
+                      >
+                        <div>
+                          <div className="text-white font-medium text-xs group-hover:text-indigo-300 transition-colors">
+                            {y.full_name_demo}
+                          </div>
+                          <div className="text-[10px] text-slate-400">
+                            {y.age} {lang === 'ru' ? 'лет' : 'yosh'} • {y.activity_type}
+                          </div>
+                        </div>
+
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            y.is_neet 
+                              ? 'bg-rose-400' 
+                              : y.assigned_program 
+                              ? 'bg-indigo-400'
+                              : 'bg-emerald-400'
+                          }`}></span>
+                          <span>{y.is_neet ? 'NEET' : y.employment_status}</span>
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -728,7 +1395,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               }
               onNavigateRegistry();
             }}
-            className="w-full py-2.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm flex items-center justify-center gap-2 transition-all group"
+            className="w-full py-2.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm flex items-center justify-center gap-2 transition-all group mt-2"
           >
             <Eye className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300" />
             <span>

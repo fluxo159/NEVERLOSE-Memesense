@@ -77,6 +77,8 @@ export interface MakhallaStats {
   employmentRate: number; // percentage
   leaderName: string;
   leaderPhone: string;
+  leaderTelegram?: string;
+  committeeAddress?: string;
   riskLevel: 'low' | 'medium' | 'high';
   coordinates: { x: number; y: number }; // For SVG map
   geoCenter: [number, number]; // [lat, lng] for Leaflet GIS
@@ -87,12 +89,15 @@ export interface InfrastructurePOI {
   id: string;
   name: string;
   nameUz: string;
-  category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university';
+  category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university' | 'employer';
   address: string;
   phone: string;
+  website?: string;
+  workHours?: string;
   coordinates: [number, number]; // [lat, lng]
   servicesCount: number;
   descriptionRu: string;
   descriptionUz: string;
 }
+
 
