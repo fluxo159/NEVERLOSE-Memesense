@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   AlertCircle, CheckCircle, XCircle, Search, UserCheck, 
@@ -38,6 +38,16 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   // Local state for inline verification dialog
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [verificationComment, setVerificationComment] = useState<string>('');
+
+  useEffect(() => {
+    if (verifyingId) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [verifyingId]);
   const [isSuccessAnimating, setIsSuccessAnimating] = useState<boolean>(false);
   const [successInfo, setSuccessInfo] = useState<{ name: string; isConfirmed: boolean } | null>(null);
 

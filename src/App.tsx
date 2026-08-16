@@ -42,6 +42,27 @@ export const App: React.FC = () => {
   const [showPitchGuide, setShowPitchGuide] = useState<boolean>(false);
   const [registryInitialFilter, setRegistryInitialFilter] = useState<string>('all');
 
+  // Lock body scroll when any modal is active
+  const isAnyModalOpen = Boolean(
+    selectedYouthForModal || 
+    youthForRouting || 
+    showNewYouthModal || 
+    showNewProgramModal || 
+    showExportModal || 
+    showImportModal || 
+    showPitchGuide
+  );
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isAnyModalOpen]);
+
   // Filtered dataset based on currently chosen Makhalla
   const currentScopedList = selectedMakhalla === 'all'
     ? youthList

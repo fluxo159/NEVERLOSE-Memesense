@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   X, MapPin, Phone, GraduationCap, Calendar, 
@@ -36,6 +36,14 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   const [programFilter, setProgramFilter] = useState<'all' | 'recommended' | 'training' | 'finance' | 'employment'>('all');
   const [programSearch, setProgramSearch] = useState<string>('');
 
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
       onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Tizimda holat yangilandi'));
@@ -67,11 +75,11 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   return createPortal(
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
+      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto overscroll-contain animate-in fade-in duration-150 cursor-pointer"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.12] shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col cursor-default"
+        className="bg-surface-1 w-full max-w-3xl rounded-2xl border border-white/[0.12] shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col cursor-default overscroll-contain"
       >
         
         {/* Modal Header */}
