@@ -182,10 +182,10 @@ export const AnimatedStackedBarChart: React.FC<AnimatedStackedBarChartProps> = (
                   />
                 )}
 
-                {/* Animated Column Group with Cascading Entry Animation */}
+                {/* Animated Column Group with Subtle Fast Entry Animation */}
                 <g
                   style={{
-                    animation: `barGrowCascading 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 70}ms both`,
+                    animation: `barGrowCascading 0.28s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 20}ms both`,
                     transformOrigin: `${xCenter}px ${chartBottom}px`
                   }}
                 >

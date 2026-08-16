@@ -82,11 +82,8 @@
 
 @keyframes barGrowCascading {
   0% {
-    transform: scaleY(0);
+    transform: scaleY(0.4);
     opacity: 0;
-  }
-  40% {
-    opacity: 0.8;
   }
   100% {
     transform: scaleY(1);
