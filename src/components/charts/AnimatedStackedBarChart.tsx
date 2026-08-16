@@ -182,8 +182,13 @@ export const AnimatedStackedBarChart: React.FC<AnimatedStackedBarChartProps> = (
                   />
                 )}
 
-                {/* Smooth Column Group */}
-                <g className="transition-opacity duration-300">
+                {/* Animated Column Group with Silky Smooth Rising Animation */}
+                <g
+                  style={{
+                    animation: `barGrowCascading 0.65s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms both`,
+                    transformOrigin: `${xCenter}px ${chartBottom}px`
+                  }}
+                >
                   {/* Employed Section (Bottom) */}
                   {employedH > 0 && (
                     <rect
@@ -192,9 +197,7 @@ export const AnimatedStackedBarChart: React.FC<AnimatedStackedBarChartProps> = (
                       width={colWidth}
                       height={employedH}
                       fill={colors.employed}
-                      style={{
-                        transition: 'y 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), fill 0.3s ease'
-                      }}
+                      className="transition-all duration-200"
                     />
                   )}
 
@@ -206,9 +209,7 @@ export const AnimatedStackedBarChart: React.FC<AnimatedStackedBarChartProps> = (
                       width={colWidth}
                       height={studyingH}
                       fill={colors.studying}
-                      style={{
-                        transition: 'y 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), fill 0.3s ease'
-                      }}
+                      className="transition-all duration-200"
                     />
                   )}
 
@@ -221,9 +222,7 @@ export const AnimatedStackedBarChart: React.FC<AnimatedStackedBarChartProps> = (
                       height={neetH}
                       rx={4}
                       fill={colors.neet}
-                      style={{
-                        transition: 'y 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), fill 0.3s ease'
-                      }}
+                      className="transition-all duration-200"
                     />
                   )}
                 </g>

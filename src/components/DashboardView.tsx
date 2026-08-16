@@ -64,6 +64,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* 1. Status Breakdown Donut with Sequential Drawing Animation */}
         <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <AnimatedDonutChart
+            key={selectedMakhalla}
             data={donutData}
             total={youthList.length}
             title={tr.dashEmploymentStructure}

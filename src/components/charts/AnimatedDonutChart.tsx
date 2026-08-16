@@ -105,9 +105,10 @@ export const AnimatedDonutChart: React.FC<AnimatedDonutChartProps> = ({
                 onMouseEnter={() => setHoveredIndex(seg.idx)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
+                  animation: `donutSliceDraw 0.65s cubic-bezier(0.16, 1, 0.3, 1) ${seg.idx * 75}ms both`,
                   opacity: isDimmed ? 0.3 : 1,
                   filter: isHovered ? `drop-shadow(0 0 6px ${seg.color}60)` : 'none',
-                  transition: 'stroke-dasharray 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), stroke-dashoffset 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), stroke-width 0.25s ease-out, opacity 0.25s ease-out, filter 0.2s ease-out'
+                  transition: 'stroke-width 0.2s ease, opacity 0.2s ease, filter 0.2s ease'
                 }}
               />
             );

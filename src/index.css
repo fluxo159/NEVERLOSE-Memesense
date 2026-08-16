@@ -72,6 +72,9 @@
     stroke-dasharray: 0 1000;
     opacity: 0;
   }
+  35% {
+    opacity: 1;
+  }
   100% {
     opacity: 1;
   }
@@ -79,8 +82,11 @@
 
 @keyframes barGrowCascading {
   0% {
-    transform: scaleY(0.6);
+    transform: scaleY(0);
     opacity: 0;
+  }
+  35% {
+    opacity: 0.8;
   }
   100% {
     transform: scaleY(1);
