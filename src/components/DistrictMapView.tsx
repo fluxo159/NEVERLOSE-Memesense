@@ -92,53 +92,145 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   // Animation Timers Ref
   const cameraTimersRef = useRef<NodeJS.Timeout[]>([]);
+  const isAnimatingRef = useRef<boolean>(false);
 
-  // Clear all pending camera timeouts
+  // Clear all pending camera timeouts and abort listeners
   const clearCameraTimers = () => {
     cameraTimersRef.current.forEach(t => clearTimeout(t));
     cameraTimersRef.current = [];
+    isAnimatingRef.current = false;
   };
 
   /**
-   * 🎬 SMART DYNAMIC CAMERA CONTROLLER:
-   * - Close/Adjacent Mahallas (<= 1.8km): Smooth, direct fluid pan without zoom-out.
-   * - Distant Mahallas (> 1.8km): Smooth, seamless aerial zoom-out + tight rapid dive.
+   * Pre-load tiles along the animation corridor so there's zero white-flash during flight.
+   * Triggers tile loading at both endpoints plus the midpoint to ensure full coverage.
+   * Leaflet's keepBuffer=32 will hold them all in memory.
+   */
+  const preloadTilesForPath = useCallback((from: [number, number], to: [number, number]) => {
+    if (!tileLayerRef.current) return;
+    const tl = tileLayerRef.current as any;
+    if (typeof tl._update !== 'function') return;
+
+    // Pre-fetch tiles at the overview zoom level for source, midpoint, and destination
+    const midLat = (from[0] + to[0]) / 2;
+    const midLng = (from[1] + to[1]) / 2;
+
+    try {
+      tl._update(L.latLng(from[0], from[1]));
+      tl._update(L.latLng(midLat, midLng));
+      tl._update(L.latLng(to[0], to[1]));
+    } catch (_) {
+      // Silently ignore — this is a best-effort preload
+    }
+  }, []);
+
+  /**
+   * 🎬 3-PHASE CINEMATIC CAMERA CONTROLLER:
+   *
+   * NEARBY Mahallas (≤ 1.5 km): Simple smooth direct pan — no zoom change.
+   *
+   * DISTANT Mahallas (> 1.5 km):
+   *   Phase 1 → Smoothly zoom OUT from current position to overview altitude (zoom 12.3)
+   *             in one continuous fluid motion. Camera stays centered on current spot.
+   *   Phase 2 → At the SAME altitude (12.3), smoothly PAN to center the target mahalla.
+   *             One continuous fluid motion, no zoom change.
+   *   Phase 3 → Dive IN to target in 2 ticks:
+   *             Tick 1: zoom 12.3 → 13.4 (approach)
+   *             Tick 2: zoom 13.4 → 14.5 (lock)
+   *             with a short interval between ticks.
+   *
+   * All tiles along the flight path are pre-loaded before animation begins.
    */
   const smoothNavigateToMahalla = useCallback((targetCoords: [number, number], targetZoom = 14.5) => {
     if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
 
+    // Abort any in-progress animation
     clearCameraTimers();
-    const currentCenter = map.getCenter();
-    const distanceKm = calculateDistanceKm([currentCenter.lat, currentCenter.lng], targetCoords);
+    map.stop(); // Stop any current flyTo mid-flight
 
-    // 1. NEARBY / ADJACENT (<= 1.8 km): Smooth direct pan without jarring zoom churn
-    if (distanceKm <= 1.8) {
+    const currentCenter = map.getCenter();
+    const currentZoom = map.getZoom();
+    const fromCoords: [number, number] = [currentCenter.lat, currentCenter.lng];
+    const distanceKm = calculateDistanceKm(fromCoords, targetCoords);
+
+    isAnimatingRef.current = true;
+
+    // ─── NEARBY / ADJACENT (≤ 1.5 km): Smooth direct pan ───
+    if (distanceKm <= 1.5) {
       map.flyTo(targetCoords, targetZoom, {
-        duration: 0.45,
-        easeLinearity: 0.25,
+        duration: 0.5,
+        easeLinearity: 0.2,
         noMoveStart: true
       });
+      const tEnd = setTimeout(() => { isAnimatingRef.current = false; }, 600);
+      cameraTimersRef.current.push(tEnd);
       return;
     }
 
-    // 2. DISTANT (> 1.8 km): Smooth GTA Aerial Glide with tight minimal interval
-    // Step 1 (0ms): Smooth soft pull-back into sky (zoom 12.6)
-    map.flyTo([currentCenter.lat, currentCenter.lng], 12.6, {
-      duration: 0.28,
-      easeLinearity: 0.32
+    // ─── DISTANT (> 1.5 km): 3-Phase Cinematic Flight ───
+
+    // Pre-load tiles for the entire flight corridor
+    preloadTilesForPath(fromCoords, targetCoords);
+
+    const OVERVIEW_ZOOM = 12.3;
+    const MID_ZOOM = 13.4;
+    const FINAL_ZOOM = targetZoom; // 14.5
+
+    // Compute durations based on distance for natural feel
+    const pullBackDuration = currentZoom > 13 ? 0.55 : 0.3; // Longer if zoomed in deep
+    const panDuration = Math.min(0.7, 0.35 + distanceKm * 0.06); // Scale with distance
+    const diveTickDuration = 0.3;
+    const TICK_INTERVAL = 200; // ms between dive ticks
+
+    // ── Phase 1: Smooth zoom-out to overview altitude at current position ──
+    map.flyTo(fromCoords, OVERVIEW_ZOOM, {
+      duration: pullBackDuration,
+      easeLinearity: 0.15
     });
 
-    // Step 2 (180ms - tiny seamless interval): Fast continuous dive & lock onto target
-    const tDive = setTimeout(() => {
-      map.flyTo(targetCoords, targetZoom, {
-        duration: 0.42,
-        easeLinearity: 0.22
-      });
-    }, 180);
-    cameraTimersRef.current.push(tDive);
+    // Chain Phase 2 after Phase 1 completes
+    const tPhase2 = setTimeout(() => {
+      if (!isAnimatingRef.current || !mapInstanceRef.current) return;
 
-  }, []);
+      // ── Phase 2: Pan to target at same overview altitude (no zoom change) ──
+      map.flyTo(targetCoords, OVERVIEW_ZOOM, {
+        duration: panDuration,
+        easeLinearity: 0.15
+      });
+
+      // Chain Phase 3 after Phase 2 completes
+      const tPhase3Tick1 = setTimeout(() => {
+        if (!isAnimatingRef.current || !mapInstanceRef.current) return;
+
+        // ── Phase 3, Tick 1: Approach zoom ──
+        map.flyTo(targetCoords, MID_ZOOM, {
+          duration: diveTickDuration,
+          easeLinearity: 0.2
+        });
+
+        // ── Phase 3, Tick 2: Final lock zoom ──
+        const tPhase3Tick2 = setTimeout(() => {
+          if (!isAnimatingRef.current || !mapInstanceRef.current) return;
+
+          map.flyTo(targetCoords, FINAL_ZOOM, {
+            duration: diveTickDuration,
+            easeLinearity: 0.2
+          });
+
+          const tDone = setTimeout(() => { isAnimatingRef.current = false; }, 400);
+          cameraTimersRef.current.push(tDone);
+
+        }, diveTickDuration * 1000 + TICK_INTERVAL);
+        cameraTimersRef.current.push(tPhase3Tick2);
+
+      }, panDuration * 1000 + 50);
+      cameraTimersRef.current.push(tPhase3Tick1);
+
+    }, pullBackDuration * 1000 + 50);
+    cameraTimersRef.current.push(tPhase2);
+
+  }, [preloadTilesForPath]);
 
   // Synchronize when global selectedMakhalla prop changes
   useEffect(() => {
@@ -241,9 +333,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     const tileLayer = L.tileLayer(tileUrl, {
       maxZoom: 18,
       subdomains: 'abcd',
-      keepBuffer: 24, // Generous tile memory cache
-      updateWhenIdle: false, // Smooth continuous tile rendering during flight
-      updateInterval: 50
+      keepBuffer: 32, // Very generous tile memory cache — prevents white flashes
+      updateWhenIdle: false, // Continuous tile rendering during flight
+      updateWhenZooming: true, // Keep tiles updating during zoom transitions
+      updateInterval: 30 // More responsive tile fetching
     }).addTo(map);
 
     tileLayerRef.current = tileLayer;
