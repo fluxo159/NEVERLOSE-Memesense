@@ -53,7 +53,7 @@
 @keyframes fadeInView {
   0% {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(2px);
   }
   100% {
     opacity: 1;
@@ -62,7 +62,7 @@
 }
 
 .view-transition {
-  animation: fadeInView 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInView 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   will-change: opacity, transform;
 }
 
@@ -72,9 +72,6 @@
     stroke-dasharray: 0 1000;
     opacity: 0;
   }
-  20% {
-    opacity: 1;
-  }
   100% {
     opacity: 1;
   }
@@ -82,7 +79,7 @@
 
 @keyframes barGrowCascading {
   0% {
-    transform: scaleY(0.4);
+    transform: scaleY(0.6);
     opacity: 0;
   }
   100% {
@@ -95,7 +92,7 @@
 @keyframes rowSlideIn {
   0% {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(3px);
   }
   100% {
     opacity: 1;
@@ -104,13 +101,13 @@
 }
 
 .animate-row-slide {
-  animation: rowSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: rowSlideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 @keyframes cardPopCascade {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.985);
+    transform: translateY(4px) scale(0.995);
   }
   100% {
     opacity: 1;
@@ -119,7 +116,7 @@
 }
 
 .animate-card-cascade {
-  animation: cardPopCascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: cardPopCascade 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 /* Radar & Timeline Beacon Animations */

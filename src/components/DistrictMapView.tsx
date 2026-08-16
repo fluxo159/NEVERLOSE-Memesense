@@ -54,12 +54,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         setSelectedMahallaId(match.id);
         setSelectedPoi(null);
         if (mapInstanceRef.current) {
-          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 0.8 });
+          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 1.2, easeLinearity: 0.25 });
         }
       }
     } else if (selectedMakhalla === 'all') {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.8 });
+        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 1.2, easeLinearity: 0.25 });
       }
     }
   }, [selectedMakhalla]);
@@ -449,7 +449,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         </div>
 
         {/* Right: Territory Passport / POI Detail Inspector */}
-        <div key={selectedMahallaId || selectedPoi?.id || 'default'} className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between space-y-4 view-transition">
+        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card flex flex-col justify-between space-y-4">
           
           {selectedPoi ? (
             /* Selected POI Center Card */
