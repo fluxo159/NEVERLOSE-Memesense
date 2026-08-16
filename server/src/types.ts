@@ -26,7 +26,7 @@ export interface SupportProgram {
   category: 'обучение' | 'трудоустройство' | 'предпринимательство' | 'субсидия' | 'it_стажировка';
   description: string;
   descriptionUz?: string;
-  provider: string; // e.g. "Моноцентр «Ишга Мархамат»", "IT-Park", "Фонд «Ёшлар Дафтари»", "Районный Центр занятости"
+  provider: string;
   providerUz?: string;
   duration?: string;
   durationUz?: string;
@@ -48,11 +48,11 @@ export interface YouthProfile {
   specialty?: string;
   skills: string[];
   is_neet: boolean;
-  neet_verification: VerificationState; // 'pending_verification' | 'verified' | 'rejected'
+  neet_verification: VerificationState;
   neet_verified_by?: string;
   neet_verified_at?: string;
   needs_support: boolean;
-  support_recommendation: string[]; // IDs or names of recommended measures
+  support_recommendation: string[];
   assigned_program?: SupportProgram;
   assigned_at?: string;
   assigned_officer?: string;
@@ -61,43 +61,13 @@ export interface YouthProfile {
   status_history: StatusHistoryItem[];
 }
 
-export type UserRole = 'district_officer' | 'mahalla_leader' | 'employment_center';
-
-export interface MakhallaStats {
+export interface LiveEvent {
   id: string;
-  name: string;
-  nameUz?: string;
-  totalYouth: number;
-  employed: number;
-  studying: number;
-  unemployed: number;
-  neetCount: number;
-  neetPending: number;
-  supportedCount: number;
-  employmentRate: number; // percentage
-  leaderName: string;
-  leaderPhone: string;
-  leaderTelegram?: string;
-  committeeAddress?: string;
-  riskLevel: 'low' | 'medium' | 'high';
-  coordinates: { x: number; y: number }; // For SVG map
-  geoCenter: [number, number]; // [lat, lng] for Leaflet GIS
-  geoPolygon: [number, number][]; // Polygon vertices [lat, lng][]
+  type: 'TRIAGE_VERIFIED' | 'STATUS_CHANGED' | 'NEW_YOUTH' | 'PROGRAM_ASSIGNED' | 'MAHALLA_SYNC';
+  timestamp: string;
+  mahalla: string;
+  author: string;
+  messageRu: string;
+  messageUz: string;
+  youth?: YouthProfile;
 }
-
-export interface InfrastructurePOI {
-  id: string;
-  name: string;
-  nameUz: string;
-  category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university' | 'employer';
-  address: string;
-  phone: string;
-  website?: string;
-  workHours?: string;
-  coordinates: [number, number]; // [lat, lng]
-  servicesCount: number;
-  descriptionRu: string;
-  descriptionUz: string;
-}
-
-
