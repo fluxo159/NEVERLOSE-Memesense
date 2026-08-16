@@ -86,17 +86,17 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   const poiGroupRef = useRef<L.FeatureGroup | null>(null);
   const routeLineGroupRef = useRef<L.FeatureGroup | null>(null);
 
-  // Persistent reference maps for Leaflet layers to avoid recreating SVG nodes
+  // Persistent reference maps for Leaflet layers (Zero recreation during panning)
   const polygonsMapRef = useRef<Map<string, L.Polygon>>(new Map());
   const labelsMapRef = useRef<Map<string, L.Marker>>(new Map());
 
-  // FlyTo camera helper with optimized easing
-  const smoothFlyTo = useCallback((coords: [number, number], zoom = 14) => {
+  // High-performance smooth camera panning without zoom churn or tile unload lag
+  const smoothPanTo = useCallback((coords: [number, number]) => {
     if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.flyTo(coords, zoom, {
-      duration: 0.65,
-      easeLinearity: 0.25,
-      noMoveStart: true
+    mapInstanceRef.current.panTo(coords, {
+      animate: true,
+      duration: 0.45,
+      easeLinearity: 0.25
     });
   }, []);
 
@@ -107,12 +107,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       if (match) {
         setSelectedMahallaId(match.id);
         setSelectedPoi(null);
-        smoothFlyTo(match.geoCenter, 14);
+        smoothPanTo(match.geoCenter);
       }
     } else if (selectedMakhalla === 'all') {
-      smoothFlyTo(DISTRICT_CENTER, 13);
+      smoothPanTo(DISTRICT_CENTER);
     }
-  }, [selectedMakhalla, smoothFlyTo]);
+  }, [selectedMakhalla, smoothPanTo]);
 
   const currentMahalla: MakhallaStats = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
 
@@ -167,7 +167,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     }).sort((a, b) => a.distanceKm - b.distanceKm);
   }, [currentMahalla]);
 
-  // 1. Initialize Map ONCE and register persistent polygon layers
+  // 1. Initialize Map ONCE with tile caching and memory buffers
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -179,6 +179,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     const map = L.map(mapContainerRef.current, {
       center: DISTRICT_CENTER,
       zoom: 13,
+      minZoom: 12,
+      maxZoom: 17,
       zoomControl: false,
       attributionControl: false,
       preferCanvas: false
@@ -186,7 +188,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
     mapInstanceRef.current = map;
 
-    // Tile Layer based on theme
+    // Tile Layer with aggressive buffering and responsive preloading
     const tileUrl = baseMapTheme === 'satellite'
       ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
       : baseMapTheme === 'streets'
@@ -194,8 +196,11 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
     const tileLayer = L.tileLayer(tileUrl, {
-      maxZoom: 19,
-      subdomains: 'abcd'
+      maxZoom: 18,
+      subdomains: 'abcd',
+      keepBuffer: 16, // Keep generous buffer of tiles in memory
+      updateWhenIdle: false, // Update tiles continuously without lag spikes
+      updateInterval: 100
     }).addTo(map);
 
     tileLayerRef.current = tileLayer;
@@ -212,20 +217,22 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     poiGroupRef.current = poiGroup;
     routeLineGroupRef.current = routeGroup;
 
-    // Create and attach all 8 Polygons & Labels persistently (DO NOT destroy on state changes)
+    // Create and attach all 8 Polygons & Labels ONCE
     MAKHALLAS_LIST.forEach(mahalla => {
       const polygon = L.polygon(mahalla.geoPolygon, {
         color: '#34d399',
         weight: 1.5,
         fillColor: '#10b981',
-        fillOpacity: 0.28,
+        fillOpacity: 0.26,
         dashArray: '3, 4'
       });
 
+      // Bind non-sticky tooltip with clean mouseover/mouseout cleanup
       polygon.bindTooltip('', {
         className: 'leaflet-tooltip-dark',
-        sticky: true,
-        direction: 'top'
+        sticky: false,
+        direction: 'top',
+        opacity: 0.98
       });
 
       // Interactive Click Event
@@ -233,20 +240,21 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         setSelectedMahallaId(mahalla.id);
         setSelectedPoi(null);
         onSelectMakhalla(mahalla.name);
-        map.flyTo(mahalla.geoCenter, 14, { duration: 0.65, easeLinearity: 0.25 });
+        map.panTo(mahalla.geoCenter, { animate: true, duration: 0.45 });
       });
 
-      // Hover glow effects with direct style mutation
-      polygon.on('mouseover', function (this: L.Polygon) {
+      // Controlled Hover with clean Tooltip show/hide
+      polygon.on('mouseover', function (this: L.Polygon, e: L.LeafletMouseEvent) {
         this.setStyle({
           fillOpacity: 0.72,
           weight: 3.5,
           color: '#ffffff'
         });
+        this.openTooltip(e.latlng);
       });
 
       polygon.on('mouseout', function (this: L.Polygon) {
-        // Will be re-synchronized by the style update effect
+        this.closeTooltip();
       });
 
       polygon.addTo(polyGroup);
@@ -273,7 +281,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     };
   }, []);
 
-  // 2. Update Tile Layer Theme smoothly without recreating map
+  // 2. Update Tile Layer Theme without recreating map
   useEffect(() => {
     if (!mapInstanceRef.current || !tileLayerRef.current) return;
     const tileUrl = baseMapTheme === 'satellite'
@@ -285,7 +293,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     tileLayerRef.current.setUrl(tileUrl);
   }, [baseMapTheme]);
 
-  // 3. Ultra-fast and lag-free Polygon & Label Style Synchronization (Mutates existing instances)
+  // 3. Fast Polygon & Label Style Synchronization (Never destroys DOM elements)
   useEffect(() => {
     if (!mapInstanceRef.current) return;
 
@@ -346,7 +354,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         badgeText = `${totalYouthInM} чел.`;
       }
 
-      // ⚡ Smooth in-place style update (Triggers CSS 60fps transitions)
+      // Smooth in-place style mutation (GPU accelerated)
       polygon.setStyle({
         color: isSelected ? '#38bdf8' : strokeColor,
         weight: isSelected ? 3.5 : 1.5,
@@ -355,9 +363,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         dashArray: isSelected ? undefined : '3, 4'
       });
 
-      // Update Mouseout handler to restore current active styling
+      // Update Mouseout handler to safely close tooltip and restore clean state
       polygon.off('mouseout');
       polygon.on('mouseout', () => {
+        polygon.closeTooltip();
         polygon.setStyle({
           color: isSelected ? '#38bdf8' : strokeColor,
           weight: isSelected ? 3.5 : 1.5,
@@ -367,23 +376,23 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         });
       });
 
-      // Update Tooltip
+      // Update Tooltip content
       const mahallaDisplayName = getMahallaName(mahalla.name, lang);
       const tooltipContent = `
-        <div style="font-family: inherit; padding: 3px 5px;">
-          <div style="font-weight: 800; font-size: 13px; color: #38bdf8; margin-bottom: 3px;">
+        <div style="font-family: inherit; padding: 2px 4px; pointer-events: none;">
+          <div style="font-weight: 800; font-size: 12px; color: #38bdf8; margin-bottom: 2px;">
             ${lang === 'ru' ? `Махалля «${mahalla.name}»` : `«${mahallaDisplayName}» mahallasi`}
           </div>
-          <div style="font-size: 11px; color: #cbd5e1; display: flex; flex-direction: column; gap: 2px;">
-            <div style="display: flex; justify-content: space-between; gap: 12px;">
+          <div style="font-size: 11px; color: #cbd5e1; display: flex; flex-direction: column; gap: 1px;">
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
               <span>${lang === 'ru' ? 'В реестре' : 'Reyestrda'}:</span>
               <b style="color: #ffffff;">${totalYouthInM} ${lang === 'ru' ? 'чел.' : 'nafar'}</b>
             </div>
-            <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
               <span>NEET статус:</span>
               <b style="color: ${neetCount > 0 ? '#f43f5e' : '#10b981'};">${neetCount} ${lang === 'ru' ? 'чел.' : 'nafar'}</b>
             </div>
-            <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
               <span>${lang === 'ru' ? 'Занятость' : 'Bandlik'}:</span>
               <b style="color: #38bdf8;">${empRate}%</b>
             </div>
@@ -392,7 +401,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       `;
       polygon.setTooltipContent(tooltipContent);
 
-      // Update Center Label Icon HTML in place
+      // Update Center Label HTML in place
       const labelIconHtml = `
         <div style="
           transform: translate(-50%, -50%);
@@ -503,23 +512,24 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       const poiTitle = lang === 'uz' ? poi.nameUz : poi.name;
       marker.bindTooltip(`
-        <div style="font-family: inherit; padding: 2px 4px;">
+        <div style="font-family: inherit; padding: 2px 4px; pointer-events: none;">
           <div style="font-weight: 700; color: #ffffff;">${poiTitle}</div>
           <div style="font-size: 10px; color: #94a3b8;">${poi.address}</div>
         </div>
       `, {
         className: 'leaflet-tooltip-dark',
-        direction: 'top'
+        direction: 'top',
+        sticky: false
       });
 
       marker.on('click', () => {
         setSelectedPoi(poi);
-        smoothFlyTo(poi.coordinates, 15);
+        smoothPanTo(poi.coordinates);
       });
 
       marker.addTo(poiGroup);
     });
-  }, [showPoi, poiCategoryFilter, selectedPoi, lang, smoothFlyTo]);
+  }, [showPoi, poiCategoryFilter, selectedPoi, lang, smoothPanTo]);
 
   // 5. Draw Dynamic Route Line from Selected Mahalla to Selected POI
   useEffect(() => {
@@ -562,6 +572,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             font-family: monospace;
+            pointer-events: none;
           ">
             ${distance} км
           </div>
@@ -575,7 +586,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   const handleResetMapPosition = () => {
     setSelectedPoi(null);
-    smoothFlyTo(DISTRICT_CENTER, 13);
+    smoothPanTo(DISTRICT_CENTER);
     onSelectMakhalla('all');
   };
 
@@ -583,7 +594,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     setSelectedMahallaId(mahalla.id);
     setSelectedPoi(null);
     onSelectMakhalla(mahalla.name);
-    smoothFlyTo(mahalla.geoCenter, 14);
+    smoothPanTo(mahalla.geoCenter);
   };
 
   const handleCopyLeaderPhone = (phoneStr: string) => {
@@ -742,7 +753,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   key={p.id}
                   onClick={() => {
                     setSelectedPoi(p);
-                    smoothFlyTo(p.coordinates, 15);
+                    smoothPanTo(p.coordinates);
                     setSearchQuery('');
                   }}
                   className="p-2 bg-surface-1 hover:bg-surface-3 border border-white/[0.08] rounded-lg text-left text-xs transition-colors flex items-center justify-between"
@@ -1362,7 +1373,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       key={poi.id}
                       onClick={() => {
                         setSelectedPoi(poi);
-                        smoothFlyTo(poi.coordinates, 15);
+                        smoothPanTo(poi.coordinates);
                       }}
                       className="p-1.5 bg-surface-1 hover:bg-surface-3 rounded-lg border border-white/[0.04] flex items-center justify-between text-xs cursor-pointer transition-colors"
                     >
