@@ -134,10 +134,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
    *             in one continuous fluid motion. Camera stays centered on current spot.
    *   Phase 2 → At the SAME altitude (12.3), smoothly PAN to center the target mahalla.
    *             One continuous fluid motion, no zoom change.
-   *   Phase 3 → Dive IN to target in 2 ticks:
-   *             Tick 1: zoom 12.3 → 13.4 (approach)
-   *             Tick 2: zoom 13.4 → 14.5 (lock)
-   *             with a short interval between ticks.
+   *   Phase 3 → Single fluid DIVE directly to target mahalla zoom (14.5).
    *
    * All tiles along the flight path are pre-loaded before animation begins.
    */
@@ -174,14 +171,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     preloadTilesForPath(fromCoords, targetCoords);
 
     const OVERVIEW_ZOOM = 12.3;
-    const MID_ZOOM = 13.4;
     const FINAL_ZOOM = targetZoom; // 14.5
 
     // Compute durations based on distance for natural feel
-    const pullBackDuration = currentZoom > 13 ? 0.55 : 0.3; // Longer if zoomed in deep
-    const panDuration = Math.min(0.7, 0.35 + distanceKm * 0.06); // Scale with distance
-    const diveTickDuration = 0.3;
-    const TICK_INTERVAL = 200; // ms between dive ticks
+    const pullBackDuration = currentZoom > 13 ? 0.5 : 0.28; // Longer if zoomed in deep
+    const panDuration = Math.min(0.65, 0.35 + distanceKm * 0.05); // Scale with distance
+    const diveDuration = 0.45; // Single fluid dive in
 
     // ── Phase 1: Smooth zoom-out to overview altitude at current position ──
     map.flyTo(fromCoords, OVERVIEW_ZOOM, {
@@ -200,34 +195,22 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       });
 
       // Chain Phase 3 after Phase 2 completes
-      const tPhase3Tick1 = setTimeout(() => {
+      const tPhase3 = setTimeout(() => {
         if (!isAnimatingRef.current || !mapInstanceRef.current) return;
 
-        // ── Phase 3, Tick 1: Approach zoom ──
-        map.flyTo(targetCoords, MID_ZOOM, {
-          duration: diveTickDuration,
+        // ── Phase 3: Single fluid dive to final zoom ──
+        map.flyTo(targetCoords, FINAL_ZOOM, {
+          duration: diveDuration,
           easeLinearity: 0.2
         });
 
-        // ── Phase 3, Tick 2: Final lock zoom ──
-        const tPhase3Tick2 = setTimeout(() => {
-          if (!isAnimatingRef.current || !mapInstanceRef.current) return;
+        const tDone = setTimeout(() => { isAnimatingRef.current = false; }, diveDuration * 1000 + 100);
+        cameraTimersRef.current.push(tDone);
 
-          map.flyTo(targetCoords, FINAL_ZOOM, {
-            duration: diveTickDuration,
-            easeLinearity: 0.2
-          });
+      }, panDuration * 1000 + 40);
+      cameraTimersRef.current.push(tPhase3);
 
-          const tDone = setTimeout(() => { isAnimatingRef.current = false; }, 400);
-          cameraTimersRef.current.push(tDone);
-
-        }, diveTickDuration * 1000 + TICK_INTERVAL);
-        cameraTimersRef.current.push(tPhase3Tick2);
-
-      }, panDuration * 1000 + 50);
-      cameraTimersRef.current.push(tPhase3Tick1);
-
-    }, pullBackDuration * 1000 + 50);
+    }, pullBackDuration * 1000 + 40);
     cameraTimersRef.current.push(tPhase2);
 
   }, [preloadTilesForPath]);
