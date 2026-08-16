@@ -85,12 +85,12 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           </p>
           
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className="p-2.5 bg-rose-950/40 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5"/> Фокус на проблеме</div>
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Фокус на проблеме</div>
               Красная карточка: "24 требуют проверки" — чёткий призыв к действию.
             </div>
-            <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5"/> Мотивация (Zero Inbox)</div>
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Мотивация (Zero Inbox)</div>
               Зелёная карточка: "Отличная работа! Задач нет" — награда за труд.
             </div>
           </div>
@@ -100,7 +100,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(1);
               onClose();
             }}
-            className="w-full py-2.5 mt-2 bg-gradient-to-r from-gov-600 to-cyan-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
           >
             <Play className="w-4 h-4" />
             <span>Показать жюри экран Обзора</span>
@@ -117,8 +117,8 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           <p>
             <strong>Что говорить жюри:</strong> «Система автоматически помечает молодых людей без налоговых отчислений как кандидатов в NEET. Но согласно требованию GovTech, система <em>НЕ выносит автоматических решений</em> — статус верифицируется лидером махалли («Ёшлар етакчиси») после выездного обследования».
           </p>
-          <div className="p-3 bg-rose-950/40 rounded-xl border border-rose-500/40 text-[11px] space-y-1 text-rose-200">
-            <div className="text-rose-300 font-bold">✓ Закрывает требование ТЗ №3 и Ограничения:</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] text-[11px] space-y-1 text-slate-300">
+            <div className="text-white font-bold">✓ Закрывает требование ТЗ №3 и Ограничения:</div>
             <div>Статус «NEET» — это рекомендация к проверке, верификация через протокол в 1 клик.</div>
           </div>
           <button
@@ -126,7 +126,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(2);
               onClose();
             }}
-            className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
           >
             <Play className="w-4 h-4" />
             <span>Перейти к экрану NEET Триажа</span>
@@ -256,12 +256,12 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           </p>
           
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className="p-2.5 bg-rose-950/40 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5"/> Muammoga urg‘u</div>
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Muammoga urg‘u</div>
               Qizil kartochka: "24 nafar tekshiruvda" — harakatga chaqiruv.
             </div>
-            <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5"/> Rag‘bat (Zero Inbox)</div>
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Rag‘bat (Zero Inbox)</div>
               Yashil kartochka: "A’lo natija! Vazifalar yo‘q" — mehnat samarasi.
             </div>
           </div>
@@ -271,7 +271,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(1);
               onClose();
             }}
-            className="w-full py-2.5 mt-2 bg-gradient-to-r from-gov-600 to-cyan-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
           >
             <Play className="w-4 h-4" />
             <span>Hay’atga Tahlil sahifasini ko‘rsatish</span>
@@ -288,8 +288,8 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           <p>
             <strong>Hay’atga nima deyiladi:</strong> «Tizim soliq to‘lovi bo‘lmagan yoshlarni avtomatik ravishda NEET nomzodi deb belgilaydi. Ammo GovTech talabiga binoan tizim <em>avtomatik qaror chiqarmaydi</em> — holat mahalla yetakchisining xonadonbay suhbatidan so‘ng tasdiqlanadi».
           </p>
-          <div className="p-3 bg-rose-950/40 rounded-xl border border-rose-500/40 text-[11px] space-y-1 text-rose-200">
-            <div className="text-rose-300 font-bold">✓ TZ 3-talabi va cheklovlariga javob beradi:</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] text-[11px] space-y-1 text-slate-300">
+            <div className="text-white font-bold">✓ TZ 3-talabi va cheklovlariga javob beradi:</div>
             <div>«NEET» maqomi — bu ko‘rik uchun tavsiya, verifikatsiya 1 bosishda amalga oshiriladi.</div>
           </div>
           <button
@@ -297,7 +297,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(2);
               onClose();
             }}
-            className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
           >
             <Play className="w-4 h-4" />
             <span>NEET Triaj sahifasiga o‘tish</span>

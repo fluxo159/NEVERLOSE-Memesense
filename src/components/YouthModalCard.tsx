@@ -165,8 +165,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className="text-sm font-bold text-white capitalize">{youth.employment_status}</span>
                     {youth.is_neet && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold whitespace-nowrap flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3 text-rose-400" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-3 text-slate-300 border border-white/[0.08] text-xs font-medium whitespace-nowrap">
+                        <span className={`w-1.5 h-1.5 rounded-full ${youth.neet_verification === 'verified' ? 'bg-amber-400' : 'bg-rose-400'}`}></span>
                         <span>NEET ({youth.neet_verification === 'verified' ? tr.triageCardVerifiedBadge : tr.triageTabPending})</span>
                       </span>
                     )}
