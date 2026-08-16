@@ -119,7 +119,38 @@
 }
 
 .animate-card-cascade {
-  animation: cardPopCascade 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: cardPopCascade 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Smooth Pitch Guide Slide Transitions */
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-right {
+  animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Radar & Timeline Beacon Animations */
