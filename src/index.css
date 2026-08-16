@@ -209,6 +209,21 @@
 .leaflet-container {
   background-color: #08090C !important;
   font-family: inherit !important;
+  outline: none !important;
+}
+
+/* Remove ugly browser focus bounding box rectangle on SVG paths, markers and map */
+.leaflet-container :focus,
+.leaflet-container :focus-visible,
+.leaflet-interactive,
+.leaflet-interactive:focus,
+.leaflet-interactive:focus-visible,
+.leaflet-pane svg path,
+.leaflet-pane svg path:focus,
+.leaflet-pane svg path:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 /* Hardware accelerated smooth color transitions for polygons */
@@ -218,6 +233,7 @@
               stroke-width 0.25s ease, 
               fill-opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: stroke, fill, fill-opacity;
+  outline: none !important;
 }
 
 .custom-mahalla-label > div {

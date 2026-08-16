@@ -482,6 +482,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         dashArray: isSelected ? undefined : '3, 4'
       });
 
+      if (isSelected) {
+        polygon.bringToFront();
+      }
+
       // Update Mouseout handler
       polygon.off('mouseout');
       polygon.on('mouseout', () => {
