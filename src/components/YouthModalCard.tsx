@@ -36,14 +36,6 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   const [programFilter, setProgramFilter] = useState<'all' | 'recommended' | 'training' | 'finance' | 'employment'>('all');
   const [programSearch, setProgramSearch] = useState<string>('');
 
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, []);
-
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
       onUpdateStatus(youth.id, newStatus, statusComment || (lang === 'ru' ? 'Обновление статуса в системе' : 'Tizimda holat yangilandi'));

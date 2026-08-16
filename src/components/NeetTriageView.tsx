@@ -41,12 +41,15 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
 
   useEffect(() => {
     if (verifyingId) {
-      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
     }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    };
   }, [verifyingId]);
   const [isSuccessAnimating, setIsSuccessAnimating] = useState<boolean>(false);
   const [successInfo, setSuccessInfo] = useState<{ name: string; isConfirmed: boolean } | null>(null);

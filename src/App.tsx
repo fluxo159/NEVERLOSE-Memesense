@@ -42,7 +42,7 @@ export const App: React.FC = () => {
   const [showPitchGuide, setShowPitchGuide] = useState<boolean>(false);
   const [registryInitialFilter, setRegistryInitialFilter] = useState<string>('all');
 
-  // Lock body scroll when any modal is active
+  // Centralized body scroll lock when any modal is active
   const isAnyModalOpen = Boolean(
     selectedYouthForModal || 
     youthForRouting || 
@@ -55,13 +55,33 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (isAnyModalOpen) {
-      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
     }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    };
   }, [isAnyModalOpen]);
+
+  // Handle ESC key to close any active modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedYouthForModal(null);
+        setYouthForRouting(null);
+        setShowNewYouthModal(false);
+        setShowNewProgramModal(false);
+        setShowExportModal(false);
+        setShowImportModal(false);
+        setShowPitchGuide(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Filtered dataset based on currently chosen Makhalla
   const currentScopedList = selectedMakhalla === 'all'
