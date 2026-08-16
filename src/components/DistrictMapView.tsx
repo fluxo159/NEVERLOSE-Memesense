@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { 
   Map as MapIcon, 
   Phone, 
@@ -6,7 +6,6 @@ import {
   Eye, 
   Building2, 
   RotateCcw, 
-  Info, 
   CheckCircle2, 
   Search, 
   ExternalLink, 
@@ -87,6 +86,20 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   const poiGroupRef = useRef<L.FeatureGroup | null>(null);
   const routeLineGroupRef = useRef<L.FeatureGroup | null>(null);
 
+  // Persistent reference maps for Leaflet layers to avoid recreating SVG nodes
+  const polygonsMapRef = useRef<Map<string, L.Polygon>>(new Map());
+  const labelsMapRef = useRef<Map<string, L.Marker>>(new Map());
+
+  // FlyTo camera helper with optimized easing
+  const smoothFlyTo = useCallback((coords: [number, number], zoom = 14) => {
+    if (!mapInstanceRef.current) return;
+    mapInstanceRef.current.flyTo(coords, zoom, {
+      duration: 0.65,
+      easeLinearity: 0.25,
+      noMoveStart: true
+    });
+  }, []);
+
   // Synchronize when global selectedMakhalla prop changes
   useEffect(() => {
     if (selectedMakhalla && selectedMakhalla !== 'all') {
@@ -94,16 +107,12 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       if (match) {
         setSelectedMahallaId(match.id);
         setSelectedPoi(null);
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.flyTo(match.geoCenter, 14, { duration: 1.0, easeLinearity: 0.25 });
-        }
+        smoothFlyTo(match.geoCenter, 14);
       }
     } else if (selectedMakhalla === 'all') {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 1.0, easeLinearity: 0.25 });
-      }
+      smoothFlyTo(DISTRICT_CENTER, 13);
     }
-  }, [selectedMakhalla]);
+  }, [selectedMakhalla, smoothFlyTo]);
 
   const currentMahalla: MakhallaStats = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
 
@@ -158,7 +167,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     }).sort((a, b) => a.distanceKm - b.distanceKm);
   }, [currentMahalla]);
 
-  // Initialize Map
+  // 1. Initialize Map ONCE and register persistent polygon layers
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -171,7 +180,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       center: DISTRICT_CENTER,
       zoom: 13,
       zoomControl: false,
-      attributionControl: false
+      attributionControl: false,
+      preferCanvas: false
     });
 
     mapInstanceRef.current = map;
@@ -202,6 +212,59 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     poiGroupRef.current = poiGroup;
     routeLineGroupRef.current = routeGroup;
 
+    // Create and attach all 8 Polygons & Labels persistently (DO NOT destroy on state changes)
+    MAKHALLAS_LIST.forEach(mahalla => {
+      const polygon = L.polygon(mahalla.geoPolygon, {
+        color: '#34d399',
+        weight: 1.5,
+        fillColor: '#10b981',
+        fillOpacity: 0.28,
+        dashArray: '3, 4'
+      });
+
+      polygon.bindTooltip('', {
+        className: 'leaflet-tooltip-dark',
+        sticky: true,
+        direction: 'top'
+      });
+
+      // Interactive Click Event
+      polygon.on('click', () => {
+        setSelectedMahallaId(mahalla.id);
+        setSelectedPoi(null);
+        onSelectMakhalla(mahalla.name);
+        map.flyTo(mahalla.geoCenter, 14, { duration: 0.65, easeLinearity: 0.25 });
+      });
+
+      // Hover glow effects with direct style mutation
+      polygon.on('mouseover', function (this: L.Polygon) {
+        this.setStyle({
+          fillOpacity: 0.72,
+          weight: 3.5,
+          color: '#ffffff'
+        });
+      });
+
+      polygon.on('mouseout', function (this: L.Polygon) {
+        // Will be re-synchronized by the style update effect
+      });
+
+      polygon.addTo(polyGroup);
+      polygonsMapRef.current.set(mahalla.id, polygon);
+
+      // Label Marker
+      const labelMarker = L.marker(mahalla.geoCenter, {
+        icon: L.divIcon({
+          className: 'custom-mahalla-label',
+          html: '<div></div>',
+          iconSize: [0, 0]
+        }),
+        interactive: false
+      }).addTo(polyGroup);
+
+      labelsMapRef.current.set(mahalla.id, labelMarker);
+    });
+
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -210,29 +273,27 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     };
   }, []);
 
-  // Update Tile Layer Theme
+  // 2. Update Tile Layer Theme smoothly without recreating map
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !tileLayerRef.current) return;
     const tileUrl = baseMapTheme === 'satellite'
       ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
       : baseMapTheme === 'streets'
       ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
       : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
-    if (tileLayerRef.current) {
-      tileLayerRef.current.setUrl(tileUrl);
-    }
+    tileLayerRef.current.setUrl(tileUrl);
   }, [baseMapTheme]);
 
-  // Update Mahalla Polygons & Layer Colors
+  // 3. Ultra-fast and lag-free Polygon & Label Style Synchronization (Mutates existing instances)
   useEffect(() => {
-    if (!mapInstanceRef.current || !polygonsGroupRef.current) return;
-
-    const map = mapInstanceRef.current;
-    const polyGroup = polygonsGroupRef.current;
-    polyGroup.clearLayers();
+    if (!mapInstanceRef.current) return;
 
     MAKHALLAS_LIST.forEach(mahalla => {
+      const polygon = polygonsMapRef.current.get(mahalla.id);
+      const labelMarker = labelsMapRef.current.get(mahalla.id);
+      if (!polygon || !labelMarker) return;
+
       const isSelected = mahalla.id === selectedMahallaId;
       const mahallaYouth = youthList.filter(y => y.makhalla === mahalla.name);
       const neetCount = mahallaYouth.filter(y => y.is_neet).length;
@@ -285,15 +346,28 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         badgeText = `${totalYouthInM} чел.`;
       }
 
-      const polygon = L.polygon(mahalla.geoPolygon, {
+      // ⚡ Smooth in-place style update (Triggers CSS 60fps transitions)
+      polygon.setStyle({
         color: isSelected ? '#38bdf8' : strokeColor,
         weight: isSelected ? 3.5 : 1.5,
         fillColor: fillColor,
-        fillOpacity: isSelected ? 0.60 : 0.28,
+        fillOpacity: isSelected ? 0.58 : 0.26,
         dashArray: isSelected ? undefined : '3, 4'
       });
 
-      // Interactive Tooltip
+      // Update Mouseout handler to restore current active styling
+      polygon.off('mouseout');
+      polygon.on('mouseout', () => {
+        polygon.setStyle({
+          color: isSelected ? '#38bdf8' : strokeColor,
+          weight: isSelected ? 3.5 : 1.5,
+          fillColor: fillColor,
+          fillOpacity: isSelected ? 0.58 : 0.26,
+          dashArray: isSelected ? undefined : '3, 4'
+        });
+      });
+
+      // Update Tooltip
       const mahallaDisplayName = getMahallaName(mahalla.name, lang);
       const tooltipContent = `
         <div style="font-family: inherit; padding: 3px 5px;">
@@ -316,81 +390,49 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           </div>
         </div>
       `;
+      polygon.setTooltipContent(tooltipContent);
 
-      polygon.bindTooltip(tooltipContent, {
-        className: 'leaflet-tooltip-dark',
-        sticky: true,
-        direction: 'top'
-      });
+      // Update Center Label Icon HTML in place
+      const labelIconHtml = `
+        <div style="
+          transform: translate(-50%, -50%);
+          background: ${isSelected ? 'rgba(14, 165, 233, 0.95)' : 'rgba(15, 23, 42, 0.92)'};
+          border: 1px solid ${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.18)'};
+          padding: 3px 8px;
+          border-radius: 9999px;
+          font-size: 11px;
+          font-weight: 700;
+          color: #ffffff;
+          white-space: nowrap;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        ">
+          <span style="width: 6px; height: 6px; border-radius: 9999px; background: ${fillColor}; flex-shrink: 0;"></span>
+          <span>${mahallaDisplayName}</span>
+          <span style="
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.12);
+            font-family: monospace;
+            font-weight: 600;
+          ">${badgeText}</span>
+        </div>
+      `;
 
-      // Click Event
-      polygon.on('click', () => {
-        setSelectedMahallaId(mahalla.id);
-        setSelectedPoi(null);
-        onSelectMakhalla(mahalla.name);
-        map.flyTo(mahalla.geoCenter, 14, { duration: 0.8 });
-      });
-
-      // Hover glow effects
-      polygon.on('mouseover', function (this: L.Polygon) {
-        this.setStyle({
-          fillOpacity: 0.75,
-          weight: 3.5,
-          color: '#ffffff'
-        });
-      });
-
-      polygon.on('mouseout', function (this: L.Polygon) {
-        this.setStyle({
-          fillOpacity: isSelected ? 0.60 : 0.28,
-          weight: isSelected ? 3.5 : 1.5,
-          color: isSelected ? '#38bdf8' : strokeColor
-        });
-      });
-
-      polygon.addTo(polyGroup);
-
-      // Clean, calm center label marker without distracting animations
-      const centerIcon = L.divIcon({
+      labelMarker.setIcon(L.divIcon({
         className: 'custom-mahalla-label',
-        html: `
-          <div style="
-            transform: translate(-50%, -50%);
-            background: ${isSelected ? 'rgba(14, 165, 233, 0.95)' : 'rgba(15, 23, 42, 0.92)'};
-            border: 1px solid ${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.18)'};
-            padding: 3px 8px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #ffffff;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-          ">
-            <span style="width: 6px; height: 6px; border-radius: 9999px; background: ${fillColor}; flex-shrink: 0;"></span>
-            <span>${mahallaDisplayName}</span>
-            <span style="
-              font-size: 9px;
-              padding: 1px 4px;
-              border-radius: 4px;
-              background: rgba(255,255,255,0.12);
-              font-family: monospace;
-              font-weight: 600;
-            ">${badgeText}</span>
-          </div>
-        `,
+        html: labelIconHtml,
         iconSize: [0, 0]
-      });
-
-      L.marker(mahalla.geoCenter, { icon: centerIcon, interactive: false }).addTo(polyGroup);
+      }));
     });
 
   }, [activeLayer, selectedMahallaId, youthList, lang]);
 
-  // Update POI Infrastructure Markers
+  // 4. Update POI Markers
   useEffect(() => {
     if (!mapInstanceRef.current || !poiGroupRef.current) return;
 
@@ -472,16 +514,14 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       marker.on('click', () => {
         setSelectedPoi(poi);
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.8 });
-        }
+        smoothFlyTo(poi.coordinates, 15);
       });
 
       marker.addTo(poiGroup);
     });
-  }, [showPoi, poiCategoryFilter, selectedPoi, lang]);
+  }, [showPoi, poiCategoryFilter, selectedPoi, lang, smoothFlyTo]);
 
-  // Draw Dynamic Route Line from Selected Mahalla to Selected POI
+  // 5. Draw Dynamic Route Line from Selected Mahalla to Selected POI
   useEffect(() => {
     if (!mapInstanceRef.current || !routeLineGroupRef.current) return;
     const routeGroup = routeLineGroupRef.current;
@@ -535,9 +575,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   const handleResetMapPosition = () => {
     setSelectedPoi(null);
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.8 });
-    }
+    smoothFlyTo(DISTRICT_CENTER, 13);
     onSelectMakhalla('all');
   };
 
@@ -545,9 +583,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     setSelectedMahallaId(mahalla.id);
     setSelectedPoi(null);
     onSelectMakhalla(mahalla.name);
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo(mahalla.geoCenter, 14, { duration: 0.8 });
-    }
+    smoothFlyTo(mahalla.geoCenter, 14);
   };
 
   const handleCopyLeaderPhone = (phoneStr: string) => {
@@ -579,7 +615,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       {/* 1. TOP HEADER & QUICK JUMP MAHALLA STRIP */}
       <div className="bg-surface-1 p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-3.5">
         
-        {/* Title + Global Controls */}
+        {/* Title + Search */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1 min-w-0 flex-1">
             <div className="flex items-center gap-2.5">
@@ -597,7 +633,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  Live GPS
+                  Live 60fps
                 </span>
               </div>
             </div>
@@ -706,9 +742,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   key={p.id}
                   onClick={() => {
                     setSelectedPoi(p);
-                    if (mapInstanceRef.current) {
-                      mapInstanceRef.current.flyTo(p.coordinates, 15, { duration: 0.8 });
-                    }
+                    smoothFlyTo(p.coordinates, 15);
                     setSearchQuery('');
                   }}
                   className="p-2 bg-surface-1 hover:bg-surface-3 border border-white/[0.08] rounded-lg text-left text-xs transition-colors flex items-center justify-between"
@@ -735,7 +769,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           {/* Map Toolbar (Layers, Basemap Theme, POI Toggles) */}
           <div className="flex flex-wrap items-center justify-between gap-2 z-10">
             
-            {/* Layer Mode Selector (Properly capitalized "Слой:") */}
+            {/* Layer Mode Selector */}
             <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-xl border border-white/[0.08] text-xs">
               <span className="text-[11px] font-semibold text-slate-400 px-2 uppercase tracking-wider">
                 {lang === 'ru' ? 'Слой:' : 'Qatlam:'}
@@ -781,7 +815,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             {/* Basemap Switcher & POI Toggle */}
             <div className="flex items-center gap-1.5">
               
-              {/* Basemap Theme Toggle without emojis */}
+              {/* Basemap Theme Toggle */}
               <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-xl border border-white/[0.08]">
                 <button
                   onClick={() => setBaseMapTheme('dark')}
@@ -827,7 +861,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
           </div>
 
-          {/* POI Sub-category Chips (Clean unified style without emojis) */}
+          {/* POI Sub-category Chips */}
           {showPoi && (
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
               <button
@@ -1328,9 +1362,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       key={poi.id}
                       onClick={() => {
                         setSelectedPoi(poi);
-                        if (mapInstanceRef.current) {
-                          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.8 });
-                        }
+                        smoothFlyTo(poi.coordinates, 15);
                       }}
                       className="p-1.5 bg-surface-1 hover:bg-surface-3 rounded-lg border border-white/[0.04] flex items-center justify-between text-xs cursor-pointer transition-colors"
                     >

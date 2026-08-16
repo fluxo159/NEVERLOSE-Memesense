@@ -211,6 +211,20 @@
   font-family: inherit !important;
 }
 
+/* Hardware accelerated smooth color transitions for polygons */
+.leaflet-pane svg path {
+  transition: stroke 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              fill 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              stroke-width 0.25s ease, 
+              fill-opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: stroke, fill, fill-opacity;
+}
+
+.custom-mahalla-label > div {
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  will-change: background, border-color;
+}
+
 .leaflet-popup-content-wrapper {
   background: rgba(14, 17, 23, 0.95) !important;
   backdrop-filter: blur(16px) !important;
