@@ -53,17 +53,14 @@
 @keyframes fadeInView {
   0% {
     opacity: 0;
-    transform: translateY(2px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .view-transition {
-  animation: fadeInView 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  will-change: opacity, transform;
+  animation: fadeInView 0.3s ease-out forwards;
 }
 
 /* Sequential Chart Animations */

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   AlertCircle, CheckCircle, XCircle, Search, UserCheck, 
   MapPin, GraduationCap, Sparkles, Check, ArrowRight, ShieldCheck, Clock
@@ -241,15 +242,15 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
       </div>
 
-      {/* Verification Modal */}
-      {verifyingId && (
+      {/* Verification Modal portaled to document.body */}
+      {verifyingId && createPortal(
         <div 
           onClick={() => setVerifyingId(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150 cursor-pointer"
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 overflow-hidden cursor-default"
+            className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 overflow-hidden cursor-default my-auto"
           >
             
             {/* SUCCESS ANIMATION SCREEN */}
@@ -359,7 +360,8 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
             )}
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Candidates Grid */}
