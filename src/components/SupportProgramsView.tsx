@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
 import { t, getProgramCategoryName } from '../data/translations';
+import { isProgramRecommended } from '../data/programRecommender';
 
 interface SupportProgramsViewProps {
   youthList: YouthProfile[];
@@ -253,7 +254,7 @@ export const SupportProgramsView: React.FC<SupportProgramsViewProps> = ({
             <div key={selectedCategory} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {filteredPrograms.map((prog, idx) => {
                 const countAssigned = youthList.filter(y => y.assigned_program?.id === prog.id).length;
-                const countRecommended = youthList.filter(y => y.support_recommendation.includes(prog.id)).length;
+                const countRecommended = youthList.filter(y => isProgramRecommended(y, prog)).length;
                 const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
                 const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
                 const provider = (lang === 'uz' && prog.providerUz) ? prog.providerUz : prog.provider;

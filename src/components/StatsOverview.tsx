@@ -30,12 +30,8 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const isAllClear = neetPending === 0;
 
   // Dynamic monthly dynamics calculation for this scoped mahalla
-  // Youth who received support / assistance in current month (June 2026)
-  const supportedThisMonth = youthList.filter(
-    y => (y.assigned_program || y.employment_status === 'направлен на обучение') && y.last_updated.startsWith('2026-06')
-  ).length;
-
-  const growthPercent = total > 0 ? Math.round((supportedThisMonth / total) * 100) : 0;
+  // Real-time calculation of youth covered by state employment support programs
+  const growthPercent = total > 0 ? Math.round((supported / total) * 100) : 0;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

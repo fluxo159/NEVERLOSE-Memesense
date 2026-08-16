@@ -9,6 +9,7 @@ import {
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
 import { CustomSelect } from './ui/CustomSelect';
 import { t, getMahallaName, getEducationName } from '../data/translations';
+import { isProgramRecommended } from '../data/programRecommender';
 
 interface YouthModalCardProps {
   youth: YouthProfile;
@@ -340,7 +341,9 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
                     <span>{lang === 'ru' ? 'Рекомендованные' : 'Tavsiya etilgan'}</span>
-                    <span className="text-[10px] text-slate-400">({youth.support_recommendation.length})</span>
+                    <span className="text-[10px] text-slate-400">
+                      ({supportPrograms.filter(p => isProgramRecommended(youth, p)).length})
+                    </span>
                   </button>
 
                   <button
@@ -382,11 +385,11 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               <div className="space-y-2.5">
                 {(() => {
                   const filtered = supportPrograms.filter(prog => {
-                    const isRecommended = youth.support_recommendation.includes(prog.id);
+                    const isRecommended = isProgramRecommended(youth, prog);
                     if (programFilter === 'recommended' && !isRecommended) return false;
-                    if (programFilter === 'training' && !['prog_mono', 'prog_it_park'].includes(prog.id)) return false;
-                    if (programFilter === 'finance' && !['prog_daftari', 'prog_credit'].includes(prog.id)) return false;
-                    if (programFilter === 'employment' && !['prog_job_fair'].includes(prog.id)) return false;
+                    if (programFilter === 'training' && !(prog.category === 'обучение' || prog.category === 'it_стажировка')) return false;
+                    if (programFilter === 'finance' && !(prog.category === 'субсидия' || prog.category === 'предпринимательство')) return false;
+                    if (programFilter === 'employment' && !(prog.category === 'трудоустройство')) return false;
 
                     if (programSearch.trim()) {
                       const q = programSearch.toLowerCase();
@@ -394,7 +397,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                       const titleUz = (prog.titleUz || '').toLowerCase();
                       const descRu = prog.description.toLowerCase();
                       const descUz = (prog.descriptionUz || '').toLowerCase();
-                      const prov = prog.provider.toLowerCase();
+                      const prov = (prog.provider || '').toLowerCase();
                       return titleRu.includes(q) || titleUz.includes(q) || descRu.includes(q) || descUz.includes(q) || prov.includes(q);
                     }
                     return true;
@@ -415,7 +418,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
                   }
 
                   return filtered.map((prog, idx) => {
-                    const isRecommended = youth.support_recommendation.includes(prog.id);
+                    const isRecommended = isProgramRecommended(youth, prog);
                     const isCurrentAssigned = youth.assigned_program?.id === prog.id;
                     const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
                     const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;

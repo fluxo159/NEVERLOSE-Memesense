@@ -84,7 +84,9 @@ export const NewYouthModal: React.FC<NewYouthModalProps> = ({
       is_neet: isNeet,
       neet_verification: isNeet ? 'pending_verification' : 'verified',
       needs_support: isNeet,
-      support_recommendation: ['prog_it_01', 'prog_mono_01'],
+      support_recommendation: isNeet 
+        ? ['prog_ishga_marhamat_tech', 'prog_district_job_fair'] 
+        : ['prog_it_park_bootcamp', 'prog_micro_credit_biz'],
       status_history: [
         {
           date: new Date().toISOString().split('T')[0],

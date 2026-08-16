@@ -8,6 +8,7 @@ import { YouthProfile, UserRole, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
 import { t, getMahallaName, getEducationName } from '../data/translations';
+import { isProgramRecommended } from '../data/programRecommender';
 
 interface NeetTriageViewProps {
   youthList: YouthProfile[];
@@ -381,7 +382,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       <div key={filterVerification + selectedMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {neetCandidates.map((youth, idx) => {
           const isPending = youth.neet_verification === 'pending_verification';
-          const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
+          const firstProg = supportPrograms.find(p => isProgramRecommended(youth, p)) || supportPrograms[0];
           const progTitle = firstProg 
             ? ((lang === 'uz' && firstProg.titleUz) ? firstProg.titleUz : firstProg.title) 
             : '';

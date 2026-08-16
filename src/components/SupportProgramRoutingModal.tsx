@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Route, Check } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
 import { t } from '../data/translations';
+import { isProgramRecommended } from '../data/programRecommender';
 
 interface SupportProgramRoutingModalProps {
   youth: YouthProfile;
@@ -20,8 +21,9 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
   lang
 }) => {
   const tr = t[lang];
+  const recommendedProg = supportPrograms.find(p => isProgramRecommended(youth, p));
   const [selectedProgramId, setSelectedProgramId] = useState<string>(
-    youth.support_recommendation[0] || supportPrograms[0]?.id || ''
+    recommendedProg?.id || supportPrograms[0]?.id || ''
   );
   const [routingNotes, setRoutingNotes] = useState<string>(
     lang === 'ru' 
@@ -79,7 +81,7 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
           <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
             {supportPrograms.map(prog => {
               const isSelected = prog.id === selectedProgramId;
-              const isRecommended = youth.support_recommendation.includes(prog.id);
+              const isRecommended = isProgramRecommended(youth, prog);
 
               return (
                 <div
