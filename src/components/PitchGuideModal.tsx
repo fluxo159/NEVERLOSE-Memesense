@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Sparkles, Target, CheckCircle2, ArrowRight, Award, 
-  AlertTriangle, ArrowLeft, Play, Zap, Cpu
+  ArrowLeft, Play, Zap, Cpu, MapPin, Building2, Layers
 } from 'lucide-react';
 
 interface PitchGuideModalProps {
@@ -24,15 +24,15 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       badge: "3-минутный сценарий защиты",
       content: (
         <div className="space-y-4 text-xs text-slate-300">
-          <div className="p-3.5 bg-gov-950/60 rounded-2xl border border-cyan-500/30">
-            <h4 className="font-bold text-cyan-300 text-sm mb-1">🎯 Ключевой посыл для жюри:</h4>
-            <p className="leading-relaxed">
-              Мы создали не просто статистический дашборд, а <strong>полноценный управленческий инструмент</strong> для хокимията района и лидеров махаллей («Ёшлар етакчиси»), закрывающий цикл от <em>выявления скрытой безработицы</em> до <em>гарантированного трудоустройства через Моноцентры</em>.
+          <div className="p-3.5 bg-surface-2 rounded-2xl border border-indigo-500/30">
+            <h4 className="font-bold text-indigo-300 text-sm mb-1">🎯 Ключевой посыл для жюри:</h4>
+            <p className="leading-relaxed text-slate-200">
+              Мы создали не просто статистический дашборд, а <strong>полноценный управленческий инструмент</strong> для хокимията района и лидеров махаллей («Ёшлар етакчиси»), закрывающий весь цикл: от <em>выявления скрытой безработицы</em> до <em>маршрутизации в Моноцентры WorldSkills и трудоустройства</em>.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
               <div className="text-emerald-400 font-bold text-xs flex items-center gap-1">
                 <Target className="w-3.5 h-3.5" /> 30% Соответствие проблеме
               </div>
@@ -41,30 +41,30 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div className="text-cyan-400 font-bold text-xs flex items-center gap-1">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
+              <div className="text-indigo-400 font-bold text-xs flex items-center gap-1">
                 <Zap className="w-3.5 h-3.5" /> 30% Внедряемость
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                Готов к интеграции с Soliq.uz, Mehnat.uz и моноцентрами «Ишга мархамат».
+                Интеграция с Моноцентрами «Ишга Мархамат», IT-Park, Soliq.uz и Mehnat.uz.
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
               <div className="text-purple-400 font-bold text-xs flex items-center gap-1">
                 <Award className="w-3.5 h-3.5" /> 25% Качество прототипа
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                100% рабочий интерактив, живой таймлайн, карточки, фильтры, экспорт.
+                100% живой интерактив, таймлайн статусов, двуязычность (RU/UZ), экспорт в Excel.
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div className="text-yellow-400 font-bold text-xs flex items-center gap-1">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
+              <div className="text-sky-400 font-bold text-xs flex items-center gap-1">
                 <Cpu className="w-3.5 h-3.5" /> 15% Инновации
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                ГИС-тепловая карта района + Human-in-the-Loop предиктивный NEET триаж.
+                ГИС-карта кадастра 8 махаллей + Human-in-the-Loop предиктивный триаж.
               </div>
             </div>
           </div>
@@ -73,25 +73,25 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
     },
     {
       title: "Шаг 1: Вкладка «Главная / Обзор»",
-      subtitle: "Простой и наглядный сводный мониторинг",
+      subtitle: "Простой и наглядный сводный мониторинг без перегруза",
       badge: "Демо-шаг 1",
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Что говорить жюри:</strong> «На главной вкладке руководство сразу видит понятную картину без перегруза данными. Мы мониторим самое главное: сколько всего молодёжи, кто работает, кто учится, а кто требует нашего внимания. Всё наглядно разбито по конкретным махаллям».
+            <strong>Что говорить жюри:</strong> «На главной вкладке руководство видит чёткую картину: сколько всего молодёжи, кто работает, кто учится, а кто требует внимания. Все метрики динамически распределены по 8 махаллям».
           </p>
           <p>
-            «Особая фишка — <strong>динамическая умная карточка "Главная задача на сегодня"</strong>. Если инспектору нужно проверить статус молодых людей, она горит тревожным красным. Но как только проверки завершены (Zero Inbox), она превращается в успокаивающую зелёную карточку успеха, хваля сотрудника. Это крутой UX-приём, который снимает стресс у госслужащих!»
+            «Особая фишка — <strong>динамическая умная карточка "Главная задача"</strong>. Если инспектору нужно проверить статус граждан, она сигнализирует фиолетовым бейджем. Но как только проверки завершены (Zero Inbox), она превращается в зелёную карточку успеха. Это снижает стресс госслужащих!»
           </p>
           
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Фокус на проблеме</div>
-              Красная карточка: "24 требуют проверки" — чёткий призыв к действию.
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight">
+              <div className="font-bold mb-1 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> Фокус на действии</div>
+              Карточка «Ожидают проверки» с переходом в 1 клик.
             </div>
-            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Мотивация (Zero Inbox)</div>
-              Зелёная карточка: "Отличная работа! Задач нет" — награда за труд.
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight">
+              <div className="font-bold mb-1 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Мотивация (Zero Inbox)</div>
+              Зелёный индикатор успеха при полном закрытии задач.
             </div>
           </div>
 
@@ -100,7 +100,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(1);
               onClose();
             }}
-            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>Показать жюри экран Обзора</span>
@@ -115,18 +115,18 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Что говорить жюри:</strong> «Система автоматически помечает молодых людей без налоговых отчислений как кандидатов в NEET. Но согласно требованию GovTech, система <em>НЕ выносит автоматических решений</em> — статус верифицируется лидером махалли («Ёшлар етакчиси») после выездного обследования».
+            <strong>Что говорить жюри:</strong> «Система автоматически помечает молодых людей без отчислений как кандидатов в NEET. Но согласно требованию GovTech, система <em>НЕ выносит решений автоматически</em> — статус верифицируется лидером махалли («Ёшлар етакчиси») после выездного обследования».
           </p>
           <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] text-[11px] space-y-1 text-slate-300">
             <div className="text-white font-bold">✓ Закрывает требование ТЗ №3 и Ограничения:</div>
-            <div>Статус «NEET» — это рекомендация к проверке, верификация через протокол в 1 клик.</div>
+            <div>Статус «NEET» — это рекомендация к проверке, верификация через протокол в 1 клик с моментальным обновлением реестра.</div>
           </div>
           <button
             onClick={() => {
               onRunDemoStep(2);
               onClose();
             }}
-            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>Перейти к экрану NEET Триажа</span>
@@ -141,18 +141,18 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Что говорить жюри:</strong> «Для каждого безработного рекомендательный модуль подбирает государственные меры: Моноцентр «Ишга Мархамат», IT-Park, субсидии «Ёшлар Дафтари». При назначении программы система сохраняет полную хронологию статусов в таймлайне профиля».
+            <strong>Что говорить жюри:</strong> «Для каждого безработного рекомендательный AI-модуль подбирает государственные меры: Моноцентр «Ишга Мархамат», IT-Park буткемп, субсидии «Ёшлар Дафтари». При назначении программы система сохраняет полную хронологию статусов в таймлайне профиля».
           </p>
-          <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-500/40 text-[11px] space-y-1 text-emerald-200">
-            <div className="text-emerald-300 font-bold">✓ Закрывает требования ТЗ №4 и №5:</div>
-            <div>Модуль умных рекомендаций + история жизненного цикла статусов.</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] text-[11px] space-y-1 text-slate-300">
+            <div className="text-indigo-300 font-bold">✓ Закрывает требования ТЗ №4 и №5:</div>
+            <div>Модуль умных рекомендаций + история жизненного цикла статусов с печатью направлений.</div>
           </div>
           <button
             onClick={() => {
               onRunDemoStep(3);
               onClose();
             }}
-            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>Открыть Единый Реестр и Карточку</span>
@@ -161,27 +161,27 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       )
     },
     {
-      title: "Шаг 4: ГИС-карта занятости района",
-      subtitle: "Территориальная тепловая визуализация без раскрытия ПДн",
-      badge: "Демо-шаг 4 (Бонус)",
+      title: "Шаг 4: Интерактивная ГИС-карта района v2.0",
+      subtitle: "Векторная картография 8 махаллей, POI-инфраструктура и кинематографичная камера",
+      badge: "Демо-шаг 4 (Технологический прорыв)",
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Что говорить жюри:</strong> «Бонусный модуль: интерактивная схема махаллей Мирзо-Улугбекского района. Цветовая индикация сразу подсвечивает проблемные секторы с повышенной плотностью NEET (например, Олий Ҳиммат), позволяя адресно направлять ресурсы района».
+            <strong>Что говорить жюри:</strong> «Мы разработали высокоточную ГИС-карту Мирзо-Улугбекского района: реальные границы 8 махаллей, переключаемые слои («NEET Риск», «Занятость %», «Поддержка %»), кинематографичная 3-фазная камера и объекты инфраструктуры (Моноцентр, IT-Park Hub, ЦЗН) с расчетом пешей доступности для молодёжи».
           </p>
-          <div className="p-3 bg-cyan-950/40 rounded-xl border border-cyan-500/40 text-[11px] space-y-1 text-cyan-200">
-            <div className="text-cyan-300 font-bold">✓ Закрывает бонусное требование ТЗ №6:</div>
-            <div>Агрегированная пространственная визуализация состояния занятости.</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-indigo-500/30 text-[11px] space-y-1 text-slate-200">
+            <div className="text-indigo-300 font-bold">✓ Закрывает бонусное требование ТЗ №6:</div>
+            <div>Пространственная аналитика территории без раскрытия персональных данных граждан.</div>
           </div>
           <button
             onClick={() => {
               onRunDemoStep(4);
               onClose();
             }}
-            className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
-            <span>Открыть Интерактивную Карту</span>
+            <span>Открыть Интерактивную ГИС-Карту</span>
           </button>
         </div>
       )
@@ -195,15 +195,15 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       badge: "3 daqiqalik himoya ssenariysi",
       content: (
         <div className="space-y-4 text-xs text-slate-300">
-          <div className="p-3.5 bg-gov-950/60 rounded-2xl border border-cyan-500/30">
-            <h4 className="font-bold text-cyan-300 text-sm mb-1">🎯 Hay’at uchun asosiy g‘oya:</h4>
-            <p className="leading-relaxed">
+          <div className="p-3.5 bg-surface-2 rounded-2xl border border-indigo-500/30">
+            <h4 className="font-bold text-indigo-300 text-sm mb-1">🎯 Hay’at uchun asosiy g‘oya:</h4>
+            <p className="leading-relaxed text-slate-200">
               Biz shunchaki statistika dashbordini emas, balki tuman hokimligi va mahalla yetakchilari uchun <strong>to‘liq boshqaruv tizimini</strong> yaratdik. Tizim <em>yashirin ishsizlikni aniqlashdan</em> boshlab <em>Monomarkazlar orqali kafolatli band qilishgacha</em> bo‘lgan jarayonni qamrab oladi.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
               <div className="text-emerald-400 font-bold text-xs flex items-center gap-1">
                 <Target className="w-3.5 h-3.5" /> 30% Muammoga moslik
               </div>
@@ -212,30 +212,30 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div className="text-cyan-400 font-bold text-xs flex items-center gap-1">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
+              <div className="text-indigo-400 font-bold text-xs flex items-center gap-1">
                 <Zap className="w-3.5 h-3.5" /> 30% Joriy etish imkoniyati
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                Soliq.uz, Mehnat.uz va «Ishga marhamat» monomarkazlari bilan integratsiyaga tayyor.
+                «Ishga marhamat» monomarkazlari, IT-Park, Soliq.uz va Mehnat.uz bilan integratsiya.
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
               <div className="text-purple-400 font-bold text-xs flex items-center gap-1">
                 <Award className="w-3.5 h-3.5" /> 25% Prototip sifati
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                100% ishlaydigan interaktivlik, taymlayn, kartochkalar, filtrlar va eksport.
+                100% ishlaydigan interaktivlik, taymlayn, ikki tillilik (RU/UZ), Excel eksport.
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div className="text-yellow-400 font-bold text-xs flex items-center gap-1">
+            <div className="p-3 rounded-xl bg-surface-2 border border-white/[0.08]">
+              <div className="text-sky-400 font-bold text-xs flex items-center gap-1">
                 <Cpu className="w-3.5 h-3.5" /> 15% Innovatsiya
               </div>
               <div className="text-[11px] text-slate-400 mt-1">
-                GIS-xarita + Human-in-the-Loop tamoyilidagi NEET triaji.
+                8 ta mahalla GIS-kadastr xaritasi + Human-in-the-Loop NEET triaji.
               </div>
             </div>
           </div>
@@ -249,20 +249,20 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Hay’atga nima deyiladi:</strong> «Bosh sahifada rahbariyat ortiqcha ma’lumotlarsiz eng muhim ko‘rsatkichlarni ko‘radi: jami yoshlar soni, bandlar, o‘qiyotganlar va e’tibor talab qiladigan toifa. Barchasi mahallalar kesimida taqsimlangan».
+            <strong>Hay’atga nima deyiladi:</strong> «Bosh sahifada rahbariyat eng muhim ko‘rsatkichlarni ko‘radi: jami yoshlar soni, bandlar, o‘qiyotganlar va e’tibor talab qiladigan toifa. Barchasi 8 ta mahalla kesimida taqsimlangan».
           </p>
           <p>
-            «Asosiy ustunlik — <strong>dinamik «Bugungi asosiy vazifa» kartochkasi</strong>. Agar yetakchiga tekshirish vazifasi bo‘lsa, u qizil rangda yonadi. Tekshiruvlar yakunlangach (Zero Inbox), u tinchlantiruvchi yashil muvaffaqiyat kartochkasiga aylanadi. Bu davlat xodimi stressini kamaytiradigan ajoyib UX-yechim!»
+            «Asosiy ustunlik — <strong>dinamik «Asosiy vazifa» kartochkasi</strong>. Agar tekshirish vazifasi bo‘lsa, u binafsha belgi bilan yonadi. Tekshiruvlar yakunlangach (Zero Inbox), u yashil muvaffaqiyat kartochkasiga aylanadi. Bu davlat xodimi stressini kamaytiradi!»
           </p>
           
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Muammoga urg‘u</div>
-              Qizil kartochka: "24 nafar tekshiruvda" — harakatga chaqiruv.
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight">
+              <div className="font-bold mb-1 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> Tezkor harakat</div>
+              «Ko‘rik kutilmoqda» kartochkasi orqali 1 bosishda o‘tish.
             </div>
-            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight shadow-sm">
-              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Rag‘bat (Zero Inbox)</div>
-              Yashil kartochka: "A’lo natija! Vazifalar yo‘q" — mehnat samarasi.
+            <div className="p-2.5 bg-surface-2 border border-white/[0.08] rounded-xl text-slate-300 text-[11px] leading-tight">
+              <div className="font-bold mb-1 flex items-center gap-1.5 text-white"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Rag‘bat (Zero Inbox)</div>
+              Vazifalar yopilganda yashil muvaffaqiyat ko‘rsatkichi.
             </div>
           </div>
 
@@ -271,7 +271,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(1);
               onClose();
             }}
-            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+            className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>Hay’atga Tahlil sahifasini ko‘rsatish</span>
@@ -297,7 +297,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               onRunDemoStep(2);
               onClose();
             }}
-            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>NEET Triaj sahifasiga o‘tish</span>
@@ -314,16 +314,16 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           <p>
             <strong>Hay’atga nima deyiladi:</strong> «Har bir ishsiz uchun tavsiya moduli davlat ko‘mak choralarini tanlab beradi: «Ishga marhamat» monomarkazi, IT-Park, «Yoshlar daftari» subsidiyalari. Dastur biriktirilganda profilda to‘liq o‘zgarishlar tarixi saqlanadi».
           </p>
-          <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-500/40 text-[11px] space-y-1 text-emerald-200">
-            <div className="text-emerald-300 font-bold">✓ TZ 4 va 5-talablarini yopadi:</div>
-            <div>Aqlli tavsiyalar moduli + holatlar hayotiy sikli xronologiyasi.</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] text-[11px] space-y-1 text-slate-300">
+            <div className="text-indigo-300 font-bold">✓ TZ 4 va 5-talablarini yopadi:</div>
+            <div>Aqlli tavsiyalar moduli + holatlar hayotiy sikli xronologiyasi va yo‘llanma chop etish.</div>
           </div>
           <button
             onClick={() => {
               onRunDemoStep(3);
               onClose();
             }}
-            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
             <span>Yoshlar ro‘yxati va Kartochkani ochish</span>
@@ -332,27 +332,27 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
       )
     },
     {
-      title: "4-Qadam: Tuman bandlik GIS-xaritasi",
-      subtitle: "Shaxsiy ma’lumotlarni oshkor qilmagan holda hududiy vizuallashtirish",
-      badge: "Demo 4-qadam (Bonus)",
+      title: "4-Qadam: Tuman bandlik GIS-xaritasi v2.0",
+      subtitle: "8 ta mahalla vektorli kartografiyasi, infratuzilma va kinematik kamera",
+      badge: "Demo 4-qadam (Innovatsiya)",
       content: (
         <div className="space-y-3 text-xs text-slate-300">
           <p>
-            <strong>Hay’atga nima deyiladi:</strong> «Bonus moduli: Mirzo Ulug‘bek tumani mahallalarining interaktiv xaritasi. Ranglar NEET zichligi yuqori bo‘lgan mahallalarni (masalan, Oliy Himmat) ko‘rsatib, tuman resurslarini to‘g‘ri yo‘naltirish imkonini beradi».
+            <strong>Hay’atga nima deyiladi:</strong> «Biz Mirzo Ulug‘bek tumanining yuqori aniqlikdagi GIS-xaritasini ishlab chiqdik: 8 ta mahalla chegaralari, qatlamlar («NEET Xavfi», «Bandlik %», «Qo‘llab-quvvatlash»), 3-bosqichli kinematik kamera va yoshlar uchun piyoda masofani hisoblovchi davlat infratuzilmasi obyektlari (Monomarkaz, IT-Park Hub, ABKM)».
           </p>
-          <div className="p-3 bg-cyan-950/40 rounded-xl border border-cyan-500/40 text-[11px] space-y-1 text-cyan-200">
-            <div className="text-cyan-300 font-bold">✓ TZ 6-bonus talabini bajaradi:</div>
-            <div>Bandlik holatining agregatsiyalangan fazoviy vizuallashuvi.</div>
+          <div className="p-3 bg-surface-2 rounded-xl border border-indigo-500/30 text-[11px] space-y-1 text-slate-200">
+            <div className="text-indigo-300 font-bold">✓ TZ 6-bonus talabini bajaradi:</div>
+            <div>Shaxsiy ma’lumotlarni oshkor qilmagan holda hududiy fazoviy tahlil.</div>
           </div>
           <button
             onClick={() => {
               onRunDemoStep(4);
               onClose();
             }}
-            className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           >
             <Play className="w-4 h-4" />
-            <span>Interaktiv Xaritani ochish</span>
+            <span>Interaktiv GIS-Xaritani ochish</span>
           </button>
         </div>
       )
@@ -364,21 +364,21 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
   return (
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-150"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="glass-panel w-full max-w-2xl rounded-3xl border border-cyan-500/30 bg-slate-900 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200 cursor-default"
+        className="bg-surface-1 w-full max-w-2xl rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 space-y-4 cursor-default max-h-[92vh] flex flex-col justify-between"
       >
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[10px] text-cyan-400 font-mono font-bold uppercase tracking-wider">
+              <div className="text-[10px] text-indigo-400 font-mono font-bold uppercase tracking-wider">
                 {slides[currentSlide].badge}
               </div>
               <h3 className="text-base font-bold text-white leading-tight">
@@ -386,22 +386,22 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               </h3>
             </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-lg">✕</button>
+          <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-surface-3 transition-colors">✕</button>
         </div>
 
         {/* Slide Body */}
-        <div>
-          <div className="text-xs text-slate-400 mb-3">{slides[currentSlide].subtitle}</div>
+        <div className="flex-1 overflow-y-auto pr-1">
+          <div className="text-xs text-slate-400 mb-3 font-medium">{slides[currentSlide].subtitle}</div>
           {slides[currentSlide].content}
         </div>
 
         {/* Navigation Dots & Buttons */}
-        <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+        <div className="flex items-center justify-between pt-3 border-t border-white/[0.08] text-xs">
           
           <button
             disabled={currentSlide === 0}
             onClick={() => setCurrentSlide(prev => prev - 1)}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 flex items-center gap-1"
+            className="px-3.5 py-1.5 rounded-xl bg-surface-2 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-surface-3 border border-white/[0.06] flex items-center gap-1 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>{lang === 'ru' ? 'Назад' : 'Orqaga'}</span>
@@ -413,8 +413,8 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  idx === currentSlide ? 'bg-cyan-400 w-6' : 'bg-slate-700 hover:bg-slate-600'
+                className={`h-2 rounded-full transition-all ${
+                  idx === currentSlide ? 'bg-indigo-500 w-6' : 'bg-surface-3 w-2 hover:bg-slate-600'
                 }`}
               />
             ))}
@@ -423,7 +423,7 @@ export const PitchGuideModal: React.FC<PitchGuideModalProps> = ({
           <button
             disabled={currentSlide === slides.length - 1}
             onClick={() => setCurrentSlide(prev => prev + 1)}
-            className="px-3.5 py-1.5 rounded-xl bg-cyan-600 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500 font-semibold flex items-center gap-1 shadow"
+            className="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-indigo-500 font-semibold flex items-center gap-1 shadow-sm transition-all"
           >
             <span>{lang === 'ru' ? 'Вперёд' : 'Oldinga'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
