@@ -21,7 +21,8 @@ import {
   Clock, 
   Globe, 
   Moon, 
-  Satellite 
+  Satellite,
+  Crosshair
 } from 'lucide-react';
 import L from 'leaflet';
 import { MAKHALLAS_LIST, DISTRICT_POI_LIST } from '../data/mahallasData';
@@ -74,6 +75,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   const [copiedLeaderPhone, setCopiedLeaderPhone] = useState<boolean>(false);
   const [youthListFilter, setYouthListFilter] = useState<'all' | 'neet' | 'supported'>('all');
 
+  // GTA Camera State & HUD
+  const [gtaTransitStatus, setGtaTransitStatus] = useState<string | null>(null);
+  const [isGtaZooming, setIsGtaZooming] = useState<boolean>(false);
+
   // Resolve initial selected ID from global selectedMakhalla
   const initialMahalla = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla) || MAKHALLAS_LIST[0];
   const [selectedMahallaId, setSelectedMahallaId] = useState<string>(initialMahalla.id);
@@ -90,29 +95,102 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
   const polygonsMapRef = useRef<Map<string, L.Polygon>>(new Map());
   const labelsMapRef = useRef<Map<string, L.Marker>>(new Map());
 
-  // High-performance smooth camera panning without zoom churn or tile unload lag
-  const smoothPanTo = useCallback((coords: [number, number]) => {
+  // Animation Timers Ref
+  const gtaTimersRef = useRef<NodeJS.Timeout[]>([]);
+
+  // Clear all pending camera timeouts
+  const clearGtaTimers = () => {
+    gtaTimersRef.current.forEach(t => clearTimeout(t));
+    gtaTimersRef.current = [];
+  };
+
+  /**
+   * 🎬 GTA-STYLE 3-STAGE CINEMATIC CAMERA TRANSITION:
+   * 1. High Altitude Ascend (Zoom Out to Sky/Orbit View)
+   * 2. Aerial Orbital Pan (Glide over destination center)
+   * 3. Snappy Dive / Step-Zoom Down (Plunge directly into target mahalla)
+   * 4. Target Acquisition & Data Reveal
+   */
+  const triggerGtaCameraJump = useCallback((targetCoords: [number, number], mahallaName: string, targetZoom = 14.6) => {
     if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.panTo(coords, {
-      animate: true,
-      duration: 0.45,
-      easeLinearity: 0.25
+    const map = mapInstanceRef.current;
+
+    clearGtaTimers();
+    setIsGtaZooming(true);
+    setGtaTransitStatus(`TRANSIT ➔ ${mahallaName.toUpperCase()}`);
+
+    const currentCenter = map.getCenter();
+    const distanceKm = calculateDistanceKm([currentCenter.lat, currentCenter.lng], targetCoords);
+
+    // If already at the target point, just perform a slight responsive focus
+    if (distanceKm < 0.25) {
+      map.flyTo(targetCoords, targetZoom, {
+        duration: 0.35,
+        easeLinearity: 0.25
+      });
+      const t1 = setTimeout(() => {
+        setIsGtaZooming(false);
+        setGtaTransitStatus(null);
+      }, 350);
+      gtaTimersRef.current.push(t1);
+      return;
+    }
+
+    // 🚀 STAGE 1 (0ms - 280ms): Rocket Zoom-Out into Sky View (Zoom 11.8)
+    map.flyTo([currentCenter.lat, currentCenter.lng], 11.8, {
+      duration: 0.28,
+      easeLinearity: 0.35
     });
+
+    // 🛰️ STAGE 2 (280ms - 520ms): High-Altitude Sky Pan over target destination
+    const tStage2 = setTimeout(() => {
+      map.panTo(targetCoords, {
+        animate: true,
+        duration: 0.24,
+        easeLinearity: 0.3
+      });
+    }, 260);
+    gtaTimersRef.current.push(tStage2);
+
+    // 🎯 STAGE 3 (520ms - 880ms): Rapid Snappy Dive / Plunge directly down into the Mahalla
+    const tStage3 = setTimeout(() => {
+      setGtaTransitStatus(`LOCKING ➔ ${mahallaName.toUpperCase()}`);
+      map.flyTo(targetCoords, targetZoom, {
+        duration: 0.36,
+        easeLinearity: 0.15 // Crisp deceleration curve
+      });
+    }, 480);
+    gtaTimersRef.current.push(tStage3);
+
+    // ✨ STAGE 4 (880ms): Lock Acquired, Reveal Complete
+    const tStage4 = setTimeout(() => {
+      setGtaTransitStatus(`TARGET ACQUIRED`);
+      const tFade = setTimeout(() => {
+        setIsGtaZooming(false);
+        setGtaTransitStatus(null);
+      }, 400);
+      gtaTimersRef.current.push(tFade);
+    }, 850);
+    gtaTimersRef.current.push(tStage4);
+
   }, []);
 
   // Synchronize when global selectedMakhalla prop changes
   useEffect(() => {
     if (selectedMakhalla && selectedMakhalla !== 'all') {
       const match = MAKHALLAS_LIST.find(m => m.name === selectedMakhalla);
-      if (match) {
+      if (match && match.id !== selectedMahallaId) {
         setSelectedMahallaId(match.id);
         setSelectedPoi(null);
-        smoothPanTo(match.geoCenter);
+        triggerGtaCameraJump(match.geoCenter, match.name);
       }
     } else if (selectedMakhalla === 'all') {
-      smoothPanTo(DISTRICT_CENTER);
+      if (mapInstanceRef.current) {
+        clearGtaTimers();
+        mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.45 });
+      }
     }
-  }, [selectedMakhalla, smoothPanTo]);
+  }, [selectedMakhalla, triggerGtaCameraJump, selectedMahallaId]);
 
   const currentMahalla: MakhallaStats = MAKHALLAS_LIST.find(m => m.id === selectedMahallaId) || MAKHALLAS_LIST[0];
 
@@ -167,7 +245,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     }).sort((a, b) => a.distanceKm - b.distanceKm);
   }, [currentMahalla]);
 
-  // 1. Initialize Map ONCE with tile caching and memory buffers
+  // 1. Initialize Map ONCE with aggressive preloading and caching
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -179,8 +257,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     const map = L.map(mapContainerRef.current, {
       center: DISTRICT_CENTER,
       zoom: 13,
-      minZoom: 12,
-      maxZoom: 17,
+      minZoom: 11,
+      maxZoom: 18,
       zoomControl: false,
       attributionControl: false,
       preferCanvas: false
@@ -188,7 +266,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
     mapInstanceRef.current = map;
 
-    // Tile Layer with aggressive buffering and responsive preloading
+    // Tile Layer with high buffer capacity
     const tileUrl = baseMapTheme === 'satellite'
       ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
       : baseMapTheme === 'streets'
@@ -198,9 +276,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     const tileLayer = L.tileLayer(tileUrl, {
       maxZoom: 18,
       subdomains: 'abcd',
-      keepBuffer: 16, // Keep generous buffer of tiles in memory
-      updateWhenIdle: false, // Update tiles continuously without lag spikes
-      updateInterval: 100
+      keepBuffer: 24, // Generous tile memory cache
+      updateWhenIdle: false, // Smooth continuous tile rendering during flight
+      updateInterval: 50
     }).addTo(map);
 
     tileLayerRef.current = tileLayer;
@@ -227,7 +305,6 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         dashArray: '3, 4'
       });
 
-      // Bind non-sticky tooltip with clean mouseover/mouseout cleanup
       polygon.bindTooltip('', {
         className: 'leaflet-tooltip-dark',
         sticky: false,
@@ -235,18 +312,18 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         opacity: 0.98
       });
 
-      // Interactive Click Event
+      // Interactive Click with GTA Jump
       polygon.on('click', () => {
         setSelectedMahallaId(mahalla.id);
         setSelectedPoi(null);
         onSelectMakhalla(mahalla.name);
-        map.panTo(mahalla.geoCenter, { animate: true, duration: 0.45 });
+        triggerGtaCameraJump(mahalla.geoCenter, mahalla.name);
       });
 
-      // Controlled Hover with clean Tooltip show/hide
+      // Controlled Hover
       polygon.on('mouseover', function (this: L.Polygon, e: L.LeafletMouseEvent) {
         this.setStyle({
-          fillOpacity: 0.72,
+          fillOpacity: 0.75,
           weight: 3.5,
           color: '#ffffff'
         });
@@ -260,7 +337,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       polygon.addTo(polyGroup);
       polygonsMapRef.current.set(mahalla.id, polygon);
 
-      // Label Marker
+      // Center Label Marker
       const labelMarker = L.marker(mahalla.geoCenter, {
         icon: L.divIcon({
           className: 'custom-mahalla-label',
@@ -274,12 +351,13 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     });
 
     return () => {
+      clearGtaTimers();
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [triggerGtaCameraJump]);
 
   // 2. Update Tile Layer Theme without recreating map
   useEffect(() => {
@@ -354,16 +432,16 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
         badgeText = `${totalYouthInM} чел.`;
       }
 
-      // Smooth in-place style mutation (GPU accelerated)
+      // Smooth in-place style mutation
       polygon.setStyle({
         color: isSelected ? '#38bdf8' : strokeColor,
         weight: isSelected ? 3.5 : 1.5,
         fillColor: fillColor,
-        fillOpacity: isSelected ? 0.58 : 0.26,
+        fillOpacity: isSelected ? 0.60 : 0.26,
         dashArray: isSelected ? undefined : '3, 4'
       });
 
-      // Update Mouseout handler to safely close tooltip and restore clean state
+      // Update Mouseout handler
       polygon.off('mouseout');
       polygon.on('mouseout', () => {
         polygon.closeTooltip();
@@ -371,7 +449,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           color: isSelected ? '#38bdf8' : strokeColor,
           weight: isSelected ? 3.5 : 1.5,
           fillColor: fillColor,
-          fillOpacity: isSelected ? 0.58 : 0.26,
+          fillOpacity: isSelected ? 0.60 : 0.26,
           dashArray: isSelected ? undefined : '3, 4'
         });
       });
@@ -524,12 +602,14 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
       marker.on('click', () => {
         setSelectedPoi(poi);
-        smoothPanTo(poi.coordinates);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.45 });
+        }
       });
 
       marker.addTo(poiGroup);
     });
-  }, [showPoi, poiCategoryFilter, selectedPoi, lang, smoothPanTo]);
+  }, [showPoi, poiCategoryFilter, selectedPoi, lang]);
 
   // 5. Draw Dynamic Route Line from Selected Mahalla to Selected POI
   useEffect(() => {
@@ -586,7 +666,10 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
 
   const handleResetMapPosition = () => {
     setSelectedPoi(null);
-    smoothPanTo(DISTRICT_CENTER);
+    clearGtaTimers();
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.flyTo(DISTRICT_CENTER, 13, { duration: 0.5 });
+    }
     onSelectMakhalla('all');
   };
 
@@ -594,7 +677,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
     setSelectedMahallaId(mahalla.id);
     setSelectedPoi(null);
     onSelectMakhalla(mahalla.name);
-    smoothPanTo(mahalla.geoCenter);
+    triggerGtaCameraJump(mahalla.geoCenter, mahalla.name);
   };
 
   const handleCopyLeaderPhone = (phoneStr: string) => {
@@ -644,7 +727,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  Live 60fps
+                  GTA Orbit Cam
                 </span>
               </div>
             </div>
@@ -753,7 +836,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                   key={p.id}
                   onClick={() => {
                     setSelectedPoi(p);
-                    smoothPanTo(p.coordinates);
+                    if (mapInstanceRef.current) {
+                      mapInstanceRef.current.flyTo(p.coordinates, 15, { duration: 0.45 });
+                    }
                     setSearchQuery('');
                   }}
                   className="p-2 bg-surface-1 hover:bg-surface-3 border border-white/[0.08] rounded-lg text-left text-xs transition-colors flex items-center justify-between"
@@ -932,9 +1017,29 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             </div>
           )}
 
-          {/* Leaflet Map Box with Floating "Центр" Button inside top-right */}
+          {/* Leaflet Map Box with GTA Atmospheric Vignette & Floating Controls */}
           <div className="relative w-full h-[470px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-slate-950">
             <div ref={mapContainerRef} className="w-full h-full z-0" />
+
+            {/* GTA Camera Transit HUD Badge */}
+            {gtaTransitStatus && (
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3.5 py-1.5 rounded-full bg-slate-950/90 border border-cyan-400/50 backdrop-blur-md shadow-2xl flex items-center gap-2 text-cyan-300 font-mono text-[11px] font-bold tracking-wider uppercase">
+                  <Crosshair className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                  <span>{gtaTransitStatus}</span>
+                </div>
+              </div>
+            )}
+
+            {/* GTA Atmospheric Vignette Overlay during high-altitude jump */}
+            <div 
+              className={`absolute inset-0 pointer-events-none z-[350] transition-opacity duration-300 ${
+                isGtaZooming ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                boxShadow: 'inset 0 0 60px rgba(6, 182, 212, 0.25), inset 0 0 120px rgba(2, 6, 23, 0.7)'
+              }}
+            />
 
             {/* Floating Center / Reset Button inside Map (Top Right) */}
             <button
@@ -1010,7 +1115,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
           
           {selectedPoi ? (
             /* SELECTED POI DETAIL CARD */
-            <div className="space-y-4 animate-in fade-in duration-200">
+            <div key={selectedPoi.id} className="space-y-4 animate-in fade-in zoom-in-95 slide-in-from-right-2 duration-300">
               <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
                 <div>
                   <div className="flex items-center gap-2">
@@ -1218,8 +1323,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
               </div>
             </div>
           ) : (
-            /* SELECTED MAKHALA PASSPORT */
-            <div className="space-y-4 animate-in fade-in duration-200">
+            /* SELECTED MAKHALA PASSPORT WITH SNAPPY GTA ENTRANCE */
+            <div key={currentMahalla.id} className="space-y-4 animate-in fade-in zoom-in-95 slide-in-from-right-2 duration-300">
               
               {/* Mahalla Header */}
               <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3">
@@ -1373,7 +1478,9 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       key={poi.id}
                       onClick={() => {
                         setSelectedPoi(poi);
-                        smoothPanTo(poi.coordinates);
+                        if (mapInstanceRef.current) {
+                          mapInstanceRef.current.flyTo(poi.coordinates, 15, { duration: 0.45 });
+                        }
                       }}
                       className="p-1.5 bg-surface-1 hover:bg-surface-3 rounded-lg border border-white/[0.04] flex items-center justify-between text-xs cursor-pointer transition-colors"
                     >
