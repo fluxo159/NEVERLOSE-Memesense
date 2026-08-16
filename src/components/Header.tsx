@@ -1,8 +1,9 @@
 import React from 'react';
-import { Shield, UserCheck, Sparkles, MapPin, Globe, Building, User, Briefcase } from 'lucide-react';
+import { Shield, MapPin, Globe, Building, User, Briefcase, Sparkles } from 'lucide-react';
 import { UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
 import { CustomSelect } from './ui/CustomSelect';
+import { t, getMahallaName } from '../data/translations';
 
 interface HeaderProps {
   selectedRole: UserRole;
@@ -23,32 +24,44 @@ export const Header: React.FC<HeaderProps> = ({
   lang,
   onToggleLang
 }) => {
+  const tr = t[lang];
+
   return (
-    <header className="relative z-50 bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl">
+    <header className="bg-surface-1/95 border-b border-white/[0.08] backdrop-blur-xl relative z-50">
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-brand-linear to-cyan-500 p-[1px] shadow-glow-brand flex-shrink-0">
-              <div className="w-full h-full bg-surface-1 rounded-[11px] flex items-center justify-center">
-                <Shield className="w-4 h-4 text-indigo-400" />
-              </div>
+            <div className="w-9 h-9 rounded-xl bg-surface-2 border border-white/[0.12] flex-shrink-0 flex items-center justify-center relative overflow-hidden shadow-sm">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 relative z-10" fill="none">
+                <path 
+                  d="M4.5 4.5L12 12.5L19.5 4.5M12 12.5V20" 
+                  stroke="url(#govtech-logo-grad)" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                />
+                <defs>
+                  <linearGradient id="govtech-logo-grad" x1="4.5" y1="4.5" x2="19.5" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#818CF8" />
+                    <stop offset="1" stopColor="#38BDF8" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Ёшлар Бандлиги
+                  {tr.appName}
                 </h1>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-full tracking-wide">
-                  GovTech 2.0
+                <span className="px-2 py-0.5 text-[10px] font-semibold bg-surface-2 text-slate-300 border border-white/[0.08] rounded-md tracking-wider font-mono">
+                  {tr.appBadge}
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block font-medium">
-                {lang === 'ru' 
-                  ? 'Платформа мониторинга занятости и маршрутизации молодёжи' 
-                  : 'Ёшлар бандлиги мониторинги ва йўналтириш тизими'}
+                {tr.appSubtitle}
               </p>
             </div>
           </div>
@@ -61,9 +74,10 @@ export const Header: React.FC<HeaderProps> = ({
               value={selectedMakhalla}
               onChange={onSelectMakhalla}
               options={[
-                { value: 'all', label: lang === 'ru' ? 'Весь район (8 махаллей)' : 'Барча маҳаллалар', icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
-                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: m.name, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
+                { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> },
+                ...MAKHALLAS_LIST.map((m) => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-indigo-400" /> }))
               ]}
+              className="min-w-[170px]"
             />
 
             {/* Role Switcher */}
@@ -71,9 +85,9 @@ export const Header: React.FC<HeaderProps> = ({
               value={selectedRole}
               onChange={(val) => onSelectRole(val as UserRole)}
               options={[
-                { value: 'district_officer', label: lang === 'ru' ? 'Хокимият' : 'Ҳокимлик', icon: <Building className="w-3.5 h-3.5 text-indigo-400" /> },
-                { value: 'mahalla_leader', label: lang === 'ru' ? 'Лидер Махалли' : 'Маҳалла етакчиси', icon: <User className="w-3.5 h-3.5 text-emerald-400" /> },
-                { value: 'employment_center', label: lang === 'ru' ? 'Центр занятости' : 'Бандлик маркази', icon: <Briefcase className="w-3.5 h-3.5 text-purple-400" /> }
+                { value: 'district_officer', label: tr.roleHokimiyat, icon: <Building className="w-3.5 h-3.5 text-indigo-400" /> },
+                { value: 'mahalla_leader', label: tr.roleLeader, icon: <User className="w-3.5 h-3.5 text-emerald-400" /> },
+                { value: 'employment_center', label: tr.roleEmployment, icon: <Briefcase className="w-3.5 h-3.5 text-purple-400" /> }
               ]}
               className="min-w-[150px]"
             />
@@ -82,19 +96,19 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleLang}
               className="flex items-center gap-1 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/[0.08] hover:border-white/[0.16] font-bold text-xs transition-all"
-              title="Переключить язык (RU / O'Z)"
+              title="Tilni o‘zgartirish / Сменить язык (RU / O‘Z)"
             >
               <Globe className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{lang === 'ru' ? 'RU' : 'O\'Z'}</span>
+              <span>{lang === 'ru' ? 'RU' : 'O‘Z'}</span>
             </button>
 
             {/* Pitch Button */}
             <button
               onClick={onOpenPitchGuide}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-brand-linear to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-xl shadow-glow-brand border border-indigo-400/30 transition-all hover:scale-[1.02]"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm transition-all"
             >
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
-              <span>{lang === 'ru' ? 'Питч-гид' : 'Питч-гид'}</span>
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{tr.pitchGuideBtn}</span>
             </button>
 
           </div>

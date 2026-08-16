@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend 
-} from 'recharts';
 import { YouthProfile, UserRole } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
-import { AlertCircle, ArrowRight, CheckCircle, Sparkles, MapPin, Building, GraduationCap, Briefcase, UserCheck } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
+import { t, getMahallaName, getEducationName } from '../data/translations';
+import { AnimatedDonutChart, DonutDataItem } from './charts/AnimatedDonutChart';
+import { AnimatedStackedBarChart, MahallaBarItem } from './charts/AnimatedStackedBarChart';
 
 interface DashboardViewProps {
   youthList: YouthProfile[];
+  allYouthList?: YouthProfile[];
   selectedMakhalla: string;
   userRole: UserRole;
   lang: 'ru' | 'uz';
@@ -16,39 +16,39 @@ interface DashboardViewProps {
   onOpenProfile: (youth: YouthProfile) => void;
 }
 
-const statusColors = ['#10B981', '#8B5CF6', '#06B6D4', '#3B82F6', '#F59E0B', '#F43F5E', '#64748B'];
-
 export const DashboardView: React.FC<DashboardViewProps> = ({
   youthList,
+  allYouthList,
   selectedMakhalla,
-  userRole,
   lang,
   onNavigateTab,
   onOpenProfile
 }) => {
-  const statusCounts = {
-    'Работают по найму': youthList.filter(y => y.employment_status === 'занят').length,
-    'Свой бизнес / ИП': youthList.filter(y => y.employment_status === 'предприниматель').length,
-    'Учатся (ВУЗ / техникум)': youthList.filter(y => y.employment_status === 'обучается').length,
-    'Направлены на обучение': youthList.filter(y => y.employment_status === 'направлен на обучение').length,
-    'Ищут работу': youthList.filter(y => y.employment_status === 'безработный' && !y.is_neet).length,
-    'Требуют проверки (без работы/учёбы)': youthList.filter(y => y.is_neet).length,
-    'Не уточнено': youthList.filter(y => y.employment_status === 'не уточнено').length,
-  };
+  const tr = t[lang];
+  const listForBars = allYouthList || youthList;
 
-  const donutData = Object.entries(statusCounts).map(([name, value]) => ({
-    name,
-    value
-  })).filter(d => d.value > 0);
+  const donutData: DonutDataItem[] = [
+    { name: tr.dashLegendEmployed, value: youthList.filter(y => y.employment_status === 'занят').length, color: '#10B981' },
+    { name: tr.dashLegendBusiness, value: youthList.filter(y => y.employment_status === 'предприниматель').length, color: '#8B5CF6' },
+    { name: tr.dashLegendStudy, value: youthList.filter(y => y.employment_status === 'обучается').length, color: '#06B6D4' },
+    { name: tr.dashLegendCourses, value: youthList.filter(y => y.employment_status === 'направлен на обучение').length, color: '#3B82F6' },
+    { name: tr.dashLegendUnemployed, value: youthList.filter(y => y.employment_status === 'безработный' && !y.is_neet).length, color: '#F59E0B' },
+    { name: tr.dashLegendNeetPending, value: youthList.filter(y => y.is_neet).length, color: '#F43F5E' },
+  ].filter(d => d.value > 0);
 
-  const mahallaBarData = MAKHALLAS_LIST.map(m => {
-    const listInM = youthList.filter(y => y.makhalla === m.name);
+  const mahallaBarData: MahallaBarItem[] = MAKHALLAS_LIST.map(m => {
+    const listInM = listForBars.filter(y => y.makhalla === m.name);
+    const mName = getMahallaName(m.name, lang);
+    const shortName = lang === 'ru' 
+      ? m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.')
+      : mName.replace('Buyuk Ipak Yo‘li', 'B. Ipak').replace('Oliy Himmat', 'Oliy H.');
+
     return {
-      name: m.name.replace('Буюк Ипак Йўли', 'Б. Ипак').replace('Олий Ҳиммат', 'Олий Ҳ.'),
-      fullName: m.name,
-      работают: listInM.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length,
-      учатся: listInM.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length,
-      на_проверке: listInM.filter(y => y.is_neet).length,
+      name: shortName,
+      fullName: mName,
+      employed: listInM.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель').length,
+      studying: listInM.filter(y => y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length,
+      neet: listInM.filter(y => y.is_neet).length,
       total: listInM.length
     };
   });
@@ -61,199 +61,89 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Main Visuals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* 1. Status Breakdown (Apple Clarity Donut) */}
-        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Чем занята молодёжь' : 'Ёшлар бандлиги ҳолати'}
-              </h3>
-              <span className="text-xs text-cyan-300 font-semibold bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                {youthList.length} {lang === 'ru' ? 'чел. в реестре' : 'киши'}
-              </span>
-            </div>
-
-            <div className="h-72 relative my-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={donutData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={85}
-                    outerRadius={120}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {donutData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={statusColors[index % statusColors.length]} stroke="rgba(15,23,42,0.9)" strokeWidth={2} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip 
-                    itemStyle={{ color: '#ffffff', fontWeight: 600 }}
-                    labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
-                    contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: 'rgba(56, 189, 248, 0.4)', 
-                      borderRadius: '12px', 
-                      color: '#ffffff', 
-                      fontSize: '12px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
-                      padding: '8px 12px'
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              
-              {/* Center Label inside Donut */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-3xl font-black text-white">{youthList.length}</span>
-                <span className="text-xs text-slate-400">{lang === 'ru' ? 'человек' : 'киши'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Clean Human Legend with Icons */}
-          <div className="space-y-2 pt-4 border-t border-slate-800 text-xs">
-            {donutData.map((entry, idx) => (
-              <div key={entry.name} className="flex items-center justify-between text-slate-300">
-                <div className="flex items-center gap-2 truncate">
-                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: statusColors[idx % statusColors.length] }}></span>
-                  <span className="truncate text-xs">{entry.name}</span>
-                </div>
-                <span className="font-bold text-white ml-2">{entry.value} чел.</span>
-              </div>
-            ))}
-          </div>
+        {/* 1. Status Breakdown Donut with Sequential Drawing Animation */}
+        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
+          <AnimatedDonutChart
+            key={selectedMakhalla}
+            data={donutData}
+            total={youthList.length}
+            title={tr.dashEmploymentStructure}
+            inRegistryLabel={tr.dashInRegistry}
+            unitLabel={tr.dashPersonShort}
+          />
         </div>
 
-        {/* 2. Mahalla Comparative Bar Chart */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl px-6 pt-6 pb-8 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
-          <div className="flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <h3 className="text-base font-bold text-white">
-                  {lang === 'ru' ? 'Ситуация по махаллям' : 'Маҳаллалар тақсимоти'}
-                </h3>
-                <span className="hidden sm:inline-block text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                  {lang === 'ru' ? 'Средняя занятость: 75%' : 'Ўртача бандлик: 75%'}
-                </span>
-              </div>
-              <button 
-                onClick={() => onNavigateTab('map')}
-                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold transition-colors shrink-0"
-              >
-                <span>{lang === 'ru' ? 'Открыть карту' : 'Харитани очиш'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="flex-1 min-h-[256px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mahallaBarData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#cbd5e1" 
-                    fontSize={12} 
-                    fontWeight={500} 
-                    interval={0} 
-                    angle={-25} 
-                    textAnchor="end"
-                    dy={12} 
-                  />
-                  <YAxis stroke="#94a3b8" fontSize={11} />
-                  <RechartsTooltip 
-                    itemStyle={{ color: '#ffffff', fontWeight: 600 }}
-                    labelStyle={{ color: '#38bdf8', fontWeight: 700, marginBottom: '4px' }}
-                    contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: 'rgba(56, 189, 248, 0.4)', 
-                      borderRadius: '12px', 
-                      color: '#ffffff', 
-                      fontSize: '12px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
-                      padding: '8px 12px'
-                    }}
-                  />
-                  <Legend 
-                    verticalAlign="bottom"
-                    wrapperStyle={{ position: 'absolute', bottom: -25, width: '100%' }}
-                    content={(props) => {
-                      const { payload } = props;
-                      if (!payload) return null;
-                      return (
-                        <div className="flex justify-center gap-6 text-[11px] font-medium text-slate-300 w-full">
-                          {payload.map((entry, index) => (
-                            <div key={`item-${index}`} className="flex items-center gap-2">
-                              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: entry.color }}></div>
-                              <span>{entry.value}</span>
-                            </div>
-                          ))}
-                        </div>
-                      );
-                    }}
-                  />
-                  <Bar dataKey="работают" fill="#10B981" stackId="a" name={lang === 'ru' ? 'Работают' : 'Ишлайди'} />
-                  <Bar dataKey="учатся" fill="#06B6D4" stackId="a" name={lang === 'ru' ? 'Учатся' : 'Ўқийди'} />
-                  <Bar dataKey="на_проверке" fill="#F43F5E" stackId="a" radius={[4, 4, 0, 0]} name={lang === 'ru' ? 'Требуют проверки' : 'Текширувда'} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+        {/* 2. Mahalla Comparative Bar Chart with Cascading Staggered Animation */}
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
+          <AnimatedStackedBarChart
+            data={mahallaBarData}
+            title={tr.dashMakhallaSituation}
+            avgEmploymentLabel={tr.dashAvgEmployment}
+            openMapLabel={tr.dashOpenMap}
+            labels={{
+              employed: tr.dashChartEmployed,
+              studying: tr.dashChartStudying,
+              neet: tr.dashChartNeet
+            }}
+            onOpenMap={() => onNavigateTab('map')}
+          />
         </div>
 
       </div>
 
-      {/* Action Row: Whom to visit & where to route */}
+      {/* Action Row: Priority visits & quick route */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* 1. Priority Visits */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-rose-500/20 bg-slate-900/80 shadow-lg">
+        <div className="lg:col-span-7 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-rose-400"></span>
               <h3 className="text-base font-bold text-white">
-                {lang === 'ru' ? 'Кого необходимо посетить в первую очередь' : 'Биринчи навбатда кўриладиган ёшлар'}
+                {tr.dashPriorityTitle}
               </h3>
             </div>
             <button
               onClick={() => onNavigateTab('triage')}
-              className="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-white font-medium flex items-center gap-1 transition-colors"
             >
-              <span>{lang === 'ru' ? 'Все на проверке' : 'Барчаси'}</span>
+              <span>{tr.dashAllPending}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           <div className="space-y-3">
             {priorityVisitProfiles.map(youth => (
-              <div
+              <div 
                 key={youth.id}
                 onClick={() => onOpenProfile(youth)}
-                className="glass-card p-4 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between gap-3 transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm text-cyan-400 flex-shrink-0">
-                    {youth.age}
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-surface-3 border border-white/[0.08] flex items-center justify-center font-bold text-xs text-slate-300 group-hover:text-white transition-colors">
+                    {youth.full_name_demo.split(' ')[0][0]}{youth.full_name_demo.split(' ')[1] ? youth.full_name_demo.split(' ')[1][0] : ''}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white hover:text-cyan-400 transition-colors">
+                    <h4 className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
                       {youth.full_name_demo}
                     </h4>
                     <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                      <span className="text-slate-300">📍 {youth.makhalla}</span>
+                      <span className="text-slate-300 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-slate-400" />
+                        {getMahallaName(youth.makhalla, lang)}
+                      </span>
                       <span>•</span>
-                      <span>{youth.education}</span>
+                      <span>{getEducationName(youth.education, lang)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold whitespace-nowrap">
-                    {lang === 'ru' ? 'Требует визита' : 'Кўрик кутмоқда'}
+                  <span className="text-xs px-2.5 py-1 rounded-lg bg-surface-3 text-slate-300 border border-white/[0.08] font-medium whitespace-nowrap flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400/80"></span>
+                    <span>{tr.dashNeedsVisit}</span>
                   </span>
-                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
                 </div>
               </div>
             ))}
@@ -261,57 +151,59 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 2. Where to route */}
-        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-700/60 bg-slate-900/80 shadow-lg flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-surface-1 rounded-2xl p-6 border border-white/[0.08] shadow-surface-card flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-white mb-1">
-              {lang === 'ru' ? 'Куда можно направить человека' : 'Қайси дастурларга йўналтириш мумкин'}
+              {tr.dashWhereToRouteTitle}
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              {lang === 'ru' ? 'Бесплатные государственные возможности' : 'Бепул давлат ёрдами имкониятлари'}
+              {tr.dashWhereToRouteSubtitle}
             </p>
 
             <div className="space-y-3">
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-cyan-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Моноцентр «Ишга Мархамат»</div>
-                  <div className="text-xs text-slate-400 mt-0.5">24 рабочие специальности + стипендия</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">{tr.dashMonoCenterTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashMonoCenterDesc}</div>
                 </div>
-                <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30">
-                  Обучение
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{tr.dashMonoCenterTag}</span>
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-emerald-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">IT-Park & IT-Bilim</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Курсы веб-разработки + субсидия на ноутбук</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">{tr.dashItParkTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashItParkDesc}</div>
                 </div>
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                  IT-Ваучер
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{tr.dashItParkTag}</span>
                 </span>
               </div>
 
               <div 
                 onClick={() => onNavigateTab('programs')}
-                className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-purple-500/50 cursor-pointer flex items-center justify-between transition-all"
+                className="p-3.5 rounded-xl bg-surface-2 border border-white/[0.08] hover:border-white/[0.16] cursor-pointer flex items-center justify-between transition-all shadow-sm group"
               >
                 <div>
-                  <div className="text-sm font-bold text-white">Фонд «Ёшлар Дафтари»</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Гранты на оборудование для открытия своего дела</div>
+                  <div className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">{tr.dashYoshlarDaftariTitle}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{tr.dashYoshlarDaftariDesc}</div>
                 </div>
-                <span className="text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30">
-                  Субсидия
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-surface-3 px-2.5 py-1 rounded-lg border border-white/[0.08]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{tr.dashYoshlarDaftariTag}</span>
                 </span>
               </div>
             </div>
           </div>
-
 
         </div>
 

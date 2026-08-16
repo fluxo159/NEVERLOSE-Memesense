@@ -22,11 +22,16 @@ export interface StatusHistoryItem {
 export interface SupportProgram {
   id: string;
   title: string;
+  titleUz?: string;
   category: 'обучение' | 'трудоустройство' | 'предпринимательство' | 'субсидия' | 'it_стажировка';
   description: string;
+  descriptionUz?: string;
   provider: string; // e.g. "Моноцентр «Ишга Мархамат»", "IT-Park", "Фонд «Ёшлар Дафтари»", "Районный Центр занятости"
+  providerUz?: string;
   duration?: string;
+  durationUz?: string;
   stipend?: string;
+  stipendUz?: string;
   iconName: string;
 }
 
@@ -61,6 +66,7 @@ export type UserRole = 'district_officer' | 'mahalla_leader' | 'employment_cente
 export interface MakhallaStats {
   id: string;
   name: string;
+  nameUz?: string;
   totalYouth: number;
   employed: number;
   studying: number;
@@ -71,6 +77,8 @@ export interface MakhallaStats {
   employmentRate: number; // percentage
   leaderName: string;
   leaderPhone: string;
+  leaderTelegram?: string;
+  committeeAddress?: string;
   riskLevel: 'low' | 'medium' | 'high';
   coordinates: { x: number; y: number }; // For SVG map
   geoCenter: [number, number]; // [lat, lng] for Leaflet GIS
@@ -81,12 +89,15 @@ export interface InfrastructurePOI {
   id: string;
   name: string;
   nameUz: string;
-  category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university';
+  category: 'monocenter' | 'it_park' | 'employment_center' | 'youth_center' | 'university' | 'employer';
   address: string;
   phone: string;
+  website?: string;
+  workHours?: string;
   coordinates: [number, number]; // [lat, lng]
   servicesCount: number;
   descriptionRu: string;
   descriptionUz: string;
 }
+
 

@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   AlertCircle, CheckCircle, XCircle, Search, UserCheck, 
   MapPin, GraduationCap, Sparkles, Check, ArrowRight, ShieldCheck, Clock
 } from 'lucide-react';
 import { YouthProfile, UserRole, SupportProgram } from '../types';
 import { MAKHALLAS_LIST } from '../data/mahallasData';
+import { CustomSelect } from './ui/CustomSelect';
+import { t, getMahallaName, getEducationName } from '../data/translations';
+import { isProgramRecommended } from '../data/programRecommender';
 
 interface NeetTriageViewProps {
   youthList: YouthProfile[];
   supportPrograms: SupportProgram[];
   selectedMakhalla: string;
+  onSelectMakhalla?: (makhalla: string) => void;
   userRole: UserRole;
   lang: 'ru' | 'uz';
   onVerifyNeet: (youthId: string, isConfirmed: boolean, comment: string) => void;
@@ -21,32 +26,52 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
   youthList,
   supportPrograms,
   selectedMakhalla,
-  userRole,
+  onSelectMakhalla,
   lang,
   onVerifyNeet,
   onOpenProfile,
   onRouteProgram
 }) => {
-  const [filterMakhalla, setFilterMakhalla] = useState<string>(selectedMakhalla !== 'all' ? selectedMakhalla : 'all');
+  const tr = t[lang];
   const [filterVerification, setFilterVerification] = useState<string>('pending');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Local state for inline verification dialog
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [verificationComment, setVerificationComment] = useState<string>('');
+
+  useEffect(() => {
+    if (verifyingId) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    };
+  }, [verifyingId]);
   const [isSuccessAnimating, setIsSuccessAnimating] = useState<boolean>(false);
   const [successInfo, setSuccessInfo] = useState<{ name: string; isConfirmed: boolean } | null>(null);
 
   // Success Toast Banner State
   const [toastMessage, setToastMessage] = useState<{ title: string; desc: string } | null>(null);
 
-  const neetCandidates = youthList.filter(youth => {
-    if (!youth.is_neet && youth.neet_verification !== 'verified') return false;
-    if (filterMakhalla !== 'all' && youth.makhalla !== filterMakhalla) return false;
+  const scopedYouthList = selectedMakhalla === 'all'
+    ? youthList
+    : youthList.filter(y => y.makhalla === selectedMakhalla);
 
-    if (filterVerification === 'pending' && youth.neet_verification !== 'pending_verification') return false;
-    if (filterVerification === 'verified' && youth.neet_verification !== 'verified') return false;
-    if (filterVerification === 'rejected' && youth.neet_verification !== 'rejected') return false;
+  const neetCandidates = scopedYouthList.filter(youth => {
+    if (filterVerification === 'pending') {
+      if (!youth.is_neet || youth.neet_verification !== 'pending_verification') return false;
+    } else if (filterVerification === 'verified') {
+      if (youth.neet_verification !== 'verified') return false;
+    } else if (filterVerification === 'rejected') {
+      if (youth.neet_verification !== 'rejected') return false;
+    } else if (filterVerification === 'all') {
+      if (!youth.is_neet && youth.neet_verification !== 'verified' && youth.neet_verification !== 'rejected') return false;
+    }
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
@@ -61,20 +86,20 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
     return true;
   });
 
-  const pendingCount = youthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
-  const verifiedCount = youthList.filter(y => y.is_neet && y.neet_verification === 'verified').length;
+  const pendingCount = scopedYouthList.filter(y => y.is_neet && y.neet_verification === 'pending_verification').length;
+  const verifiedCount = scopedYouthList.filter(y => y.is_neet && y.neet_verification === 'verified').length;
 
   const handleStartVerify = (youth: YouthProfile) => {
     setVerifyingId(youth.id);
     setIsSuccessAnimating(false);
-    setVerificationComment(youth.notes || 'По результатам личного подворового обхода инспектором махалли.');
+    setVerificationComment(youth.notes || (lang === 'ru' ? 'По результатам личного подворового обхода инспектором махалли.' : 'Mahalla yetakchisining xonadonbay o‘rganishi asosida.'));
   };
 
   const handleConfirmAction = (isNeetConfirmed: boolean) => {
     if (!verifyingId) return;
 
     const targetYouth = youthList.find(y => y.id === verifyingId);
-    const youthName = targetYouth?.full_name_demo || 'Человек';
+    const youthName = targetYouth?.full_name_demo || (lang === 'ru' ? 'Гражданин' : 'Fuqaro');
 
     setIsSuccessAnimating(true);
     setSuccessInfo({ name: youthName, isConfirmed: isNeetConfirmed });
@@ -86,8 +111,12 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
       setVerificationComment('');
 
       setToastMessage({
-        title: isNeetConfirmed ? '✓ Статус подтверждён: Нуждается в помощи' : '✓ Статус обновлён: Работает',
-        desc: `Данные гражданина «${youthName}» зафиксированы и перенесены в соответствующий список.`
+        title: isNeetConfirmed 
+          ? (lang === 'ru' ? '✓ Статус подтверждён: Нуждается в помощи' : '✓ Holat tasdiqlandi: Yordamga muhtoj') 
+          : (lang === 'ru' ? '✓ Статус обновлён: Работает' : '✓ Holat yangilandi: Band'),
+        desc: lang === 'ru' 
+          ? `Данные гражданина «${youthName}» зафиксированы и перенесены в соответствующий список.`
+          : `«${youthName}» bo‘yicha ma’lumotlar saqlandi va tegishli ro‘yxatga o‘tkazildi.`
       });
 
       setTimeout(() => {
@@ -127,7 +156,7 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                   }}
                   className="text-xs text-emerald-400 font-bold hover:text-emerald-300 flex items-center gap-1"
                 >
-                  <span>Посмотреть подтверждённых</span>
+                  <span>{tr.triageZeroBtnCheck}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -136,117 +165,111 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         </div>
       )}
 
-      {/* Human-Centered Header Banner */}
-      <div className="bg-surface-1 rounded-2xl p-5 border border-white/[0.08] shadow-surface-card bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div className="space-y-1 max-w-2xl">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                <AlertCircle className="w-5 h-5" />
-              </div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                {lang === 'ru' ? 'Молодёжь, требующая проверки' : 'Текширув кутаётган ёшлар'}
+      {/* Sleek Control & Filter Toolbar */}
+      <div className="bg-surface-1 p-4 rounded-2xl border border-white/[0.08] shadow-surface-card space-y-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          {/* Title & Badge */}
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-surface-2 text-slate-300 border border-white/[0.08]">
+              <AlertCircle className="w-4 h-4 text-slate-400" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white tracking-tight flex items-center gap-2 flex-wrap">
+                <span>{tr.triageTitle}</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium bg-surface-2 text-slate-300 border border-white/[0.08] rounded-full font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/80"></span>
+                  <span>{pendingCount} {tr.triagePendingBadge}</span>
+                </span>
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-semibold whitespace-nowrap">
-                {lang === 'ru' ? 'Личный подворовой обход' : 'Маҳалла кўриги'}
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="relative flex-1 max-w-md bg-surface-2 border border-white/[0.08] rounded-xl focus-within:border-indigo-500/60 transition-colors">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder={tr.triageSearchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Filter Row */}
+        <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-white/[0.06] text-xs">
+          
+          {/* Verification Status Tabs */}
+          <div className="flex items-center p-1 bg-surface-2 border border-white/[0.08] rounded-xl text-xs font-semibold">
+            <button
+              onClick={() => setFilterVerification('pending')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+                filterVerification === 'pending' 
+                  ? 'bg-indigo-600/90 text-white shadow-sm border border-indigo-500/30 font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent font-medium'
+              }`}
+            >
+              <Clock className={`w-3.5 h-3.5 ${filterVerification === 'pending' ? 'text-white' : 'text-slate-400'}`} />
+              <span>{tr.triageTabPending}</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono ${filterVerification === 'pending' ? 'bg-white/20 text-white' : 'bg-surface-3 text-slate-400'}`}>
+                {pendingCount}
               </span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed pt-0.5">
-              {lang === 'ru'
-                ? 'Список молодых людей, у которых более 6 месяцев нет налоговых отчислений или записей об учёбе. Проведите личный опрос, чтобы подтвердить статус или помочь с работой.'
-                : 'Солиқ ёки таълим базасида 6 ойдан ортиқ маълумоти бўлмаган ёшлар рўйхати.'}
-            </p>
+            </button>
+            <button
+              onClick={() => setFilterVerification('verified')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
+                filterVerification === 'verified' 
+                  ? 'bg-indigo-600/90 text-white shadow-sm border border-indigo-500/30 font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border border-transparent font-medium'
+              }`}
+            >
+              <ShieldCheck className={`w-3.5 h-3.5 ${filterVerification === 'verified' ? 'text-white' : 'text-slate-400'}`} />
+              <span>{tr.triageTabVerified}</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono ${filterVerification === 'verified' ? 'bg-white/20 text-white' : 'bg-surface-3 text-slate-400'}`}>
+                {verifiedCount}
+              </span>
+            </button>
+            <button
+              onClick={() => setFilterVerification('all')}
+              className={`px-3 py-1.5 rounded-lg transition-colors border ${
+                filterVerification === 'all' 
+                  ? 'bg-surface-3 text-white border-white/[0.12] font-semibold' 
+                  : 'text-slate-400 hover:text-slate-300 border-transparent font-medium'
+              }`}
+            >
+              {tr.triageTabAll}
+            </button>
           </div>
 
-          {/* Quick Metric Chips */}
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Ожидают обхода' : 'Кутмоқда'}</div>
-              <div className="text-xl font-black text-rose-400 mt-0.5">{pendingCount} чел.</div>
-            </div>
-            <div className="flex-1 sm:flex-initial bg-surface-2 px-4 py-2.5 rounded-xl border border-white/[0.08] text-center min-w-[120px]">
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">{lang === 'ru' ? 'Опрошены' : 'Текширилган'}</div>
-              <div className="text-xl font-black text-emerald-400 mt-0.5">{verifiedCount} чел.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Control Bar */}
-      <div className="bg-surface-1 p-3 rounded-xl border border-white/[0.08] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
-        
-        {/* Search */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder={lang === 'ru' ? 'Поиск по ФИО, специальности, махалле...' : 'Ф.И.Ш. ёки маҳалла бўйича излаш...'}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-2 border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+          {/* Makhalla Quick Filter */}
+          <CustomSelect
+            value={selectedMakhalla}
+            onChange={(val) => onSelectMakhalla && onSelectMakhalla(val)}
+            options={[
+              { value: 'all', label: tr.allMakhallas, icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> },
+              ...MAKHALLAS_LIST.map(m => ({ value: m.name, label: getMahallaName(m.name, lang), icon: <MapPin className="w-3.5 h-3.5 text-slate-400" /> }))
+            ]}
           />
+
+          <div className="text-[11px] text-slate-400 ml-auto font-medium">
+            {tr.triageDisplayed} <strong className="text-white font-bold">{neetCandidates.length}</strong> {tr.triageProfilesCount}
+          </div>
+
         </div>
-
-        {/* Segmented Filter Tabs */}
-        <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-lg border border-white/[0.06] overflow-x-auto no-scrollbar">
-          <button
-            onClick={() => setFilterVerification('pending')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-              filterVerification === 'pending'
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Clock className="w-3 h-3" />
-            <span>{lang === 'ru' ? 'Нужен визит' : 'Текширувда'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{pendingCount}</span>
-          </button>
-
-          <button
-            onClick={() => setFilterVerification('verified')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-              filterVerification === 'verified'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <CheckCircle className="w-3 h-3" />
-            <span>{lang === 'ru' ? 'Опрошены' : 'Тасдиқланган'}</span>
-            <span className="px-1.5 py-0.2 bg-black/30 rounded-full text-[10px] font-bold">{verifiedCount}</span>
-          </button>
-
-          <button
-            onClick={() => setFilterVerification('all')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-              filterVerification === 'all'
-                ? 'bg-surface-3 text-white border border-white/[0.12]'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            {lang === 'ru' ? 'Все' : 'Барчаси'}
-          </button>
-        </div>
-
-        {/* Makhalla Quick Filter */}
-        <div className="flex items-center gap-2">
-          <select
-            value={filterMakhalla}
-            onChange={(e) => setFilterMakhalla(e.target.value)}
-            className="bg-surface-2 border border-white/[0.08] text-slate-300 text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            <option value="all">{lang === 'ru' ? 'Все 8 махаллей' : 'Барча маҳаллалар'}</option>
-            {MAKHALLAS_LIST.map(m => (
-              <option key={m.id} value={m.name} className="bg-surface-1 text-white">{m.name}</option>
-            ))}
-          </select>
-        </div>
-
       </div>
 
-      {/* Verification Modal with Linear/Raycast Dark Theme */}
-      {verifyingId && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 overflow-hidden">
+      {/* Verification Modal portaled to document.body */}
+      {verifyingId && createPortal(
+        <div 
+          onClick={() => setVerifyingId(null)}
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-surface-1 w-full max-w-lg rounded-2xl border border-white/[0.14] shadow-surface-modal p-6 overflow-hidden cursor-default my-auto"
+          >
             
             {/* SUCCESS ANIMATION SCREEN */}
             {isSuccessAnimating ? (
@@ -256,10 +279,14 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white tracking-tight">
-                    {successInfo?.isConfirmed ? 'Статус подтверждён: Нуждается в помощи' : 'Статус обновлён: Работает'}
+                    {successInfo?.isConfirmed 
+                      ? (lang === 'ru' ? 'Статус подтверждён: Нуждается в помощи' : 'Holat tasdiqlandi: Yordamga muhtoj')
+                      : (lang === 'ru' ? 'Статус обновлён: Работает' : 'Holat yangilandi: Band')}
                   </h3>
                   <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto leading-relaxed">
-                    Данные по гражданину «<strong className="text-white">{successInfo?.name}</strong>» зафиксированы инспектором махалли.
+                    {lang === 'ru'
+                      ? <>Данные по гражданину «<strong className="text-white">{successInfo?.name}</strong>» зафиксированы инспектором махалли.</>
+                      : <>«<strong className="text-white">{successInfo?.name}</strong>» bo‘yicha ma’lumotlar yetakchi tomonidan qayd etildi.</>}
                   </p>
                 </div>
                 <div className="w-40 h-1 bg-surface-3 rounded-full mx-auto overflow-hidden">
@@ -276,10 +303,10 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-white tracking-tight">
-                        {lang === 'ru' ? 'Результат подворового опроса' : 'Суҳбат натижаси'}
+                        {lang === 'ru' ? 'Результат подворового опроса' : 'Xonadonbay suhbat natijasi'}
                       </h3>
                       <p className="text-[11px] text-slate-400">
-                        {lang === 'ru' ? 'Фиксация реального статуса занятости' : 'Бандлик ҳолатини қайд этиш'}
+                        {lang === 'ru' ? 'Фиксация реального статуса занятости' : 'Bandlik holatini qayd etish'}
                       </p>
                     </div>
                   </div>
@@ -300,43 +327,48 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                       <div className="p-3.5 bg-surface-2 rounded-xl border border-white/[0.08] space-y-1.5">
                         <div className="text-sm font-bold text-white">{target.full_name_demo}</div>
                         <div className="text-xs text-slate-300 flex items-center gap-3">
-                          <span>📍 Махалля: <strong className="text-white">{target.makhalla}</strong></span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-slate-400" />
+                            <span>{getMahallaName(target.makhalla, lang)}</span>
+                          </span>
                           <span>•</span>
-                          <span>Возраст: <strong className="text-white">{target.age} лет</strong></span>
+                          <span>{lang === 'ru' ? 'Возраст:' : 'Yoshi:'} <strong className="text-white">{target.age} {lang === 'ru' ? 'лет' : 'yosh'}</strong></span>
                         </div>
                         <div className="text-xs text-slate-300 pt-0.5">
-                          Образование: <strong className="text-indigo-400">{target.education} ({target.specialty})</strong>
+                          {tr.newYouthEducation}: <strong className="text-slate-200">{getEducationName(target.education, lang)} ({target.specialty})</strong>
                         </div>
                       </div>
 
                       <div>
                         <label className="block text-[11px] font-semibold text-slate-300 mb-1.5 uppercase tracking-wide">
-                          {lang === 'ru' ? 'Заметка инспектора по итогам беседы:' : 'Инспектор хулосаси:'}
+                          {tr.verifInspectorComment}
                         </label>
-                        <textarea
-                          value={verificationComment}
-                          onChange={(e) => setVerificationComment(e.target.value)}
-                          rows={3}
-                          className="w-full bg-surface-2 border border-white/[0.08] rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
-                          placeholder={lang === 'ru' ? 'Например: не работает, желает пройти курсы в Моноцентре...' : 'Хулоса ёзинг...'}
-                        />
+                        <div className="bg-surface-2 border border-white/[0.08] hover:border-white/[0.14] focus-within:border-indigo-500/70 rounded-xl p-3">
+                          <textarea
+                            value={verificationComment}
+                            onChange={(e) => setVerificationComment(e.target.value)}
+                            rows={3}
+                            className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none resize-none"
+                            placeholder={tr.verifCommentPlaceholder}
+                          />
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2.5 pt-2">
                         <button
                           onClick={() => handleConfirmAction(true)}
-                          className="py-2.5 px-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-glow-rose transition-all flex items-center justify-center gap-1.5"
+                          className="py-2.5 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-glow-brand transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Ёрдамга муҳтож'}</span>
+                          <span>{lang === 'ru' ? 'Нуждается в помощи' : 'Yordamga muhtoj'}</span>
                         </button>
 
                         <button
                           onClick={() => handleConfirmAction(false)}
-                          className="py-2.5 px-3.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+                          className="py-2.5 px-3.5 bg-surface-3 hover:bg-surface-card text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          <span>{lang === 'ru' ? 'Работает / Занят' : 'Банд (ишлайди)'}</span>
+                          <span>{lang === 'ru' ? 'Работает / Занят' : 'Band (ishlaydi)'}</span>
                         </button>
                       </div>
                     </div>
@@ -346,23 +378,24 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
             )}
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Candidates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {neetCandidates.map(youth => {
+      <div key={filterVerification + selectedMakhalla} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {neetCandidates.map((youth, idx) => {
           const isPending = youth.neet_verification === 'pending_verification';
-          const firstProg = supportPrograms.find(p => p.id === youth.support_recommendation[0]);
+          const firstProg = supportPrograms.find(p => isProgramRecommended(youth, p)) || supportPrograms[0];
+          const progTitle = firstProg 
+            ? ((lang === 'uz' && firstProg.titleUz) ? firstProg.titleUz : firstProg.title) 
+            : '';
 
           return (
             <div
               key={youth.id}
-              className={`bg-surface-1 p-4 rounded-xl border transition-all flex flex-col justify-between shadow-surface-card hover:border-white/[0.18] ${
-                isPending 
-                  ? 'border-rose-500/30 bg-gradient-to-b from-rose-950/10 to-surface-1' 
-                  : 'border-emerald-500/30 bg-gradient-to-b from-emerald-950/10 to-surface-1'
-              }`}
+              style={{ animationDelay: `${idx * 45}ms` }}
+              className="animate-card-cascade bg-surface-1 p-4 rounded-xl border border-white/[0.08] hover:border-white/[0.16] transition-all flex flex-col justify-between shadow-surface-card"
             >
               <div className="space-y-2.5">
                 
@@ -373,39 +406,33 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                       {youth.full_name_demo}
                     </h3>
                     <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-                        {youth.makhalla}
+                      <span className="flex items-center gap-1 text-slate-300">
+                        <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                        {getMahallaName(youth.makhalla, lang)}
                       </span>
                       <span>•</span>
-                      <span>{youth.age} лет</span>
+                      <span>{youth.age} {lang === 'ru' ? 'лет' : 'yosh'}</span>
                     </div>
                   </div>
 
-                  <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold whitespace-nowrap flex items-center gap-1 ${
-                      isPending
-                        ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
-                        : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                    }`}
-                  >
-                    {isPending ? <Clock className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
-                    <span>{isPending ? (lang === 'ru' ? 'Ожидает визита' : 'Текширувда') : (lang === 'ru' ? 'Опрошен' : 'Тасдиқланган')}</span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-surface-2 text-slate-300 border border-white/[0.08] text-[11px] font-medium whitespace-nowrap">
+                    <span className={`w-1.5 h-1.5 rounded-full ${isPending ? 'bg-amber-400/80' : 'bg-emerald-400/80'}`}></span>
+                    <span>{isPending ? tr.triageCardNeetBadge : tr.triageCardVerifiedBadge}</span>
                   </span>
                 </div>
 
                 {/* Education & Situation Summary */}
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-center gap-1.5 text-slate-300 text-[11px]">
-                    <GraduationCap className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-                    <span className="font-medium text-white">{youth.education}</span>
+                    <GraduationCap className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                    <span className="font-medium text-white">{getEducationName(youth.education, lang)}</span>
                     {youth.specialty && youth.specialty !== '—' && (
                       <span className="text-slate-400 truncate">({youth.specialty})</span>
                     )}
                   </div>
 
                   <p className="text-slate-300 text-[11px] leading-relaxed line-clamp-2 bg-surface-2/80 p-2 rounded-lg border border-white/[0.06]">
-                    {youth.notes || 'Отсутствуют налоговые отчисления более 6 месяцев.'}
+                    {youth.notes || (lang === 'ru' ? 'Отсутствуют налоговые отчисления более 6 месяцев.' : '6 oydan ortiq rasmiy daromad va soliq to‘lovlari mavjud emas.')}
                   </p>
                 </div>
 
@@ -413,9 +440,9 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
                 {firstProg && (
                   <div className="pt-0.5">
                     <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                      <Sparkles className="w-3 h-3 text-yellow-400 flex-shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400/80 flex-shrink-0" />
                       <span className="text-slate-300 font-medium truncate">
-                        {firstProg.title.split('—')[0]}
+                        {progTitle.split('—')[0]}
                       </span>
                     </div>
                   </div>
@@ -427,26 +454,26 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
               <div className="pt-3 mt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
                 <button
                   onClick={() => onOpenProfile(youth)}
-                  className="px-2.5 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-3 text-slate-300 text-xs font-semibold transition-all border border-white/[0.08]"
+                  className="h-8 px-3 rounded-lg bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-semibold transition-all border border-white/[0.08] flex items-center justify-center"
                 >
-                  {lang === 'ru' ? 'Анкета' : 'Анкета'}
+                  {tr.triageCardBtnProfile}
                 </button>
 
                 {isPending ? (
                   <button
                     onClick={() => handleStartVerify(youth)}
-                    className="flex-1 py-1.5 px-3 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="flex-1 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <UserCheck className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Провести опрос' : 'Суҳбат ўтказиш'}</span>
+                    <span>{tr.triageCardBtnSurvey}</span>
                   </button>
                 ) : (
                   <button
                     onClick={() => onRouteProgram(youth)}
-                    className="flex-1 py-1.5 px-3 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="flex-1 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'ru' ? 'Направить на обучение' : 'Ўқишга йўналтириш'}</span>
+                    <span>{tr.triageCardBtnRoute}</span>
                   </button>
                 )}
               </div>
@@ -460,12 +487,10 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
         <div className="bg-surface-1 rounded-2xl p-12 text-center text-slate-400 border border-white/[0.08]">
           <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2 opacity-90" />
           <h3 className="text-sm font-bold text-white mb-1">
-            {lang === 'ru' ? 'Все визиты завершены!' : 'Барча суҳбатлар ўтказилган'}
+            {tr.triageZeroTitle}
           </h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            {lang === 'ru' 
-              ? 'В выбранной махалле нет неработающей молодёжи, ожидающей проверки.' 
-              : 'Ушбу маҳаллада текширув кутаётган ёшлар қолмади.'}
+            {tr.triageZeroDesc}
           </p>
         </div>
       )}

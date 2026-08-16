@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRole, YouthProfile, EmploymentStatus, SupportProgram } from './types';
 import { INITIAL_YOUTH_DATA } from './data/mockYouthData';
 import { Header } from './components/Header';
@@ -26,6 +26,12 @@ export const App: React.FC = () => {
   const [lang, setLang] = useState<'ru' | 'uz'>('ru');
   const [supportPrograms, setSupportPrograms] = useState<SupportProgram[]>(SUPPORT_PROGRAMS);
 
+  useEffect(() => {
+    document.title = lang === 'ru' 
+      ? 'Ёшлар Бандлиги — Система мониторинга занятости и маршрутизации молодёжи'
+      : 'Yoshlar Bandligi — Yoshlar bandligi monitoringi va yo‘naltirish tizimi';
+  }, [lang]);
+
   // Modals & Drawers state
   const [selectedYouthForModal, setSelectedYouthForModal] = useState<YouthProfile | null>(null);
   const [youthForRouting, setYouthForRouting] = useState<YouthProfile | null>(null);
@@ -35,6 +41,47 @@ export const App: React.FC = () => {
   const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [showPitchGuide, setShowPitchGuide] = useState<boolean>(false);
   const [registryInitialFilter, setRegistryInitialFilter] = useState<string>('all');
+
+  // Centralized body scroll lock when any modal is active
+  const isAnyModalOpen = Boolean(
+    selectedYouthForModal || 
+    youthForRouting || 
+    showNewYouthModal || 
+    showNewProgramModal || 
+    showExportModal || 
+    showImportModal || 
+    showPitchGuide
+  );
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.removeProperty('overflow');
+    };
+  }, [isAnyModalOpen]);
+
+  // Handle ESC key to close any active modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedYouthForModal(null);
+        setYouthForRouting(null);
+        setShowNewYouthModal(false);
+        setShowNewProgramModal(false);
+        setShowExportModal(false);
+        setShowImportModal(false);
+        setShowPitchGuide(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Filtered dataset based on currently chosen Makhalla
   const currentScopedList = selectedMakhalla === 'all'
@@ -211,7 +258,6 @@ export const App: React.FC = () => {
           onSelectTab={setActiveTab}
           neetPendingCount={neetPendingCount}
           totalYouthCount={currentScopedList.length}
-          onOpenNewYouth={() => setShowNewYouthModal(true)}
           lang={lang}
         />
       </div>
@@ -231,66 +277,73 @@ export const App: React.FC = () => {
           }}
         />
 
-        {/* Tab Views */}
-        {activeTab === 'dashboard' && (
-          <DashboardView
-            youthList={currentScopedList}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onNavigateTab={setActiveTab}
-            onOpenProfile={setSelectedYouthForModal}
-          />
-        )}
+        {/* Tab Views with Smooth Micro-Transition */}
+        <div key={activeTab} className="view-transition">
+          {activeTab === 'dashboard' && (
+            <DashboardView
+              youthList={currentScopedList}
+              allYouthList={youthList}
+              selectedMakhalla={selectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onNavigateTab={setActiveTab}
+              onOpenProfile={setSelectedYouthForModal}
+            />
+          )}
 
-        {activeTab === 'triage' && (
-          <NeetTriageView
-            youthList={currentScopedList}
-            supportPrograms={supportPrograms}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onVerifyNeet={handleVerifyNeet}
-            onOpenProfile={setSelectedYouthForModal}
-            onRouteProgram={setYouthForRouting}
-          />
-        )}
+          {activeTab === 'triage' && (
+            <NeetTriageView
+              youthList={youthList}
+              supportPrograms={supportPrograms}
+              selectedMakhalla={selectedMakhalla}
+              onSelectMakhalla={setSelectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onVerifyNeet={handleVerifyNeet}
+              onOpenProfile={setSelectedYouthForModal}
+              onRouteProgram={setYouthForRouting}
+            />
+          )}
 
-        {activeTab === 'registry' && (
-          <YouthRegistryView
-            youthList={currentScopedList}
-            selectedMakhalla={selectedMakhalla}
-            userRole={selectedRole}
-            lang={lang}
-            onOpenProfile={setSelectedYouthForModal}
-            onOpenNewYouth={() => setShowNewYouthModal(true)}
-            onOpenExport={() => setShowExportModal(true)}
-            onOpenImport={() => setShowImportModal(true)}
-            initialFilterStatus={registryInitialFilter}
-          />
-        )}
+          {activeTab === 'registry' && (
+            <YouthRegistryView
+              youthList={youthList}
+              selectedMakhalla={selectedMakhalla}
+              onSelectMakhalla={setSelectedMakhalla}
+              userRole={selectedRole}
+              lang={lang}
+              onOpenProfile={setSelectedYouthForModal}
+              onOpenNewYouth={() => setShowNewYouthModal(true)}
+              onOpenExport={() => setShowExportModal(true)}
+              onOpenImport={() => setShowImportModal(true)}
+              initialFilterStatus={registryInitialFilter}
+            />
+          )}
 
-        {activeTab === 'map' && (
-          <DistrictMapView
-            youthList={youthList}
-            onSelectMakhalla={setSelectedMakhalla}
-            lang={lang}
-            onNavigateRegistry={() => setActiveTab('registry')}
-          />
-        )}
+          {activeTab === 'map' && (
+            <DistrictMapView
+              youthList={youthList}
+              selectedMakhalla={selectedMakhalla}
+              onSelectMakhalla={setSelectedMakhalla}
+              lang={lang}
+              onNavigateRegistry={() => setActiveTab('registry')}
+              onOpenProfile={(youth) => setSelectedYouthForModal(youth)}
+            />
+          )}
 
-        {activeTab === 'programs' && (
-          <SupportProgramsView
-            youthList={currentScopedList}
-            supportPrograms={supportPrograms}
-            lang={lang}
-            onNavigateRegistryWithFilter={(f) => {
-              setRegistryInitialFilter(f);
-              setActiveTab('registry');
-            }}
-            onOpenNewProgram={() => setShowNewProgramModal(true)}
-          />
-        )}
+          {activeTab === 'programs' && (
+            <SupportProgramsView
+              youthList={currentScopedList}
+              supportPrograms={supportPrograms}
+              lang={lang}
+              onNavigateRegistryWithFilter={(f) => {
+                setRegistryInitialFilter(f);
+                setActiveTab('registry');
+              }}
+              onOpenNewProgram={() => setShowNewProgramModal(true)}
+            />
+          )}
+        </div>
 
       </main>
 

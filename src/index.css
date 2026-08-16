@@ -14,6 +14,23 @@
       radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 45%);
     background-attachment: fixed;
   }
+
+  /* Global Safari/macOS Native Form Reset to prevent white control backgrounds */
+  input, textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    color-scheme: dark;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="search"],
+  textarea {
+    background-color: transparent;
+    color: #ffffff;
+  }
 }
 
 /* Custom Inky Scrollbar */
@@ -30,6 +47,146 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #374151;
+}
+
+/* Linear / Raycast Smooth Micro-Transitions */
+@keyframes fadeInView {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.view-transition {
+  animation: fadeInView 0.3s ease-out forwards;
+}
+
+/* Sequential Chart Animations */
+@keyframes donutSliceDraw {
+  0% {
+    stroke-dasharray: 0 1000;
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes barGrowCascading {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Staggered Row & Card Cascade Animations */
+@keyframes rowSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-row-slide {
+  animation: rowSlideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes cardPopCascade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-cascade {
+  animation: cardPopCascade 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Smooth Pitch Guide Slide Transitions */
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-right {
+  animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Radar & Timeline Beacon Animations */
+@keyframes radarPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-radar-pulse {
+  animation: radarPulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes timelineNodeGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.animate-timeline-node {
+  animation: timelineNodeGlow 2.5s infinite;
 }
 
 /* Linear / Raycast Style Surfaces */
@@ -83,6 +240,36 @@
 .leaflet-container {
   background-color: #08090C !important;
   font-family: inherit !important;
+  outline: none !important;
+}
+
+/* Remove ugly browser focus bounding box rectangle on SVG paths, markers and map */
+.leaflet-container :focus,
+.leaflet-container :focus-visible,
+.leaflet-interactive,
+.leaflet-interactive:focus,
+.leaflet-interactive:focus-visible,
+.leaflet-pane svg path,
+.leaflet-pane svg path:focus,
+.leaflet-pane svg path:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Hardware accelerated smooth color transitions for polygons */
+.leaflet-pane svg path {
+  transition: stroke 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              fill 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              stroke-width 0.25s ease, 
+              fill-opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: stroke, fill, fill-opacity;
+  outline: none !important;
+}
+
+.custom-mahalla-label > div {
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  will-change: background, border-color;
 }
 
 .leaflet-popup-content-wrapper {
@@ -132,4 +319,23 @@
 .leaflet-bar a:hover {
   background-color: #4f46e5 !important;
   color: #ffffff !important;
+}
+
+@keyframes markerPulseRing {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
