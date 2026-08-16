@@ -13,6 +13,7 @@ interface HeaderProps {
   onOpenPitchGuide: () => void;
   lang: 'ru' | 'uz';
   onToggleLang: () => void;
+  isRealtimeActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,22 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-surface-2 border border-white/[0.12] flex-shrink-0 flex items-center justify-center relative overflow-hidden shadow-sm">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 relative z-10" fill="none">
-                <path 
-                  d="M4.5 4.5L12 12.5L19.5 4.5M12 12.5V20" 
-                  stroke="url(#govtech-logo-grad)" 
-                  strokeWidth="2.5" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                />
-                <defs>
-                  <linearGradient id="govtech-logo-grad" x1="4.5" y1="4.5" x2="19.5" y2="20" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#818CF8" />
-                    <stop offset="1" stopColor="#38BDF8" />
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div className="w-9 h-9 rounded-xl bg-surface-2 border border-white/[0.12] flex-shrink-0 flex items-center justify-center relative overflow-hidden shadow-sm p-1">
+              <img src="/logo.svg" alt="Yoshlar Bandligi" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -102,12 +89,27 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{lang === 'ru' ? 'RU' : 'O‘Z'}</span>
             </button>
 
+            {/* Telegram Bot Live Sync Badge with Logo Avatar */}
+            <a
+              href="https://t.me/Eshlar_bandligi_bot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 px-2.5 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-medium rounded-xl border border-white/[0.08] hover:border-white/[0.16] shadow-sm transition-all duration-200 group"
+              title={lang === 'uz' ? 'Telegram ботга ўтиш (@Eshlar_bandligi_bot)' : 'Открыть Telegram бот (@Eshlar_bandligi_bot)'}
+            >
+              <div className="w-4 h-4 rounded-md overflow-hidden bg-surface-3 flex items-center justify-center">
+                <img src="/logo.svg" alt="Bot Avatar" className="w-full h-full object-contain" />
+              </div>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform duration-200"></span>
+              <span className="font-mono text-[11px] text-slate-300 group-hover:text-white">@Eshlar_bandligi_bot</span>
+            </a>
+
             {/* Pitch Button */}
             <button
               onClick={onOpenPitchGuide}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-slate-300 hover:text-white text-xs font-medium rounded-xl border border-white/[0.08] hover:border-white/[0.16] shadow-sm transition-all duration-200 group"
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" />
               <span>{tr.pitchGuideBtn}</span>
             </button>
 

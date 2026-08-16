@@ -17,6 +17,10 @@ import { ExportModal } from './components/ExportModal';
 import { SUPPORT_PROGRAMS } from './data/supportPrograms';
 import { ImportModal } from './components/ImportModal';
 import { PitchGuideModal } from './components/PitchGuideModal';
+import { LiveToast, ToastMessage } from './components/LiveToast';
+import { AiCopilotWidget } from './components/AiCopilotWidget';
+import { useRealtimeSync } from './hooks/useRealtimeSync';
+import { api } from './services/api';
 
 export const App: React.FC = () => {
   const [youthList, setYouthList] = useState<YouthProfile[]>(INITIAL_YOUTH_DATA);
@@ -25,6 +29,24 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [lang, setLang] = useState<'ru' | 'uz'>('ru');
   const [supportPrograms, setSupportPrograms] = useState<SupportProgram[]>(SUPPORT_PROGRAMS);
+  const [currentToast, setCurrentToast] = useState<ToastMessage | null>(null);
+
+  // Initial load from backend database
+  useEffect(() => {
+    api.getYouth().then((data) => {
+      if (data && data.length > 0) {
+        setYouthList(data);
+      }
+    }).catch(() => {});
+  }, []);
+
+  // Real-Time WebSocket Listener (Telegram Bot & Backend events)
+  const { isConnected } = useRealtimeSync({
+    onLiveUpdate: (newYouthList, event) => {
+      setYouthList(newYouthList);
+      setCurrentToast(event);
+    }
+  });
 
   useEffect(() => {
     document.title = lang === 'ru' 
@@ -131,6 +153,8 @@ export const App: React.FC = () => {
         neet_verification: isNeetConfirmed ? 'verified' : 'rejected'
       } : null);
     }
+    // Call Backend API in background
+    api.verifyTriage(id, isNeetConfirmed ? 'verified' : 'rejected', officerName, isNeetConfirmed ? 'безработный' : 'занят', comment).catch(() => {});
   };
 
   const handleUpdateStatus = (id: string, newStatus: EmploymentStatus, comment: string) => {
@@ -167,6 +191,9 @@ export const App: React.FC = () => {
         last_updated: today
       } : null);
     }
+
+    // Call Backend API in background
+    api.updateStatus(id, newStatus, officerName, comment).catch(() => {});
   };
 
   const handleAssignProgram = (youthId: string, program: SupportProgram, notes?: string) => {
@@ -208,10 +235,14 @@ export const App: React.FC = () => {
     }
 
     setYouthForRouting(null);
+
+    // Call Backend API in background
+    api.assignProgram(youthId, program, officerName).catch(() => {});
   };
 
   const handleAddYouth = (newYouth: YouthProfile) => {
     setYouthList(prev => [newYouth, ...prev]);
+    api.createYouth(newYouth).catch(() => {});
   };
 
   // Demo step trigger from Pitch Deck
@@ -251,6 +282,7 @@ export const App: React.FC = () => {
           onOpenPitchGuide={() => setShowPitchGuide(true)}
           lang={lang}
           onToggleLang={() => setLang(prev => prev === 'ru' ? 'uz' : 'ru')}
+          isRealtimeActive={isConnected}
         />
 
         <Navigation
@@ -413,6 +445,36 @@ export const App: React.FC = () => {
           lang={lang}
         />
       )}
+
+      {/* Live Telegram WebSocket Toast Notification */}
+      <LiveToast
+        toast={currentToast}
+        lang={lang}
+        onClose={() => setCurrentToast(null)}
+      />
+
+      {/* Local GovTech AI Copilot Widget */}
+      <AiCopilotWidget
+        lang={lang}
+        onHighlightMahallas={(mahallas) => {
+          if (mahallas.length > 0) {
+            setSelectedMakhalla(mahallas[0]);
+            setActiveTab('map');
+          }
+        }}
+        onNavigateTab={(tab) => {
+          setActiveTab(tab as any);
+        }}
+        onSelectMahalla={(mahalla) => {
+          setSelectedMakhalla(mahalla);
+        }}
+        onOpenYouthModal={(youthId) => {
+          const found = youthList.find(y => y.id === youthId);
+          if (found) {
+            setSelectedYouthForModal(found);
+          }
+        }}
+      />
 
     </div>
   );

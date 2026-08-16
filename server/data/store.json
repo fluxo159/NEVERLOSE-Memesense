@@ -1,0 +1,1911 @@
+{
+  "youth": [
+    {
+      "id": "y_061",
+      "full_name_demo": "Тургунбаев Даулет",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 21,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 000-00-00",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности",
+      "education": "Средне-специальное",
+      "specialty": "—",
+      "skills": [
+        "Водительские права",
+        "Базовый ПК"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "prog_ishga_marhamat_tech",
+        "prog_district_job_fair"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Первичное внесение через опрос «Ёшлар етакчиси»",
+      "status_history": [
+        {
+          "date": "2026-08-16",
+          "status": "безработный",
+          "comment": "Первичная регистрация через Telegram",
+          "officer": "Ёшлар етакчиси"
+        }
+      ]
+    },
+    {
+      "id": "y_001",
+      "full_name_demo": "Каримов Бехзод",
+      "makhalla": "Олий Ҳиммат",
+      "age": 19,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 107-11-21",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_002",
+      "full_name_demo": "Турсунов Сардор",
+      "makhalla": "Шаҳриобод",
+      "age": 20,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 114-12-22",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_003",
+      "full_name_demo": "Умарова Нигина",
+      "makhalla": "Авайхон",
+      "age": 21,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 121-13-23",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_004",
+      "full_name_demo": "Рахимов Темур",
+      "makhalla": "Дархон",
+      "age": 22,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 128-14-24",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_005",
+      "full_name_demo": "Юсупов Отабек",
+      "makhalla": "Феруза",
+      "age": 23,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 135-15-25",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_006",
+      "full_name_demo": "Назарова Гулираъно",
+      "makhalla": "Қорасув",
+      "age": 24,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 142-16-26",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_007",
+      "full_name_demo": "Хасанов Рустам",
+      "makhalla": "Ҳумо",
+      "age": 25,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 149-17-27",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "verified",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_008",
+      "full_name_demo": "Эргашев Санжар",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 26,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 156-18-28",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_009",
+      "full_name_demo": "Содикова Шахноза",
+      "makhalla": "Олий Ҳиммат",
+      "age": 27,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 163-19-29",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_010",
+      "full_name_demo": "Азизов Жавохир",
+      "makhalla": "Шаҳриобод",
+      "age": 28,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 170-20-30",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_011",
+      "full_name_demo": "Каримов Бехзод",
+      "makhalla": "Авайхон",
+      "age": 29,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 177-21-31",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_012",
+      "full_name_demo": "Турсунова Нигина",
+      "makhalla": "Дархон",
+      "age": 30,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 184-22-32",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_013",
+      "full_name_demo": "Умаров Бобур",
+      "makhalla": "Феруза",
+      "age": 18,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 191-23-33",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_014",
+      "full_name_demo": "Рахимов Темур",
+      "makhalla": "Қорасув",
+      "age": 19,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 198-24-34",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_015",
+      "full_name_demo": "Юсупова Гулираъно",
+      "makhalla": "Ҳумо",
+      "age": 20,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 205-25-35",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_016",
+      "full_name_demo": "Назаров Дониёр",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 21,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 212-26-36",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_017",
+      "full_name_demo": "Хасанов Рустам",
+      "makhalla": "Олий Ҳиммат",
+      "age": 22,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 219-27-37",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_018",
+      "full_name_demo": "Эргашева Шахноза",
+      "makhalla": "Шаҳриобод",
+      "age": 23,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 226-28-38",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_019",
+      "full_name_demo": "Содиков Алишер",
+      "makhalla": "Авайхон",
+      "age": 24,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 233-29-39",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_020",
+      "full_name_demo": "Азизов Жавохир",
+      "makhalla": "Дархон",
+      "age": 25,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 240-30-40",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_021",
+      "full_name_demo": "Каримова Нигина",
+      "makhalla": "Феруза",
+      "age": 26,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 247-31-41",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "verified",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_022",
+      "full_name_demo": "Турсунов Сардор",
+      "makhalla": "Қорасув",
+      "age": 27,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 254-32-42",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_023",
+      "full_name_demo": "Умаров Бобур",
+      "makhalla": "Ҳумо",
+      "age": 28,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 261-33-43",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_024",
+      "full_name_demo": "Рахимова Гулираъно",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 29,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 268-34-44",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_025",
+      "full_name_demo": "Юсупов Отабек",
+      "makhalla": "Олий Ҳиммат",
+      "age": 30,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 275-35-45",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_026",
+      "full_name_demo": "Назаров Дониёр",
+      "makhalla": "Шаҳриобод",
+      "age": 18,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 282-36-46",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_027",
+      "full_name_demo": "Хасанова Шахноза",
+      "makhalla": "Авайхон",
+      "age": 19,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 289-37-47",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_028",
+      "full_name_demo": "Эргашев Санжар",
+      "makhalla": "Дархон",
+      "age": 20,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 296-38-48",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_029",
+      "full_name_demo": "Содиков Алишер",
+      "makhalla": "Феруза",
+      "age": 21,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 303-39-49",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_030",
+      "full_name_demo": "Азизова Нигина",
+      "makhalla": "Қорасув",
+      "age": 22,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 310-40-50",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_031",
+      "full_name_demo": "Каримов Бехзод",
+      "makhalla": "Ҳумо",
+      "age": 23,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 317-41-51",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_032",
+      "full_name_demo": "Турсунов Сардор",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 24,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 324-42-52",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_033",
+      "full_name_demo": "Умарова Гулираъно",
+      "makhalla": "Олий Ҳиммат",
+      "age": 25,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 331-43-53",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_034",
+      "full_name_demo": "Рахимов Темур",
+      "makhalla": "Шаҳриобод",
+      "age": 26,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 338-44-54",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_035",
+      "full_name_demo": "Юсупов Отабек",
+      "makhalla": "Авайхон",
+      "age": 27,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 345-45-55",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "verified",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_036",
+      "full_name_demo": "Назарова Шахноза",
+      "makhalla": "Дархон",
+      "age": 28,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 352-46-56",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_037",
+      "full_name_demo": "Хасанов Рустам",
+      "makhalla": "Феруза",
+      "age": 29,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 359-47-57",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_038",
+      "full_name_demo": "Эргашев Санжар",
+      "makhalla": "Қорасув",
+      "age": 30,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 366-48-58",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_039",
+      "full_name_demo": "Содикова Нигина",
+      "makhalla": "Ҳумо",
+      "age": 18,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 373-49-59",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_040",
+      "full_name_demo": "Азизов Жавохир",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 19,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 380-50-60",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_041",
+      "full_name_demo": "Каримов Бехзод",
+      "makhalla": "Олий Ҳиммат",
+      "age": 20,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 387-51-61",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_042",
+      "full_name_demo": "Турсунова Гулираъно",
+      "makhalla": "Шаҳриобод",
+      "age": 21,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 394-52-62",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_043",
+      "full_name_demo": "Умаров Бобур",
+      "makhalla": "Авайхон",
+      "age": 22,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 401-53-63",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_044",
+      "full_name_demo": "Рахимов Темур",
+      "makhalla": "Дархон",
+      "age": 23,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 408-54-64",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_045",
+      "full_name_demo": "Юсупова Шахноза",
+      "makhalla": "Феруза",
+      "age": 24,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 415-55-65",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_046",
+      "full_name_demo": "Назаров Дониёр",
+      "makhalla": "Қорасув",
+      "age": 25,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 422-56-66",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_047",
+      "full_name_demo": "Хасанов Рустам",
+      "makhalla": "Ҳумо",
+      "age": 26,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 429-57-67",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_048",
+      "full_name_demo": "Эргашева Нигина",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 27,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 436-58-68",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_049",
+      "full_name_demo": "Содиков Алишер",
+      "makhalla": "Олий Ҳиммат",
+      "age": 28,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 443-59-69",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "verified",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_050",
+      "full_name_demo": "Азизов Жавохир",
+      "makhalla": "Шаҳриобод",
+      "age": 29,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 450-60-70",
+      "employment_status": "предприниматель",
+      "activity_type": "Самозанятость / Торговля",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "предприниматель",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_051",
+      "full_name_demo": "Каримова Гулираъно",
+      "makhalla": "Авайхон",
+      "age": 30,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 457-61-71",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_052",
+      "full_name_demo": "Турсунов Сардор",
+      "makhalla": "Дархон",
+      "age": 18,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 464-62-72",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_053",
+      "full_name_demo": "Умаров Бобур",
+      "makhalla": "Феруза",
+      "age": 19,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 471-63-73",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_054",
+      "full_name_demo": "Рахимова Шахноза",
+      "makhalla": "Қорасув",
+      "age": 20,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 478-64-74",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_055",
+      "full_name_demo": "Юсупов Отабек",
+      "makhalla": "Ҳумо",
+      "age": 21,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 485-65-75",
+      "employment_status": "обучается",
+      "activity_type": "Студент вуза / колледжа",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "обучается",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_056",
+      "full_name_demo": "Назаров Дониёр",
+      "makhalla": "Буюк Ипак Йўли",
+      "age": 22,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 492-66-76",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Средне-специальное",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    },
+    {
+      "id": "y_057",
+      "full_name_demo": "Хасанова Нигина",
+      "makhalla": "Олий Ҳиммат",
+      "age": 23,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 499-67-77",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_058",
+      "full_name_demo": "Эргашев Санжар",
+      "makhalla": "Шаҳриобод",
+      "age": 24,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 506-68-78",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_059",
+      "full_name_demo": "Содиков Алишер",
+      "makhalla": "Авайхон",
+      "age": 25,
+      "gender": "Мужской",
+      "phone_demo": "+998 (90) 513-69-79",
+      "employment_status": "занят",
+      "activity_type": "Работа по найму",
+      "education": "Высшее",
+      "specialty": "Информационные технологии",
+      "skills": [
+        "Автоэлектрика",
+        "Python",
+        "Сервис"
+      ],
+      "is_neet": false,
+      "neet_verification": "verified",
+      "needs_support": false,
+      "support_recommendation": [],
+      "last_updated": "2026-08-16",
+      "notes": "Трудоустроен",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "занят",
+          "comment": "Первичный учёт"
+        }
+      ]
+    },
+    {
+      "id": "y_060",
+      "full_name_demo": "Азизова Гулираъно",
+      "makhalla": "Дархон",
+      "age": 26,
+      "gender": "Женский",
+      "phone_demo": "+998 (90) 520-70-80",
+      "employment_status": "безработный",
+      "activity_type": "нет деятельности (кандидат NEET)",
+      "education": "Высшее",
+      "specialty": "Бухгалтерский учёт",
+      "skills": [
+        "1С",
+        "Excel",
+        "Текстиль"
+      ],
+      "is_neet": true,
+      "neet_verification": "pending_verification",
+      "needs_support": true,
+      "support_recommendation": [
+        "Моноцентр «Ишга Мархамат»",
+        "IT-Park Ташкент"
+      ],
+      "last_updated": "2026-08-16",
+      "notes": "Требуется опрос по программе Ёшлар дафтари",
+      "status_history": [
+        {
+          "date": "2026-01-15",
+          "status": "безработный",
+          "comment": "Выявлен алгоритмическим скорингом в группу NEET"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "ev_0",
+      "type": "MAHALLA_SYNC",
+      "timestamp": "2026-08-16T04:40:23.288Z",
+      "mahalla": "Мирзо-Улугбекский район",
+      "author": "Система",
+      "messageRu": "База данных инициализирована и подключена к Telegram-боту.",
+      "messageUz": "Ma'lumotlar bazasi ishga tushirildi va Telegram botga ulandi."
+    }
+  ]
+}
