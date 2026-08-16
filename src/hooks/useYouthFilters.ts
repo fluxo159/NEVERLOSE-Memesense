@@ -18,6 +18,12 @@ export function useYouthFilters(
     setMakhallaFilterState(initialMakhalla !== 'all' ? initialMakhalla : 'all');
   }, [initialMakhalla]);
 
+  useEffect(() => {
+    if (initialFilterStatus !== undefined) {
+      setStatusFilter(initialFilterStatus || 'all');
+    }
+  }, [initialFilterStatus]);
+
   const setMakhallaFilter = (val: string) => {
     setMakhallaFilterState(val);
     if (onMakhallaChange) {

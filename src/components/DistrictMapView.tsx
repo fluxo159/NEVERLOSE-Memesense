@@ -425,8 +425,8 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
       const mahallaYouth = youthList.filter(y => y.makhalla === mahalla.name);
       const neetCount = mahallaYouth.filter(y => y.is_neet).length;
       const totalYouthInM = mahallaYouth.length;
-      const empCount = mahallaYouth.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель' || y.employment_status === 'обучается').length;
-      const empRate = totalYouthInM > 0 ? Math.round((empCount / totalYouthInM) * 100) : 85;
+      const empCount = mahallaYouth.filter(y => y.employment_status === 'занят' || y.employment_status === 'предприниматель' || y.employment_status === 'обучается' || y.employment_status === 'направлен на обучение').length;
+      const empRate = totalYouthInM > 0 ? Math.round((empCount / totalYouthInM) * 100) : 0;
       const supCount = mahallaYouth.filter(y => y.assigned_program || y.employment_status === 'направлен на обучение').length;
       const supRate = totalYouthInM > 0 ? Math.round((supCount / totalYouthInM) * 100) : 0;
 
@@ -1125,7 +1125,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             )}
 
             <span className="text-[11px] text-slate-500 font-mono">
-              Mirzo Ulug‘bek • 8 СГМ • 100 профилей
+              Mirzo Ulug‘bek • {MAKHALLAS_LIST.length} {lang === 'ru' ? 'СГМ' : 'MFY'} • {youthList.length} {lang === 'ru' ? 'профилей' : 'profil'}
             </span>
           </div>
 
@@ -1527,7 +1527,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       onClick={() => setYouthListFilter('all')}
                       className={`px-1.5 py-0.5 rounded transition-colors ${youthListFilter === 'all' ? 'bg-surface-3 text-white font-bold' : 'text-slate-400'}`}
                     >
-                      Все
+                      {lang === 'ru' ? 'Все' : 'Barchasi'}
                     </button>
                     <button
                       onClick={() => setYouthListFilter('neet')}
@@ -1539,7 +1539,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
                       onClick={() => setYouthListFilter('supported')}
                       className={`px-1.5 py-0.5 rounded transition-colors ${youthListFilter === 'supported' ? 'bg-surface-3 text-slate-200 font-bold' : 'text-slate-400'}`}
                     >
-                      Помощь
+                      {lang === 'ru' ? 'Помощь' : 'Ko‘mak'}
                     </button>
                   </div>
                 </div>
@@ -1597,7 +1597,7 @@ export const DistrictMapView: React.FC<DistrictMapViewProps> = ({
             <Eye className="w-4 h-4 text-slate-400 group-hover:text-slate-200" />
             <span>
               {selectedMakhalla === 'all'
-                ? (lang === 'ru' ? 'Открыть реестр молодёжи района (100 чел.)' : 'Butun tuman yoshlar ro‘yxatini ochish (100 nafar)')
+                ? (lang === 'ru' ? `Открыть реестр молодёжи района (${totalDistrict} чел.)` : `Butun tuman yoshlar ro‘yxatini ochish (${totalDistrict} nafar)`)
                 : (lang === 'ru' ? `Открыть реестр молодёжи махалли «${currentMahalla.name}»` : `«${getMahallaName(currentMahalla.name, lang)}» mahallasi yoshlar ro‘yxatini ochish`)}
             </span>
           </button>

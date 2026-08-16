@@ -63,11 +63,15 @@ export const NeetTriageView: React.FC<NeetTriageViewProps> = ({
     : youthList.filter(y => y.makhalla === selectedMakhalla);
 
   const neetCandidates = scopedYouthList.filter(youth => {
-    if (!youth.is_neet && youth.neet_verification !== 'verified') return false;
-
-    if (filterVerification === 'pending' && youth.neet_verification !== 'pending_verification') return false;
-    if (filterVerification === 'verified' && youth.neet_verification !== 'verified') return false;
-    if (filterVerification === 'rejected' && youth.neet_verification !== 'rejected') return false;
+    if (filterVerification === 'pending') {
+      if (!youth.is_neet || youth.neet_verification !== 'pending_verification') return false;
+    } else if (filterVerification === 'verified') {
+      if (youth.neet_verification !== 'verified') return false;
+    } else if (filterVerification === 'rejected') {
+      if (youth.neet_verification !== 'rejected') return false;
+    } else if (filterVerification === 'all') {
+      if (!youth.is_neet && youth.neet_verification !== 'verified' && youth.neet_verification !== 'rejected') return false;
+    }
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
