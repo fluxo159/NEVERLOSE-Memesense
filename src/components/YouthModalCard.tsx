@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, MapPin, Phone, GraduationCap, Calendar, 
-  Sparkles, CheckCircle2, History, ArrowRight, ShieldCheck, 
-  Printer, Wrench, Code, Gift, TrendingUp, Briefcase, User, AlertCircle
+  Route, CheckCircle2, History, ArrowRight, ShieldCheck, 
+  Printer, Wrench, Code, Gift, TrendingUp, Briefcase, User, AlertCircle,
+  Search, Check, Sparkles, Filter
 } from 'lucide-react';
 import { YouthProfile, EmploymentStatus, UserRole, SupportProgram } from '../types';
 import { CustomSelect } from './ui/CustomSelect';
@@ -31,6 +33,8 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
   const [statusComment, setStatusComment] = useState<string>('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'recommendations'>('overview');
+  const [programFilter, setProgramFilter] = useState<'all' | 'recommended' | 'training' | 'finance' | 'employment'>('all');
+  const [programSearch, setProgramSearch] = useState<string>('');
 
   const handleSaveStatus = () => {
     if (newStatus !== youth.employment_status || statusComment) {
@@ -49,21 +53,21 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
     { value: 'не уточнено', label: lang === 'ru' ? 'Не уточнено' : 'Aniqlanmagan' }
   ];
 
-  const getProgramIcon = (name: string) => {
-    switch (name) {
-      case 'Wrench': return <Wrench className="w-4 h-4 text-slate-300" />;
-      case 'Code': return <Code className="w-4 h-4 text-slate-300" />;
-      case 'Gift': return <Gift className="w-4 h-4 text-slate-300" />;
-      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-slate-300" />;
-      case 'GraduationCap': return <GraduationCap className="w-4 h-4 text-slate-300" />;
-      default: return <Briefcase className="w-4 h-4 text-slate-300" />;
+  const getProgramIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Wrench': return <Wrench className="w-4 h-4 text-amber-400" />;
+      case 'Code': return <Code className="w-4 h-4 text-cyan-400" />;
+      case 'Gift': return <Gift className="w-4 h-4 text-indigo-400" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-emerald-400" />;
+      case 'Briefcase': return <Briefcase className="w-4 h-4 text-purple-400" />;
+      default: return <Sparkles className="w-4 h-4 text-indigo-400" />;
     }
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
+      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150 cursor-pointer"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
@@ -144,7 +148,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
               activeTab === 'recommendations' ? 'border-indigo-400 text-white' : 'border-transparent hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            <Route className="w-3.5 h-3.5 text-indigo-400" />
             <span>{tr.profileCardTabRouting}</span>
           </button>
         </div>
@@ -291,69 +295,192 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
 
           {/* TAB 3: SMART RECOMMENDATIONS */}
           {activeTab === 'recommendations' && (
-            <div className="space-y-3">
-              {supportPrograms.map((prog, idx) => {
-                const isRecommended = youth.support_recommendation.includes(prog.id);
-                const isCurrentAssigned = youth.assigned_program?.id === prog.id;
-                const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
-                const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
-                const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
-                const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
+            <div className="space-y-3 view-transition">
+              
+              {/* Search & Category Filter Toolbar */}
+              <div className="p-3 bg-surface-2 rounded-xl border border-white/[0.08] space-y-2.5">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={programSearch}
+                    onChange={(e) => setProgramSearch(e.target.value)}
+                    placeholder={lang === 'ru' ? 'Поиск программы поддержки...' : 'Yordam dasturlarini qidirish...'}
+                    className="w-full bg-surface-1 border border-white/[0.08] focus:border-indigo-500/60 rounded-xl pl-9 pr-8 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-colors"
+                  />
+                  {programSearch && (
+                    <button
+                      onClick={() => setProgramSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-bold"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
 
-                return (
-                  <div
-                    key={prog.id}
-                    style={{ animationDelay: `${idx * 45}ms` }}
-                    className={`animate-card-cascade p-3.5 rounded-xl border transition-all ${
-                      isCurrentAssigned
-                        ? 'border-emerald-500/50 bg-emerald-950/15'
-                        : isRecommended
-                        ? 'border-indigo-500/40 bg-surface-2'
-                        : 'border-white/[0.06] bg-surface-2/60 opacity-80 hover:opacity-100'
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+                  <button
+                    onClick={() => setProgramFilter('all')}
+                    className={`px-2.5 py-1 rounded-lg transition-all font-medium whitespace-nowrap border text-xs ${
+                      programFilter === 'all'
+                        ? 'bg-surface-3 text-white border-indigo-500/40 shadow-sm'
+                        : 'bg-surface-1 text-slate-400 border-white/[0.06] hover:bg-surface-3 hover:text-slate-200'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-2.5">
-                        <div className="p-2 rounded-lg bg-surface-3 border border-white/[0.08] flex-shrink-0">
-                          {getProgramIcon(prog.iconName)}
+                    {lang === 'ru' ? 'Все' : 'Barchasi'} ({supportPrograms.length})
+                  </button>
+
+                  <button
+                    onClick={() => setProgramFilter('recommended')}
+                    className={`px-2.5 py-1 rounded-lg transition-all font-medium whitespace-nowrap border text-xs flex items-center gap-1.5 ${
+                      programFilter === 'recommended'
+                        ? 'bg-surface-3 text-white border-indigo-500/40 shadow-sm'
+                        : 'bg-surface-1 text-slate-400 border-white/[0.06] hover:bg-surface-3 hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                    <span>{lang === 'ru' ? 'Рекомендованные' : 'Tavsiya etilgan'}</span>
+                    <span className="text-[10px] text-slate-400">({youth.support_recommendation.length})</span>
+                  </button>
+
+                  <button
+                    onClick={() => setProgramFilter('training')}
+                    className={`px-2.5 py-1 rounded-lg transition-all font-medium whitespace-nowrap border text-xs ${
+                      programFilter === 'training'
+                        ? 'bg-surface-3 text-white border-indigo-500/40 shadow-sm'
+                        : 'bg-surface-1 text-slate-400 border-white/[0.06] hover:bg-surface-3 hover:text-slate-200'
+                    }`}
+                  >
+                    {lang === 'ru' ? 'Обучение & Курсы' : 'Ta’lim va kurslar'}
+                  </button>
+
+                  <button
+                    onClick={() => setProgramFilter('finance')}
+                    className={`px-2.5 py-1 rounded-lg transition-all font-medium whitespace-nowrap border text-xs ${
+                      programFilter === 'finance'
+                        ? 'bg-surface-3 text-white border-indigo-500/40 shadow-sm'
+                        : 'bg-surface-1 text-slate-400 border-white/[0.06] hover:bg-surface-3 hover:text-slate-200'
+                    }`}
+                  >
+                    {lang === 'ru' ? 'Субсидии & Кредиты' : 'Subsidiya & Kredit'}
+                  </button>
+
+                  <button
+                    onClick={() => setProgramFilter('employment')}
+                    className={`px-2.5 py-1 rounded-lg transition-all font-medium whitespace-nowrap border text-xs ${
+                      programFilter === 'employment'
+                        ? 'bg-surface-3 text-white border-indigo-500/40 shadow-sm'
+                        : 'bg-surface-1 text-slate-400 border-white/[0.06] hover:bg-surface-3 hover:text-slate-200'
+                    }`}
+                  >
+                    {lang === 'ru' ? 'Трудоустройство' : 'To‘g‘ridan bandlik'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Filtered Programs List */}
+              <div className="space-y-2.5">
+                {(() => {
+                  const filtered = supportPrograms.filter(prog => {
+                    const isRecommended = youth.support_recommendation.includes(prog.id);
+                    if (programFilter === 'recommended' && !isRecommended) return false;
+                    if (programFilter === 'training' && !['prog_mono', 'prog_it_park'].includes(prog.id)) return false;
+                    if (programFilter === 'finance' && !['prog_daftari', 'prog_credit'].includes(prog.id)) return false;
+                    if (programFilter === 'employment' && !['prog_job_fair'].includes(prog.id)) return false;
+
+                    if (programSearch.trim()) {
+                      const q = programSearch.toLowerCase();
+                      const titleRu = prog.title.toLowerCase();
+                      const titleUz = (prog.titleUz || '').toLowerCase();
+                      const descRu = prog.description.toLowerCase();
+                      const descUz = (prog.descriptionUz || '').toLowerCase();
+                      const prov = prog.provider.toLowerCase();
+                      return titleRu.includes(q) || titleUz.includes(q) || descRu.includes(q) || descUz.includes(q) || prov.includes(q);
+                    }
+                    return true;
+                  });
+
+                  if (filtered.length === 0) {
+                    return (
+                      <div className="py-8 text-center bg-surface-2/40 rounded-xl border border-white/[0.06] space-y-1.5">
+                        <Route className="w-6 h-6 text-slate-500 mx-auto" />
+                        <div className="text-xs font-semibold text-slate-300">
+                          {lang === 'ru' ? 'Программы не найдены' : 'Dasturlar topilmadi'}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h5 className="text-xs font-bold text-white">{title}</h5>
-                            {isRecommended && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold whitespace-nowrap">
-                                ★ {lang === 'ru' ? 'Рекомендовано' : 'Tavsiya etilgan'}
+                        <p className="text-[11px] text-slate-500">
+                          {lang === 'ru' ? 'Попробуйте изменить параметры поиска или фильтра' : 'Qidiruv parametrlarini o‘zgartirib ko‘ring'}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return filtered.map((prog, idx) => {
+                    const isRecommended = youth.support_recommendation.includes(prog.id);
+                    const isCurrentAssigned = youth.assigned_program?.id === prog.id;
+                    const title = (lang === 'uz' && prog.titleUz) ? prog.titleUz : prog.title;
+                    const description = (lang === 'uz' && prog.descriptionUz) ? prog.descriptionUz : prog.description;
+                    const duration = (lang === 'uz' && prog.durationUz) ? prog.durationUz : prog.duration;
+                    const stipend = (lang === 'uz' && prog.stipendUz) ? prog.stipendUz : prog.stipend;
+
+                    return (
+                      <div
+                        key={prog.id}
+                        style={{ animationDelay: `${idx * 35}ms` }}
+                        className={`animate-card-cascade p-3.5 rounded-xl border transition-all ${
+                          isCurrentAssigned
+                            ? 'border-emerald-500/30 bg-surface-2 shadow-sm'
+                            : isRecommended
+                            ? 'border-indigo-500/30 bg-surface-2 hover:border-indigo-500/50'
+                            : 'border-white/[0.08] bg-surface-2/60 hover:bg-surface-2 hover:border-white/[0.14]'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2.5">
+                            <div className="p-2 rounded-lg bg-surface-3 border border-white/[0.08] text-slate-300 flex-shrink-0">
+                              {getProgramIcon(prog.iconName)}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h5 className="text-xs font-bold text-white">{title}</h5>
+                                {isRecommended && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-3 text-slate-300 border border-white/[0.08] text-[10px] font-medium whitespace-nowrap">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                                    <span>{lang === 'ru' ? 'Рекомендовано' : 'Tavsiya'}</span>
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                                {description}
+                              </p>
+                              <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400 flex-wrap">
+                                <span>{tr.routingModalDuration} <strong className="text-white">{duration}</strong></span>
+                                <span>{tr.routingModalStipend} <strong className="text-emerald-400">{stipend}</strong></span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            {isCurrentAssigned ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-3 text-emerald-400 border border-emerald-500/30 text-xs font-semibold whitespace-nowrap shadow-sm">
+                                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                                <span>{lang === 'ru' ? 'Направлен' : 'Biriktirilgan'}</span>
                               </span>
+                            ) : (
+                              <button
+                                onClick={() => onAssignProgram(youth.id, prog)}
+                                className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all whitespace-nowrap shadow-sm active:scale-[0.98]"
+                              >
+                                {tr.profileCardBtnAssign}
+                              </button>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                            {description}
-                          </p>
-                          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
-                            <span>{tr.routingModalDuration} <strong className="text-white">{duration}</strong></span>
-                            <span>{tr.routingModalStipend} <strong className="text-emerald-400">{stipend}</strong></span>
-                          </div>
                         </div>
                       </div>
+                    );
+                  });
+                })()}
+              </div>
 
-                      <div>
-                        {isCurrentAssigned ? (
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1 whitespace-nowrap">
-                            <CheckCircle2 className="w-3 h-3" /> {lang === 'ru' ? 'Направлен' : 'Biriktirilgan'}
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => onAssignProgram(youth.id, prog)}
-                            className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm shadow-indigo-500/25 text-xs font-semibold transition-all whitespace-nowrap"
-                          >
-                            {tr.profileCardBtnAssign}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           )}
 
@@ -371,6 +498,7 @@ export const YouthModalCard: React.FC<YouthModalCardProps> = ({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

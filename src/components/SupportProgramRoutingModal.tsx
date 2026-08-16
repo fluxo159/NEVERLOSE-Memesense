@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, CheckCircle2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Route, Check } from 'lucide-react';
 import { YouthProfile, SupportProgram } from '../types';
 import { t } from '../data/translations';
 
@@ -34,21 +35,21 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
     onConfirmRouting(youth.id, selectedProg, routingNotes);
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150 cursor-pointer"
+      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150 cursor-pointer"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-surface-1 w-full max-w-xl rounded-2xl border border-white/[0.14] shadow-surface-modal p-5 space-y-3.5 cursor-default"
+        className="bg-surface-1 w-full max-w-xl rounded-2xl border border-white/[0.14] shadow-surface-modal p-5 space-y-3.5 cursor-default my-auto"
       >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-surface-2 text-slate-300 border border-white/[0.08]">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <Route className="w-4 h-4 text-indigo-400" />
             </div>
             <h3 className="text-sm font-bold text-white tracking-tight">
               {tr.routingModalTitle}
@@ -86,23 +87,24 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
                   onClick={() => setSelectedProgramId(prog.id)}
                   className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
                     isSelected
-                      ? 'border-emerald-500/60 bg-emerald-950/20 shadow-sm'
+                      ? 'border-indigo-500/50 bg-surface-2 shadow-sm'
                       : 'border-white/[0.06] bg-surface-2/60 hover:bg-surface-2 hover:border-white/[0.12]'
                   }`}
                 >
                   <div className="pr-2">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-xs font-bold text-white">{prog.title}</span>
                       {isRecommended && (
-                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-surface-3 text-slate-300 border border-white/[0.08] text-[9px] font-medium">
+                          <span className="w-1 h-1 rounded-full bg-indigo-400"></span>
                           AI Match
                         </span>
                       )}
                     </div>
                     <div className="text-[10px] text-slate-400 mt-0.5">{prog.provider}</div>
                   </div>
-                  <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${isSelected ? 'border-emerald-400 bg-emerald-400/20' : 'border-slate-600'}`}>
-                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>}
+                  <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${isSelected ? 'border-indigo-400 bg-indigo-400/20' : 'border-slate-600'}`}>
+                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>}
                   </div>
                 </div>
               );
@@ -135,20 +137,21 @@ export const SupportProgramRoutingModal: React.FC<SupportProgramRoutingModalProp
         <div className="grid grid-cols-2 gap-2.5 pt-1">
           <button
             onClick={handleConfirm}
-            className="py-2 px-3 bg-emerald-600/30 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            className="py-2.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
+            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{tr.routingModalBtnConfirm}</span>
           </button>
           <button
             onClick={onClose}
-            className="py-2 px-3 bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all"
+            className="py-2.5 px-3 bg-surface-2 hover:bg-surface-3 text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-all"
           >
             {tr.routingModalBtnCancel}
           </button>
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
